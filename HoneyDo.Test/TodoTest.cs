@@ -14,5 +14,13 @@ namespace HoneyDo.Test
             Assert.NotEqual(Guid.Empty, todo.Id);
             Assert.Equal("foobar", todo.Name);
         }
+
+        [Fact]
+        public void UpdateName()
+        {
+            var todo = new Todo("foobar");
+			todo.UpdateName("blah blah blah");
+			Assert.Equal("blah blah blah", todo.Name);
+        }
     }
 }
