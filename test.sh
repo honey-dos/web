@@ -9,7 +9,14 @@ fi
 if ! dotnet test HoneyDo.Test/HoneyDo.Test.csproj;
 then
 	echo 
-	echo "Tests failed"
+	echo "xunit Tests failed"
+	exit 1
+fi
+
+if ! npm run test:ci --prefix HoneyDo.Web/ClientApp;
+then
+	echo 
+	echo "jest Tests failed"
 	exit 1
 fi
 
