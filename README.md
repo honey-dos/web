@@ -24,13 +24,13 @@ When Mike is finished, he commits his code with message `#3 Updated readme` and 
 Once approved by Elanore, it will be in `dev`. After some time frame, Shelly, Mike, and the rest of the team meet up and decide 
 what to merge into `master` and do a release updating the version information and adding a tag.
 
-## Code Format | Formatting Standards
+## Coding Standards
 - master branch
     - builds
     - runs
     - tests pass
 - branches w/ tags created for releases
-- code
+- Formating
     - Javascript
         - prettier, no errors
         - eslint, no errors
