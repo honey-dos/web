@@ -1,5 +1,5 @@
 using System;
-using HoneyDo.Domain;
+using HoneyDo.Domain.Entities;
 using Xunit;
 
 namespace HoneyDo.Test

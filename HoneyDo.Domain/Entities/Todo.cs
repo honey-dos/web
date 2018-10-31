@@ -1,6 +1,6 @@
 using System;
 
-namespace HoneyDo.Domain
+namespace HoneyDo.Domain.Entities
 {
 	public class Todo
 	{
