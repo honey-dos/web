@@ -1,4 +1,4 @@
-# Honey Do
+# Honey-Dos
 
 ## Installation
 1. clone repo
@@ -11,7 +11,20 @@
 3. make init script executable `chmod +x init.sh`
 4. run init script `./init.sh`
 
-## Coding Standards
+## Git Flow
+- master -> PR only from dev - with version tag
+- dev -> locked to prevent direct commits. PR only from feature/branches
+- feature/[feature/issue#] - commit changes here
+
+If commiting against an issue/PR, please add the `#` in front of commit message.
+
+Example: Mike sees issue #3 on the kanban board/issues and wants to work on it. After assigning it to himself
+he branches off the latest commit on `dev` and names it `feature/#3`, `feature/#3-update-readme`, and then begins coding.
+When Mike is finished, he commits his code with message `#3 Updated readme` and  will open a PR to merge his branch into `dev`. 
+Once approved by Elanore, it will be in `dev`. After some time frame, Shelly, Mike, and the rest of the team meet up and decide 
+what to merge into `master` and do a release updating the version information and adding a tag.
+
+## Code Format | Formatting Standards
 - master branch
     - builds
     - runs
