@@ -11,6 +11,22 @@
 3. make init script executable `chmod +x init.sh`
 4. run init script `./init.sh`
 
+## Coding Standards
+- master branch
+    - builds
+    - runs
+    - tests pass
+- branches w/ tags created for releases
+- code
+    - Javascript
+        - prettier, no errors
+        - eslint, no errors
+    - C#
+        - vscode formatting
+- PRs
+    - must be reviewed
+- Database schema changes are made through migrations
+
 ## Infrastructure Notes
 
 To add a migration `dotnet ef migrations add {migration name} -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c {HoneyDoContext}`
