@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoneyDo.Domain", "HoneyDo.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoneyDo.Test", "HoneyDo.Test\HoneyDo.Test.csproj", "{BF4EA06A-16AA-44BB-AA14-BEE2C1D82537}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoneyDo.Web", "HoneyDo.Web\HoneyDo.Web.csproj", "{E5B95E34-36EC-424D-BB2C-F31F9DA21879}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{BF4EA06A-16AA-44BB-AA14-BEE2C1D82537}.Release|x64.Build.0 = Release|Any CPU
 		{BF4EA06A-16AA-44BB-AA14-BEE2C1D82537}.Release|x86.ActiveCfg = Release|Any CPU
 		{BF4EA06A-16AA-44BB-AA14-BEE2C1D82537}.Release|x86.Build.0 = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Debug|x86.Build.0 = Debug|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|x64.Build.0 = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|x86.ActiveCfg = Release|Any CPU
+		{E5B95E34-36EC-424D-BB2C-F31F9DA21879}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

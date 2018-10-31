@@ -5,6 +5,35 @@
    "version": "0.2.0",
    "configurations": [
         {
+           "name": "Web",
+           "type": "coreclr",
+           "request": "launch",
+           "preLaunchTask": "build",
+           "program": "${workspaceRoot}/HoneyDo.Web/bin/Debug/netcoreapp2.1/HoneyDo.Web.dll",
+           "args": [],
+           "cwd": "${workspaceRoot}/HoneyDo.Web",
+           "stopAtEntry": false,
+           "launchBrowser": {
+               "enabled": true,
+               "args": "${auto-detect-url}",
+               "windows": {
+                   "command": "cmd.exe",
+                   "args": "/C start ${auto-detect-url}"
+               },
+               "osx": {
+                   "command": "open"
+               },
+               "linux": {
+                   "command": "xdg-open"
+               }
+           },
+           "env": {
+               "ASPNETCORE_ENVIRONMENT": "Development"
+           },
+           "sourceFileMap": {
+               "/Views": "${workspaceRoot}/Views"
+           }
+       },{
             "name": "test",
             "type": "coreclr",
             "request": "launch",
