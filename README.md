@@ -32,8 +32,8 @@ up does a release updating the version information and adding a tag.
   - builds
   - runs
   - tests pass
-- master tagged for releases
-- code format
+- branches w/ tags created for releases
+- Formating
   - Javascript
     - prettier, no errors
     - eslint, no errors
