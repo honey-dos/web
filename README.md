@@ -23,8 +23,7 @@ If commiting against an issue/PR, please add the `#` in front of commit message.
 Example: Mike sees issue #3 on the kanban board/issues and wants to work on it. After assigning it to himself
 he branches off the latest commit on `dev` and names it `feature/#3` or `feature/#3-update-readme` and then begins coding.
 When Mike is finished, he commits his code with message `#3 Updated readme` and will open a PR to merge his branch into `dev`.
-Once approved by Elanore, PR will be merged into `dev`. After all features and bug fixes are completed for milestone team meets
-up does a release updating the version information and adding a tag.
+Once the PR is approved by Elanore, the PR will be merged into `dev`. After all features and bug fixes are completed for the milestone, the team meets up and does a release updating the version information and adding a tag.
 
 ## Coding Standards
 
