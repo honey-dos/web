@@ -71,6 +71,8 @@ namespace HoneyDo.Web
 
                 if (env.IsDevelopment())
                 {
+                    // https://docs.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-2.1&tabs=netcore-cli#run-the-cra-server-independently
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
