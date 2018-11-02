@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/HoneyDo.Test/HoneyDo.Test.csproj"
+                "${workspaceFolder}/HoneyDo.sln"
             ],
             "problemMatcher": "$msCompile"
         }
