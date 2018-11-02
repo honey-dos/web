@@ -4,13 +4,18 @@
 
 1. clone repo
 2. set env variables in `.bash_profile`, `.zshrc` or equivalent
-   ```
-   export ASPNETCORE_ENVIRONMENT=Development
-   export ASPNETCORE_HTTPS_PORT=5000
-   export NODE_ENV=development
-   ```
+    ```
+    export ASPNETCORE_ENVIRONMENT=Development
+    export ASPNETCORE_HTTPS_PORT=5001
+    export NODE_ENV=development
+    ```
 3. make init script executable `chmod +x init.sh`
 4. run init script `./init.sh`
+5. The init script builds, installs, and runs the client server and API server after initialization
+
+## Running after Installation
+1. make start.sh script executiable `chmod +x start.sh`
+2. run start.sh script `./start.sh`
 
 ## Git Flow
 
