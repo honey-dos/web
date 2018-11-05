@@ -66,7 +66,6 @@ To update database with migrations `dotnet ef database update -p ./HoneyDo.Infra
 
 ## JWT Notes
 
-**Not yet Needed -**
 `JwtKey` must be added to the dotnet secrets store for development use `dotnet user-secrets` in the `HoneyDo.Web` directory.
 
 ## Database

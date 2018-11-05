@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Infrastructure.Authentication;
+using HoneyDo.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -17,17 +18,48 @@ namespace HoneyDo.Web.Controllers
             _loginService = loginService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetToken()
+        private string GetIdToken()
         {
+
             if (!Request.Headers.TryGetValue("Id-Token", out StringValues idTokens) || idTokens.Count > 1)
+            {
+                return string.Empty;
+            }
+            var idToken = idTokens.First();
+            return idToken;
+        }
+
+        [HttpGet("login")]
+        public async Task<IActionResult> Login()
+        {
+            var idToken = GetIdToken();
+            if (string.IsNullOrEmpty(idToken))
             {
                 return BadRequest();
             }
-            var idToken = idTokens.First();
 
-            var result = await _loginService.BuildJwt(idToken);
-            return Ok(new { token = result });
+            var account = await _loginService.FindAccountForToken(idToken);
+            if (account == null)
+            {
+                return BadRequest();
+            }
+
+            var jwt = _loginService.GenerateToken(account);
+            return Ok(new TokenModel(jwt));
+        }
+
+        [HttpGet("register")]
+        public async Task<IActionResult> Register()
+        {
+            var idToken = GetIdToken();
+            if (string.IsNullOrEmpty(idToken))
+            {
+                return BadRequest();
+            }
+
+            var account = await _loginService.Register(idToken);
+            var jwt = _loginService.GenerateToken(account);
+            return Ok(new TokenModel(jwt));
         }
     }
 }

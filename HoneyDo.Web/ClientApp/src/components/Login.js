@@ -18,7 +18,8 @@ export class Login extends Component {
       .signInWithPopup(provider)
       .then(() => firebase.auth().currentUser.getIdToken(false))
       .then(idToken => {
-        fetch("api/token", {
+        const url = `api/token/${mode}`;
+        fetch(url, {
           method: "GET",
           mode: "cors",
           cache: "no-cache",

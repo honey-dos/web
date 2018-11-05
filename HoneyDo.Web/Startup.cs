@@ -1,6 +1,7 @@
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Infrastructure.Context;
+using HoneyDo.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,12 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace HoneyDo.Web
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
         {
@@ -29,6 +31,16 @@ namespace HoneyDo.Web
             {
                 options.ConnectionString = _configuration.GetConnectionString("HoneyDoContext");
             });
+
+            services.Configure<LoginOptions>(options =>
+            {
+                options.Issuer = _configuration["JwtIssuer"];
+                options.MillisecondsUntilExpiration = long.Parse(_configuration["JwtExpireMilliseconds"]);
+                options.Key = _configuration["JwtKey"];
+                options.PathToCredentialsJson = _configuration["PathToCredentialsJson"];
+            });
+
+            services.AddSingleton<LoginService>();
 
             services.AddDbContext<HoneyDoContext>();
 
