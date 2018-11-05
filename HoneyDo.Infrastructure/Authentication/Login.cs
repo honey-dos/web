@@ -9,9 +9,9 @@ namespace HoneyDo.Infrastructure.Authentication
         public Guid Id { get; private set; }
         public Guid AccountId { get; private set; }
         public string Provider { get; private set; }
-        public string ProviderId { get; private set; }  
+        public string ProviderId { get; private set; }
         public string ProviderKey { get; private set; }
-        
+
         [Obsolete("system constructor")]
         protected Login() { }
         internal Login(Account account, Providers provider, string providerId, string providerKey)

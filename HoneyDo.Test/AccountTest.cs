@@ -21,8 +21,8 @@ namespace HoneyDo.Test
         public void UpdateName()
         {
             var account = new Account("foobar");
-			account.UpdateName("blah blah blah");
-			Assert.Equal("blah blah blah", account.Name);
+            account.UpdateName("blah blah blah");
+            Assert.Equal("blah blah blah", account.Name);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace HoneyDo.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<Member>()
-                //.HasKey(i => new { i.AccountId, i.EventId });
+            //.HasKey(i => new { i.AccountId, i.EventId });
         }
     }
 }

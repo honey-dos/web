@@ -11,7 +11,7 @@ namespace HoneyDo.Infrastructure.Specifications
     {
         private readonly string _provider;
         private readonly string _providerId;
-        
+
         public FindLogin(Providers provider, string providerId)
         {
             _provider = provider.ToString();

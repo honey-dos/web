@@ -11,7 +11,7 @@ namespace HoneyDo.Infrastructure.Specifications
     public class FindAccount : ISpecification<Account>
     {
         private readonly Guid _accountId;
-        
+
         public FindAccount(Guid accountId)
         {
             _accountId = accountId;

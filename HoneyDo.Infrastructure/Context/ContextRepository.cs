@@ -42,7 +42,7 @@ namespace HoneyDo.Infrastructure.Context
 
         public void Update(T item)
         {
-            var changeTracker =_dbset.Update(item);
+            var changeTracker = _dbset.Update(item);
             _save();
         }
     }
