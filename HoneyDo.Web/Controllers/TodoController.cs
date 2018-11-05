@@ -7,17 +7,20 @@ using HoneyDo.Domain.Entities;
 using HoneyDo.Web.Models;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Specifications.Todos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HoneyDo.Web.Controllers
 {
-    [Route("api/todos")]
+    [Route("api/todos"), Authorize]
     public class TodoController : Controller
     {
 		private readonly IRepository<Todo> _todoRepository;
+        private readonly IAccountAccessor _accountAccessor;
 
-		public TodoController(IRepository<Todo> todoRepository)
+		public TodoController(IRepository<Todo> todoRepository, IAccountAccessor accountAccessor)
 		{
 			_todoRepository = todoRepository;
+            _accountAccessor = accountAccessor;
 		}
 
         [HttpGet]
@@ -41,6 +44,7 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
+            // var account = _accountAccessor.Account;
             var todo = new Todo(model.Name);
             _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);

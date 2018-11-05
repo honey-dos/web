@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HoneyDo.Web.Services;
 
 namespace HoneyDo.Web
 {
@@ -46,7 +50,23 @@ namespace HoneyDo.Web
             services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
             services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
 
+            services.AddScoped<IAccountAccessor, AccountAccessor>();
             services.AddScoped<LoginService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = _configuration["JwtIssuer"],
+                        ValidAudience = _configuration["JwtIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]))
+                    };
+                });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -71,6 +91,7 @@ namespace HoneyDo.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
