@@ -2,7 +2,7 @@ using System;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Infrastructure.Enumerations;
 
-namespace Avocado.Infrastructure.Authentication
+namespace HoneyDo.Infrastructure.Authentication
 {
     public class Login
     {

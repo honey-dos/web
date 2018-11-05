@@ -1,5 +1,6 @@
 using System;
 using HoneyDo.Domain.Entities;
+using HoneyDo.Infrastructure.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -10,6 +11,8 @@ namespace HoneyDo.Infrastructure.Context
         private readonly string _connectionString;
 
         public DbSet<Todo> Todos { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Login> Logins { get; set; }
 
         public HoneyDoContext(IOptions<ContextOptions<HoneyDoContext>> options)
         {

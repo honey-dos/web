@@ -11,20 +11,27 @@ using Microsoft.Extensions.Logging;
 using HoneyDo.Domain.Entities;
 using Microsoft.Extensions.Options;
 using System.Linq;
-using Avocado.Infrastructure.Authentication;
 using HoneyDo.Infrastructure.Enumerations;
+using HoneyDo.Domain.Interfaces;
+using HoneyDo.Infrastructure.Specifications;
 
 namespace HoneyDo.Infrastructure.Authentication
 {
     public class LoginService
     {
         private readonly LoginOptions _loginOptions;
+        private readonly IRepository<Login> _loginRepo;
+        private readonly IRepository<Account> _accountRepo;
         private readonly ILogger _logger;
-        private bool _hasInitialized = false;
 
-        public LoginService(IOptions<LoginOptions> loginOptions, ILogger<LoginService> logger)
+        public LoginService(IOptions<LoginOptions> loginOptions,
+            IRepository<Login> loginRepo,
+            IRepository<Account> accountRepo,
+            ILogger<LoginService> logger)
         {
             _loginOptions = loginOptions.Value;
+            _loginRepo = loginRepo;
+            _accountRepo = accountRepo;
             _logger = logger;
         }
 
@@ -37,24 +44,25 @@ namespace HoneyDo.Infrastructure.Authentication
                 decodedToken = await FirebaseAuth.DefaultInstance
                     .VerifyIdTokenAsync(firebaseToken);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                _logger.LogError(e, "Verify Firebase Id Token Failed");
+                _logger.LogError(exception, "Verify Firebase Id Token Failed");
                 return null;
             }
             return decodedToken;
         }
 
+        private Login FindLogin(Providers provider, string providerId) => _loginRepo.Find(new FindLogin(provider, providerId));
+
         private void InitializeIfNeeded()
         {
-                if (!_hasInitialized)
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions()
                 {
-                    FirebaseApp.Create(new AppOptions()
-                    {
-                        Credential = GoogleCredential.FromFile(_loginOptions.PathToCredentialsJson)
-                    });
-                    _hasInitialized = true;
-                }
+                    Credential = GoogleCredential.FromFile(_loginOptions.PathToCredentialsJson)
+                });
+            }
         }
 
         public async Task<Account> Register(string firebaseToken)
@@ -64,14 +72,18 @@ namespace HoneyDo.Infrastructure.Authentication
             var name = token.Claims.FirstOrDefault(claim => claim.Key == "name");
             var picture = token.Claims.FirstOrDefault(claim => claim.Key == "picture");
 
-            // TODO look for account first
+            var existingLogin = FindLogin(Providers.Google, providerId);
+            if (existingLogin != null)
+            {
+                return null;
+            }
 
             var account = new Account(name.Value.ToString());
             account.UpdatePicture(picture.Value.ToString());
+            _accountRepo.Add(account);
 
             var login = new Login(account, Providers.Google, providerId, string.Empty);
-
-            // TODO save account and login
+            _loginRepo.Add(login);
 
             return account;
         }
@@ -80,13 +92,22 @@ namespace HoneyDo.Infrastructure.Authentication
         {
             var token = await DecodeToken(firebaseToken);
             var providerId = token.Uid;
-            return null;
+            var login = FindLogin(Providers.Google, providerId);
+            if (login == null)
+            {
+                return null;
+            }
+
+            var account = _accountRepo.Find(new FindAccount(login.AccountId));
+            return account;
         }
 
         public string GenerateToken(Account account)
         {
             if (account == null)
+            {
                 throw new ArgumentNullException(nameof(account));
+            }
 
             var claims = new[]
             {

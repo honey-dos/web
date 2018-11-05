@@ -40,11 +40,13 @@ namespace HoneyDo.Web
                 options.PathToCredentialsJson = _configuration["PathToCredentialsJson"];
             });
 
-            services.AddSingleton<LoginService>();
-
             services.AddDbContext<HoneyDoContext>();
 
             services.AddScoped<IRepository<Todo>, ContextRepository<Todo, HoneyDoContext>>();
+            services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
+            services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
+
+            services.AddScoped<LoginService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
