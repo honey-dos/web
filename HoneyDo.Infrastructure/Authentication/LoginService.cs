@@ -65,7 +65,7 @@ namespace HoneyDo.Infrastructure.Authentication
             }
         }
 
-        public async Task<Account> Register(string firebaseToken)
+        public async Task<Account> RegisterViaToken(string firebaseToken)
         {
             var token = await DecodeToken(firebaseToken);
             var providerId = token.Uid;
@@ -88,11 +88,23 @@ namespace HoneyDo.Infrastructure.Authentication
             return account;
         }
 
-        public async Task<Account> FindAccountForToken(string firebaseToken)
+        public async Task<Account> FindAccountViaToken(string firebaseToken)
         {
             var token = await DecodeToken(firebaseToken);
             var providerId = token.Uid;
             var login = FindLogin(Providers.Google, providerId);
+            if (login == null)
+            {
+                return null;
+            }
+
+            var account = _accountRepo.Find(new FindAccount(login.AccountId));
+            return account;
+        }
+
+        public Account FindAccountViaLoginModel(LoginModel model)
+        {
+            var login = FindLogin(Providers.Google, model.ProviderId);
             if (login == null)
             {
                 return null;

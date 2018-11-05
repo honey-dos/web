@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Infrastructure.Authentication;
 using HoneyDo.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -12,10 +14,13 @@ namespace HoneyDo.Web.Controllers
     public class TokenController : Controller
     {
         private readonly LoginService _loginService;
+        private readonly IHostingEnvironment _environment;
 
-        public TokenController(LoginService loginService)
+        public TokenController(LoginService loginService,
+            IHostingEnvironment environment)
         {
             _loginService = loginService;
+            _environment = environment;
         }
 
         private string GetIdToken()
@@ -38,7 +43,7 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
-            var account = await _loginService.FindAccountForToken(idToken);
+            var account = await _loginService.FindAccountViaToken(idToken);
             if (account == null)
             {
                 return BadRequest();
@@ -57,10 +62,27 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
-            var account = await _loginService.Register(idToken);
+            var account = await _loginService.RegisterViaToken(idToken);
             if (account == null)
             {
                 return BadRequest(new TokenModel(string.Empty, "exists"));
+            }
+            var jwt = _loginService.GenerateToken(account);
+            return Ok(new TokenModel(jwt));
+        }
+
+        [HttpPost("test-token"), AllowAnonymous]
+        public IActionResult TestToken([FromBody] LoginModel model)
+        {
+            if (!_environment.IsDevelopment())
+            {
+                return NotFound();
+            }
+
+            var account = _loginService.FindAccountViaLoginModel(model);
+            if (account == null)
+            {
+                return BadRequest();
             }
             var jwt = _loginService.GenerateToken(account);
             return Ok(new TokenModel(jwt));

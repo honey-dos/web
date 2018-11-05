@@ -1,0 +1,248 @@
+{
+	"_type": "export",
+	"__export_format": 3,
+	"__export_date": "2018-11-05T19:58:02.637Z",
+	"__export_source": "insomnia.desktop.app:v6.0.2",
+	"resources": [
+		{
+			"_id": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"created": 1540959321449,
+			"description": "",
+			"modified": 1540959321449,
+			"name": "HoneyDo",
+			"parentId": null,
+			"_type": "workspace"
+		},
+		{
+			"_id": "env_6e7877405f2f457b8ad7c848b29e5f8a",
+			"color": null,
+			"created": 1540959321462,
+			"data": {
+				"base_url": "https://local.honeydos.co"
+			},
+			"isPrivate": false,
+			"metaSortKey": 1540959321462,
+			"modified": 1541446407316,
+			"name": "New Environment",
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"_type": "environment"
+		},
+		{
+			"_id": "jar_4051db9d1f6142d8b62ab6f1ab793701",
+			"cookies": [],
+			"created": 1540959321466,
+			"modified": 1540959321466,
+			"name": "Default Jar",
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"_type": "cookie_jar"
+		},
+		{
+			"_id": "req_60f56230ec274551b6c27c3baa4f2cc6",
+			"authentication": {
+				"disabled": false,
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {},
+			"created": 1540959339347,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1540959339348,
+			"method": "GET",
+			"modified": 1541446697285,
+			"name": "Get Todos",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos",
+			"_type": "request"
+		},
+		{
+			"_id": "req_7935583d132f412e8a4372e2b773d99f",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {},
+			"created": 1540959623909,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1540761123437.125,
+			"method": "GET",
+			"modified": 1541446695946,
+			"name": "Get Todo",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/678a56de-34a2-4f5f-89e9-29e7fdcb42be",
+			"_type": "request"
+		},
+		{
+			"_id": "req_cd228839797c490ba5d0d135829a1e0d",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {
+				"mimeType": "",
+				"text": "{\n\t\"name\": \"hello world\"\n}"
+			},
+			"created": 1540960502792,
+			"description": "",
+			"headers": [
+				{
+					"disabled": false,
+					"id": "pair_e66544c4081044088656c1e188d31619",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1540562907526.25,
+			"method": "POST",
+			"modified": 1541446641843,
+			"name": "Create Todo",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos",
+			"_type": "request"
+		},
+		{
+			"_id": "req_a23b239831ce44c39fce48168cfea5fc",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {},
+			"created": 1540961154500,
+			"description": "",
+			"headers": [
+				{
+					"disabled": false,
+					"id": "pair_e66544c4081044088656c1e188d31619",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1539968259793.625,
+			"method": "DELETE",
+			"modified": 1541446649184,
+			"name": "Delete Todo",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/e2d6b59a-9f3f-483d-8e97-9e86e95166f0",
+			"_type": "request"
+		},
+		{
+			"_id": "req_1839e8f8035c4b78878881fdb8d1004c",
+			"authentication": {
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"name\": \"blah blah blah\"\n}"
+			},
+			"created": 1540961439656,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_b69cdd007ded4f37a0e0caaf7070c613",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1539968259743.625,
+			"method": "PUT",
+			"modified": 1541446680938,
+			"name": "Update Todo",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/8a361715-4c7c-467e-be9b-e92882979abd",
+			"_type": "request"
+		},
+		{
+			"_id": "req_522f574bee85444e9d55d728379554be",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"provider\": \"Google\",\n\t\"providerId\": \"1rzWkCc0gmV5wtE4jrBizTps10v1\"\n}"
+			},
+			"created": 1541432979047,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_baf44a716a63434faa53a98d4d26fb5c",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1539968259693.625,
+			"method": "POST",
+			"modified": 1541447805345,
+			"name": "Get Token",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/token/test-token",
+			"_type": "request"
+		},
+		{
+			"_id": "env_3c84913f86024a40a486c4256de9577c",
+			"color": "#dfc50b",
+			"created": 1541446379517,
+			"data": {
+				"jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUeWxlciBFdmFucyIsImp0aSI6IjA4NTlmZjIzLTc1MTAtNDdmYy1iNDg3LWJiMjFlMDNhNTEyNiIsImV4cCI6MTU0MjA1MDE1NSwiaXNzIjoiaHR0cDovL2hvbmV5ZG9zLmNvIiwiYXVkIjoiaHR0cDovL2hvbmV5ZG9zLmNvIn0.5Wlz6sHkaettxiziNJ2jmyMuEYjUrIC0AcfgsVVEAmw",
+				"port": 5001
+			},
+			"isPrivate": false,
+			"metaSortKey": 1541446379517,
+			"modified": 1541446598456,
+			"name": "local",
+			"parentId": "env_6e7877405f2f457b8ad7c848b29e5f8a",
+			"_type": "environment"
+		}
+	]
+}
