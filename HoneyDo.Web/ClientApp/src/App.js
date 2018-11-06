@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import { Route } from "react-router";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
+import Button from "./components/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
