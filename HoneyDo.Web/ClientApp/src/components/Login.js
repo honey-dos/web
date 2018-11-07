@@ -3,6 +3,10 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 export class Login extends Component {
+  state = {
+    token: ""
+  };
+
   constructor() {
     super();
 
@@ -24,12 +28,12 @@ export class Login extends Component {
           mode: "cors",
           cache: "no-cache",
           headers: {
-            "Id-Token": idToken 
+            "Id-Token": idToken
           }
         })
           .then(r => r.json())
           .then(json => {
-            console.log(json);
+            this.setState({ token: json.token });
           });
       })
       .catch(error => {
@@ -40,6 +44,7 @@ export class Login extends Component {
   };
 
   render() {
+    const { token } = this.state;
     return (
       <div>
         Login page
@@ -49,6 +54,7 @@ export class Login extends Component {
         <button onClick={() => this.onLoginClick("login")} type="button">
           Login
         </button>
+        <div>Token: {token}</div>
       </div>
     );
   }
