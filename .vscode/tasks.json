@@ -7,6 +7,16 @@
             "type": "process",
             "args": [
                 "build",
+                "${workspaceFolder}/HoneyDo.sln"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "test",
                 "${workspaceFolder}/HoneyDo.Test/HoneyDo.Test.csproj"
             ],
             "problemMatcher": "$msCompile"

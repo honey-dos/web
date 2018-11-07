@@ -1,21 +1,34 @@
 # Honey-Dos
 
+## Prerequisites
+
+- docker >= `18.06.1-ce`
+- node >= `8.11.3`
+- npm >= `6.4.1`
+- dotnet sdk >= `2.1.403`
+
 ## Installation
 
 1. clone repo
-2. set env variables in `.bash_profile`, `.zshrc` or equivalent
-    ```
-    export ASPNETCORE_ENVIRONMENT=Development
-    export ASPNETCORE_HTTPS_PORT=5001
-    export NODE_ENV=development
-    ```
-3. make init script executable `chmod +x init.sh`
-4. run init script `./init.sh`
-5. The init script builds, installs, and runs the client server and API server after initialization
+2. set env variables in `.bash_profile`, `.zshrc` or equivalent startup script
+   ```
+   export ASPNETCORE_ENVIRONMENT=Development
+   export ASPNETCORE_HTTPS_PORT=5001
+   export NODE_ENV=development
+   ```
+3. source your startup script (ie `source ~/.zshrc`)
+    - you can also close your shell(s) and open new shell instances
+4. make init script executable `chmod +x init.sh`
+5. edit `hosts` file add entry for local development `127.0.0.1	local.honeydos.co`
+6. run init script `./init.sh`
+7. The init script builds, installs, and runs the client server and API server after initialization
 
 ## Running after Installation
+
 1. make start.sh script executiable `chmod +x start.sh`
-2. run start.sh script `./start.sh`
+2. start `honeydo-db` if it's not running already `docker start honeydo-db`
+3. run start.sh script `./start.sh` or use vscode `launch.json` configuration
+4. navigate to https://local.honeydos.co:5001
 
 ## Git Flow
 
@@ -55,7 +68,6 @@ To update database with migrations `dotnet ef database update -p ./HoneyDo.Infra
 
 ## JWT Notes
 
-**Not yet Needed -**
 `JwtKey` must be added to the dotnet secrets store for development use `dotnet user-secrets` in the `HoneyDo.Web` directory.
 
 ## Database

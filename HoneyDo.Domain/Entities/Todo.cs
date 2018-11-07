@@ -2,30 +2,30 @@ using System;
 
 namespace HoneyDo.Domain.Entities
 {
-	public class Todo
-	{
-		public Guid Id { get; private set; }
-		public string Name { get; private set; }
+    public class Todo
+    {
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
 
-		public Todo(string name)
-		{
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
+        public Todo(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
-			Id = Guid.NewGuid();
-			Name = name;
-		}
+            Id = Guid.NewGuid();
+            Name = name;
+        }
 
-		public void UpdateName(string name)
-		{
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
+        public void UpdateName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
-			Name = name;
-		}
-	}
+            Name = name;
+        }
+    }
 }

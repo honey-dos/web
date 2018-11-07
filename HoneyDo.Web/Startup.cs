@@ -1,6 +1,7 @@
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Infrastructure.Context;
+using HoneyDo.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,12 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HoneyDo.Web.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HoneyDo.Web
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
         {
@@ -23,6 +31,7 @@ namespace HoneyDo.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
@@ -30,9 +39,37 @@ namespace HoneyDo.Web
                 options.ConnectionString = _configuration.GetConnectionString("HoneyDoContext");
             });
 
+            services.Configure<LoginOptions>(options =>
+            {
+                options.Issuer = _configuration["JwtIssuer"];
+                options.MillisecondsUntilExpiration = long.Parse(_configuration["JwtExpireMilliseconds"]);
+                options.Key = _configuration["JwtKey"];
+                options.PathToCredentialsJson = _configuration["PathToCredentialsJson"];
+            });
+
             services.AddDbContext<HoneyDoContext>();
 
             services.AddScoped<IRepository<Todo>, ContextRepository<Todo, HoneyDoContext>>();
+            services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
+            services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
+
+            services.AddScoped<IAccountAccessor, AccountAccessor>();
+            services.AddScoped<LoginService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = _configuration["JwtIssuer"],
+                        ValidAudience = _configuration["JwtIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]))
+                    };
+                });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -57,6 +94,7 @@ namespace HoneyDo.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

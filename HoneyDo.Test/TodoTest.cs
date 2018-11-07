@@ -19,8 +19,8 @@ namespace HoneyDo.Test
         public void UpdateName()
         {
             var todo = new Todo("foobar");
-			todo.UpdateName("blah blah blah");
-			Assert.Equal("blah blah blah", todo.Name);
+            todo.UpdateName("blah blah blah");
+            Assert.Equal("blah blah blah", todo.Name);
         }
     }
 }

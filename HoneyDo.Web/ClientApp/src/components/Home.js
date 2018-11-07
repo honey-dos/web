@@ -1,58 +1,75 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
 
-export class Home extends Component {
-  displayName = Home.name;
+const styles = theme => ({
+  root: {
+    textAlign: "center",
+    paddingTop: theme.spacing.unit * 20
+  }
+});
+
+class HomeComponent extends Component {
+  state = {
+    open: false,
+    displayName: HomeComponent.name
+  };
+
+  handleClose = () => {
+    this.setState({
+      open: false
+    });
+  };
+
+  handleClick = () => {
+    this.setState({
+      open: true
+    });
+  };
 
   render() {
+    const { classes } = this.props;
+    const { open } = this.state;
+
     return (
-      <div>
-        <h1>Hello, world!</h1>
-        <p>Welcome to your new single-page application, built with:</p>
-        <ul>
-          <li>
-            <a href="https://get.asp.net/">ASP.NET Core</a> and{" "}
-            <a href="https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx">
-              C#
-            </a>{" "}
-            for cross-platform server-side code
-          </li>
-          <li>
-            <a href="https://facebook.github.io/react/">React</a> for
-            client-side code
-          </li>
-          <li>
-            <a href="http://getbootstrap.com/">Bootstrap</a> for layout and
-            styling
-          </li>
-        </ul>
-        <p>To help you get started, we've also set up:</p>
-        <ul>
-          <li>
-            <strong>Client-side navigation</strong>. For example, click{" "}
-            <em>Counter</em> then <em>Back</em> to return here.
-          </li>
-          <li>
-            <strong>Development server integration</strong>. In development
-            mode, the development server from <code>create-react-app</code> runs
-            in the background automatically, so your client-side resources are
-            dynamically built on demand and the page refreshes when you modify
-            any file.
-          </li>
-          <li>
-            <strong>Efficient production builds</strong>. In production mode,
-            development-time features are disabled, and your{" "}
-            <code>dotnet publish</code> configuration produces minified,
-            efficiently bundled JavaScript files.
-          </li>
-        </ul>
-        <p>
-          The <code>ClientApp</code> subdirectory is a standard React
-          application based on the <code>create-react-app</code> template. If
-          you open a command prompt in that directory, you can run{" "}
-          <code>npm</code> commands such as <code>npm test</code> or{" "}
-          <code>npm install</code>.
-        </p>
+      <div className={classes.root}>
+        <Dialog open={open} onClose={this.handleClose}>
+          <DialogTitle>Super Secret Password</DialogTitle>
+          <DialogContent>
+            <DialogContentText>1-2-3-4-5</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={this.handleClose}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Typography variant="h4" gutterBottom>
+          Material-UI
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          example project
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={this.handleClick}>
+          Super Secret Password
+        </Button>
       </div>
     );
   }
 }
+
+HomeComponent.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export const Home = withStyles(styles)(HomeComponent);
