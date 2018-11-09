@@ -72,14 +72,14 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPost("test-token"), AllowAnonymous]
-        public IActionResult TestToken([FromBody] LoginModel model)
+        public async Task<IActionResult> TestToken([FromBody] LoginModel model)
         {
             if (!_environment.IsDevelopment())
             {
                 return NotFound();
             }
 
-            var account = _loginService.FindAccountViaLoginModel(model);
+            var account = await _loginService.FindAccountViaLoginModel(model);
             if (account == null)
             {
                 return BadRequest();

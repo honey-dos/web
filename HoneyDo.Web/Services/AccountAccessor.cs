@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Infrastructure.Specifications;
@@ -19,20 +20,13 @@ namespace HoneyDo.Web.Services
             _accountRepo = accountRepo;
         }
 
-        public Account Account
+        public async Task<Account> GetAccount()
         {
-            get
+            if (_account != null)
             {
-                if (_account == null)
-                {
-                    _account = GetAccount();
-                }
                 return _account;
             }
-        }
 
-        private Account GetAccount()
-        {
             var user = _httpAccessor.HttpContext.User;
             if (user == null)
             {
@@ -51,7 +45,8 @@ namespace HoneyDo.Web.Services
                 return null;
             };
 
-            return _accountRepo.Find(new FindAccount(accountId));
+            _account = await _accountRepo.Find(new FindAccount(accountId));
+            return _account;
         }
     }
 }

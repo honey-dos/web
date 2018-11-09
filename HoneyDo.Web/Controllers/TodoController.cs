@@ -24,20 +24,21 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTodos()
+        public async Task<IActionResult> GetTodos()
         {
-            return Ok(_todoRepository.Query(new TodosForUser()));
+            var todos = await _todoRepository.Find(new TodosForUser());
+            return Ok(todos);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTodo(Guid id)
+        public async Task<IActionResult> GetTodo(Guid id)
         {
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
             return Ok(todo);
         }
 
         [HttpPost]
-        public IActionResult CreateTodo([FromBody] TodoCreateFormModel model)
+        public async Task<IActionResult> CreateTodo([FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
@@ -46,31 +47,31 @@ namespace HoneyDo.Web.Controllers
 
             // var account = _accountAccessor.Account;
             var todo = new Todo(model.Name);
-            _todoRepository.Add(todo);
+            await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTodo(Guid id)
+        public async Task<IActionResult> DeleteTodo(Guid id)
         {
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
             {
                 return BadRequest();
             }
-            _todoRepository.Remove(todo);
+            await _todoRepository.Remove(todo);
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
+        public async Task<IActionResult> UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
                 return BadRequest();
             }
 
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
 
             if (todo == null)
             {
@@ -78,7 +79,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             todo.UpdateName(model.Name);
-            _todoRepository.Update(todo);
+            await _todoRepository.Update(todo);
             return Ok(todo);
         }
     }

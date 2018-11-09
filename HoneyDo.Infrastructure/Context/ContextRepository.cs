@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using HoneyDo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,41 +10,42 @@ namespace HoneyDo.Infrastructure.Context
     public class ContextRepository<T, TContext> : IRepository<T> where T : class where TContext : DbContext
     {
         private readonly DbSet<T> _dbset;
-        private readonly Action _save;
+        private readonly Func<Task<int>> _save;
 
         public ContextRepository(TContext context)
         {
             _dbset = context.Set<T>();
-            _save = () => { context.SaveChanges(); };
+            _save = () => { return context.SaveChangesAsync(); };
         }
 
-        public void Add(T item)
+        public async Task Add(T item)
         {
-            _dbset.Add(item);
-            _save();
+            await _dbset.AddAsync(item);
+            await _save();
         }
 
-        public T Find(ISpecification<T> spec)
+        public Task<T> Find(ISpecification<T> spec)
         {
-            return spec.Filter(_dbset).FirstOrDefault();
+            return _dbset.Where(spec.BuildExpression()).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<T> Query(ISpecification<T> spec)
+        public Task<List<T>> Query(ISpecification<T> spec)
         {
-            return spec.Filter(_dbset);
+            return _dbset.Where(spec.BuildExpression()).ToListAsync();
         }
 
-        public bool Remove(T item)
+        public async Task<bool> Remove(T item)
         {
             var entityRemoved = _dbset.Remove(item);
-            _save();
-            return entityRemoved != null;
+            var numberOfChanges = await _save();
+            return numberOfChanges == 1;
         }
 
-        public void Update(T item)
+        public async Task<bool> Update(T item)
         {
             var changeTracker = _dbset.Update(item);
-            _save();
+            var numberOfChanges = await _save();
+            return numberOfChanges == 1;
         }
     }
 }
