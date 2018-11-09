@@ -111,8 +111,8 @@ namespace HoneyDo.Web
                 {
                     // https://docs.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-2.1&tabs=netcore-cli#run-the-cra-server-independently
                     // The line below separates the SPA and API into two processes so the SPA doesn't have to rebuild every API rebuild - switch when needed
-                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                    // spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
         }

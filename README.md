@@ -17,18 +17,17 @@
    export NODE_ENV=development
    ```
 3. source your startup script (ie `source ~/.zshrc`)
-    - you can also close your shell(s) and open new shell instances
+   - you can also close your shell(s) and open new shell instances
 4. make init script executable `chmod +x init.sh`
-5. edit `hosts` file add entry for local development `127.0.0.1	local.honeydos.co`
+5. (optional) edit `hosts` file add entry for local development `127.0.0.1 local.honeydos.co`
 6. run init script `./init.sh`
-7. The init script builds, installs, and runs the client server and API server after initialization
+7. Follow [Running](#Running)
 
-## Running after Installation
+## Running
 
-1. make start.sh script executiable `chmod +x start.sh`
-2. start `honeydo-db` if it's not running already `docker start honeydo-db`
-3. run start.sh script `./start.sh` or use vscode `launch.json` configuration
-4. navigate to https://local.honeydos.co:5001
+1. start `honeydo-db` if it's not running already `docker start honeydo-db`
+2. run `npm run watch` to watch & rebuild while developing locally
+3. navigate to https://localhost:5001 or https://local.honeydos.co:5001 (if you added the hosts entry)
 
 ## Git Flow
 
