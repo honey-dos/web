@@ -7,4 +7,3 @@ namespace HoneyDo.Domain.Interfaces
         IEnumerable<T> Filter(IEnumerable<T> items);
     }
 }
-

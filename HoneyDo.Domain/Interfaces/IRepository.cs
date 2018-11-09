@@ -11,4 +11,3 @@ namespace HoneyDo.Domain.Interfaces
         IEnumerable<T> Query(ISpecification<T> spec);
     }
 }
-

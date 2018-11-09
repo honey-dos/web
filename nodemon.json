@@ -1,0 +1,8 @@
+{
+  "ignore": [".git"],
+  "execMap": {
+    "csproj": "dotnet run --project"
+  },
+  "watch": ["HoneyDo.*/*"],
+  "ext": "cs,csproj"
+}

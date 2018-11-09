@@ -1,3 +1,5 @@
+# honey-dos specific ignores
+firebase.json
 
 # Created by https://www.gitignore.io/api/vim,node,csharp,intellij,visualstudio,visualstudiocode
 
