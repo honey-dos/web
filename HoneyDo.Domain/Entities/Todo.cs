@@ -44,6 +44,11 @@ namespace HoneyDo.Domain.Entities
             CompletedDate = DateTime.UtcNow;
         }
 
+        public void UnComplete()
+        {
+            CompletedDate = null;
+        }
+
         public void UpdateDueDate(DateTime dueDate)
         {
             DueDate = dueDate;

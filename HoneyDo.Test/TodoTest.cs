@@ -42,6 +42,16 @@ namespace HoneyDo.Test
         }
 
         [Fact]
+        public void UnComplete()
+        {
+            Account account = new Account("test");
+            var todo = new Todo("foobar", account);
+            todo.Complete();
+            todo.UnComplete();
+            Assert.Null(todo.CompletedDate);
+        }
+
+        [Fact]
         public void UpdateDueDate()
         {
             DateTime date = DateTime.Now;
