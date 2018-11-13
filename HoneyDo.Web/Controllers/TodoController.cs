@@ -26,7 +26,7 @@ namespace HoneyDo.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTodos()
         {
-            var todos = await _todoRepository.Find(new TodosForUser());
+            var todos = await _todoRepository.Query(new TodosForUser());
             return Ok(todos);
         }
 

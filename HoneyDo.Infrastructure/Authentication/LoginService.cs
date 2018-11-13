@@ -72,7 +72,7 @@ namespace HoneyDo.Infrastructure.Authentication
             var name = token.Claims.FirstOrDefault(claim => claim.Key == "name");
             var picture = token.Claims.FirstOrDefault(claim => claim.Key == "picture");
 
-            var existingLogin = FindLogin(Providers.Google, providerId);
+            var existingLogin = await FindLogin(Providers.Google, providerId);
             if (existingLogin != null)
             {
                 return null;
