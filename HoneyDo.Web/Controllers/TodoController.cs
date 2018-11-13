@@ -45,8 +45,8 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
-            // var account = _accountAccessor.Account;
-            var todo = new Todo(model.Name);
+            var account = await _accountAccessor.GetAccount();
+            var todo = new Todo(model.Name, account);
             await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }
