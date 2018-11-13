@@ -11,6 +11,9 @@ namespace HoneyDo.Domain.Entities
         public DateTime? CompletedDate { get; private set; }
         public DateTime? DueDate { get; private set; }
 
+        [Obsolete("system constructor")]
+        protected Todo() { }
+
         public Todo(string name, Account owner)
         {
             if (string.IsNullOrWhiteSpace(name))
