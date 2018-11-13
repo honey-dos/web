@@ -52,7 +52,7 @@ namespace HoneyDo.Domain.Entities
             CompletedDate = null;
         }
 
-        public void UpdateDueDate(DateTime dueDate)
+        public void UpdateDueDate(DateTime? dueDate)
         {
             DueDate = dueDate;
         }
