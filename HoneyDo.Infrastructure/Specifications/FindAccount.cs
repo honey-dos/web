@@ -5,6 +5,7 @@ using HoneyDo.Infrastructure.Authentication;
 using System.Linq;
 using HoneyDo.Domain.Interfaces;
 using System;
+using System.Linq.Expressions;
 
 namespace HoneyDo.Infrastructure.Specifications
 {
@@ -17,9 +18,6 @@ namespace HoneyDo.Infrastructure.Specifications
             _accountId = accountId;
         }
 
-        public IEnumerable<Account> Filter(IEnumerable<Account> items)
-        {
-            return items.Where(item => item.Id == _accountId);
-        }
+        public Expression<Func<Account, bool>> BuildExpression() => account => account.Id == _accountId;
     }
 }
