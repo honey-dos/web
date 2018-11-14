@@ -1,8 +1,8 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2018-11-05T19:58:02.637Z",
-	"__export_source": "insomnia.desktop.app:v6.0.2",
+	"__export_date": "2018-11-14T00:41:29.295Z",
+	"__export_source": "insomnia.desktop.app:v6.2.0",
 	"resources": [
 		{
 			"_id": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
@@ -18,11 +18,11 @@
 			"color": null,
 			"created": 1540959321462,
 			"data": {
-				"base_url": "https://local.honeydos.co"
+				"base_url": "https://localhost"
 			},
 			"isPrivate": false,
 			"metaSortKey": 1540959321462,
-			"modified": 1541446407316,
+			"modified": 1542152680097,
 			"name": "New Environment",
 			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
 			"_type": "environment"
@@ -37,6 +37,65 @@
 			"_type": "cookie_jar"
 		},
 		{
+			"_id": "fld_a8f2665273784f169404a9f6c8786aa5",
+			"created": 1542153069596,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1542153069596,
+			"modified": 1542153069596,
+			"name": "Todos",
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"_type": "request_group"
+		},
+		{
+			"_id": "req_522f574bee85444e9d55d728379554be",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"provider\": \"Google\",\n\t\"providerId\": \"1rzWkCc0gmV5wtE4jrBizTps10v1\"\n}"
+			},
+			"created": 1541432979047,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_baf44a716a63434faa53a98d4d26fb5c",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1539968259693.625,
+			"method": "POST",
+			"modified": 1542153517747,
+			"name": "Get Token",
+			"parameters": [],
+			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/token/test-token",
+			"_type": "request"
+		},
+		{
+			"_id": "env_3c84913f86024a40a486c4256de9577c",
+			"color": "#dfc50b",
+			"created": 1541446379517,
+			"data": {
+				"jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUeWxlciBFdmFucyIsImp0aSI6IjA4NTlmZjIzLTc1MTAtNDdmYy1iNDg3LWJiMjFlMDNhNTEyNiIsImV4cCI6MTU0Mjc1MzMyMiwiaXNzIjoiaHR0cDovL2hvbmV5ZG9zLmNvIiwiYXVkIjoiaHR0cDovL2hvbmV5ZG9zLmNvIn0.UDZaIQ2MD8brX51zPFxGTjSd_9mnvunBjNOZNuaveVM",
+				"port": 5001,
+				"todo_id": "bba1e878-d751-4d7b-a79d-1c7894f23da7"
+			},
+			"isPrivate": false,
+			"metaSortKey": 1541446379517,
+			"modified": 1542152687219,
+			"name": "local",
+			"parentId": "env_6e7877405f2f457b8ad7c848b29e5f8a",
+			"_type": "environment"
+		},
+		{
 			"_id": "req_60f56230ec274551b6c27c3baa4f2cc6",
 			"authentication": {
 				"disabled": false,
@@ -49,12 +108,12 @@
 			"description": "",
 			"headers": [],
 			"isPrivate": false,
-			"metaSortKey": -1540959339348,
+			"metaSortKey": -1541556204472,
 			"method": "GET",
-			"modified": 1541446697285,
-			"name": "Get Todos",
+			"modified": 1542153481214,
+			"name": "Get All",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
@@ -76,19 +135,19 @@
 			"description": "",
 			"headers": [],
 			"isPrivate": false,
-			"metaSortKey": -1540761123437.125,
+			"metaSortKey": -1541556204422,
 			"method": "GET",
-			"modified": 1541446695946,
-			"name": "Get Todo",
+			"modified": 1542153478639,
+			"name": "Get Single",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "{{ base_url  }}:{{ port  }}/api/todos/678a56de-34a2-4f5f-89e9-29e7fdcb42be",
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/{{todo_id}}",
 			"_type": "request"
 		},
 		{
@@ -113,12 +172,12 @@
 				}
 			],
 			"isPrivate": false,
-			"metaSortKey": -1540562907526.25,
+			"metaSortKey": -1541556204222,
 			"method": "POST",
-			"modified": 1541446641843,
-			"name": "Create Todo",
+			"modified": 1542153140838,
+			"name": "Create",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
@@ -147,12 +206,12 @@
 				}
 			],
 			"isPrivate": false,
-			"metaSortKey": -1539968259793.625,
+			"metaSortKey": -1541556204172,
 			"method": "DELETE",
-			"modified": 1541446649184,
-			"name": "Delete Todo",
+			"modified": 1542153137972,
+			"name": "Delete",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
@@ -182,12 +241,12 @@
 				}
 			],
 			"isPrivate": false,
-			"metaSortKey": -1539968259743.625,
+			"metaSortKey": -1541556204122,
 			"method": "PUT",
-			"modified": 1541446680938,
-			"name": "Update Todo",
+			"modified": 1542153134499,
+			"name": "Update",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
@@ -198,51 +257,130 @@
 			"_type": "request"
 		},
 		{
-			"_id": "req_522f574bee85444e9d55d728379554be",
-			"authentication": {},
-			"body": {
-				"mimeType": "application/json",
-				"text": "{\n\t\"provider\": \"Google\",\n\t\"providerId\": \"1rzWkCc0gmV5wtE4jrBizTps10v1\"\n}"
+			"_id": "req_aa7bade3cca84040be1a0700becbcb04",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
 			},
-			"created": 1541432979047,
+			"body": {},
+			"created": 1542152708100,
 			"description": "",
-			"headers": [
-				{
-					"id": "pair_baf44a716a63434faa53a98d4d26fb5c",
-					"name": "Content-Type",
-					"value": "application/json"
-				}
-			],
+			"headers": [],
 			"isPrivate": false,
-			"metaSortKey": -1539968259693.625,
-			"method": "POST",
-			"modified": 1541447805345,
-			"name": "Get Token",
+			"metaSortKey": -1541556204109.5,
+			"method": "PUT",
+			"modified": 1542153473314,
+			"name": "Complete",
 			"parameters": [],
-			"parentId": "wrk_be48ab5a54d34a7fadea9c161dfd9b02",
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
 			"settingDisableRenderRequestBody": false,
 			"settingEncodeUrl": true,
 			"settingMaxTimelineDataSize": 1000,
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "{{ base_url  }}:{{ port  }}/api/token/test-token",
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/{{todo_id}}/complete",
 			"_type": "request"
 		},
 		{
-			"_id": "env_3c84913f86024a40a486c4256de9577c",
-			"color": "#dfc50b",
-			"created": 1541446379517,
-			"data": {
-				"jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUeWxlciBFdmFucyIsImp0aSI6IjA4NTlmZjIzLTc1MTAtNDdmYy1iNDg3LWJiMjFlMDNhNTEyNiIsImV4cCI6MTU0MjA1MDE1NSwiaXNzIjoiaHR0cDovL2hvbmV5ZG9zLmNvIiwiYXVkIjoiaHR0cDovL2hvbmV5ZG9zLmNvIn0.5Wlz6sHkaettxiziNJ2jmyMuEYjUrIC0AcfgsVVEAmw",
-				"port": 5001
+			"_id": "req_575c10927fbb4ed48c96e7eca88c9ec1",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
 			},
+			"body": {},
+			"created": 1542153018425,
+			"description": "",
+			"headers": [],
 			"isPrivate": false,
-			"metaSortKey": 1541446379517,
-			"modified": 1541446598456,
-			"name": "local",
-			"parentId": "env_6e7877405f2f457b8ad7c848b29e5f8a",
-			"_type": "environment"
+			"metaSortKey": -1541556204097,
+			"method": "DELETE",
+			"modified": 1542153465663,
+			"name": "UnComplete",
+			"parameters": [],
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/{{todo_id}}/complete",
+			"_type": "request"
+		},
+		{
+			"_id": "req_c8f560a7f265496dae0b6908e88698f9",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": "\"2018-11-13T23:53:09.651Z\""
+			},
+			"created": 1542153061202,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_d26fba56805a4fd4b66c770016ae2dca",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1541556204072,
+			"method": "PUT",
+			"modified": 1542153476051,
+			"name": "Set Due Date",
+			"parameters": [],
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/{{todo_id}}/due",
+			"_type": "request"
+		},
+		{
+			"_id": "req_2031013420864e58bba601aae6bff092",
+			"authentication": {
+				"prefix": "",
+				"token": "{{ jwt  }}",
+				"type": "bearer"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": ""
+			},
+			"created": 1542153439203,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_d26fba56805a4fd4b66c770016ae2dca",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1540762231882.8125,
+			"method": "DELETE",
+			"modified": 1542153453265,
+			"name": "Remove Due Date",
+			"parameters": [],
+			"parentId": "fld_a8f2665273784f169404a9f6c8786aa5",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ base_url  }}:{{ port  }}/api/todos/{{todo_id}}/due",
+			"_type": "request"
 		}
 	]
 }
