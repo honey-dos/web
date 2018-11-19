@@ -5,6 +5,7 @@ npm install --prefix HoneyDo.Web/ClientApp
 # Setup a postgres docker and migrate the tables to it - if this fails, run the following commands to remove the container and re-create it
 # `docker ps` - copy container ID and replace [container ID] in `docker stop [411b2c4fd3e9]` then `docker rm [411b2c4fd3e9]`
 docker run --name honeydo-db -e POSTGRES_DB=honeydo -e POSTGRES_USER=honeydo-user -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+dotnet tool install --global ef #will warn if alaready installed
 dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext
 
 # Install dotnet dev-certs for https and then trust them

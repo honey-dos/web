@@ -8,6 +8,12 @@ namespace HoneyDo.Domain.Specifications.Todos
 {
     public class TodosForUser : ISpecification<Todo>
     {
-        public Expression<Func<Todo, bool>> BuildExpression() => todo => true;
+        private readonly Guid _ownerId;
+        public TodosForUser(Account account)
+        {
+            _ownerId = account.Id;
+        }
+
+        public Expression<Func<Todo, bool>> BuildExpression() => todo => todo.OwnerId == _ownerId;
     }
 }

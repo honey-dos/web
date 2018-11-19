@@ -6,16 +6,30 @@ namespace HoneyDo.Domain.Entities
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
+        public Guid OwnerId { get; private set; }
+        public DateTime CreateDate { get; private set; }
+        public DateTime? CompletedDate { get; private set; }
+        public DateTime? DueDate { get; private set; }
 
-        public Todo(string name)
+        [Obsolete("system constructor")]
+        protected Todo() { }
+
+        public Todo(string name, Account owner)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException(nameof(name));
             }
 
+            if (owner == null)
+            {
+                throw new ArgumentNullException(nameof(owner));
+            }
+
             Id = Guid.NewGuid();
             Name = name;
+            OwnerId = owner.Id;
+            CreateDate = DateTime.UtcNow;
         }
 
         public void UpdateName(string name)
@@ -26,6 +40,21 @@ namespace HoneyDo.Domain.Entities
             }
 
             Name = name;
+        }
+
+        public void Complete()
+        {
+            CompletedDate = DateTime.UtcNow;
+        }
+
+        public void UnComplete()
+        {
+            CompletedDate = null;
+        }
+
+        public void UpdateDueDate(DateTime? dueDate)
+        {
+            DueDate = dueDate;
         }
     }
 }
