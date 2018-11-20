@@ -24,61 +24,146 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTodos()
+        public async Task<IActionResult> GetTodos()
         {
-            return Ok(_todoRepository.Query(new TodosForUser()));
+            var account = await _accountAccessor.GetAccount();
+            var todos = await _todoRepository.Query(new TodosForUser(account));
+            return Ok(todos);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTodo(Guid id)
+        public async Task<IActionResult> GetTodo(Guid id)
         {
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
             return Ok(todo);
         }
 
         [HttpPost]
-        public IActionResult CreateTodo([FromBody] TodoCreateFormModel model)
+        public async Task<IActionResult> CreateTodo([FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
                 return BadRequest();
             }
 
-            // var account = _accountAccessor.Account;
-            var todo = new Todo(model.Name);
-            _todoRepository.Add(todo);
+            var account = await _accountAccessor.GetAccount();
+            var todo = new Todo(model.Name, account);
+            if (model.DueDate.HasValue)
+            {
+                todo.UpdateDueDate(model.DueDate);
+            }
+            await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTodo(Guid id)
+        public async Task<IActionResult> DeleteTodo(Guid id)
         {
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
             {
                 return BadRequest();
             }
-            _todoRepository.Remove(todo);
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            await _todoRepository.Remove(todo);
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
+        public async Task<IActionResult> UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
                 return BadRequest();
             }
 
-            var todo = _todoRepository.Find(new TodoById(id));
+            var todo = await _todoRepository.Find(new TodoById(id));
 
             if (todo == null)
             {
                 return BadRequest();
             }
 
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
             todo.UpdateName(model.Name);
-            _todoRepository.Update(todo);
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+        [HttpPut("{id}/complete"), HttpDelete("{id}/complete")]
+        public async Task<IActionResult> Complete(Guid id)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            var isPut = Request.Method == "PUT";
+            if (isPut)
+            {
+                todo.Complete();
+            }
+            else
+            {
+                todo.UnComplete();
+            }
+
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+        [HttpPut("{id}/due"), HttpDelete("{id}/due")]
+        public async Task<IActionResult> Due(Guid id, [FromBody] DateTime? dueDate)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            var isPut = Request.Method == "PUT";
+            if (isPut && !dueDate.HasValue)
+            {
+                return BadRequest();
+            }
+
+            todo.UpdateDueDate(dueDate);
+            await _todoRepository.Update(todo);
             return Ok(todo);
         }
     }

@@ -52,7 +52,7 @@ namespace HoneyDo.Infrastructure.Authentication
             return decodedToken;
         }
 
-        private Login FindLogin(Providers provider, string providerId) => _loginRepo.Find(new FindLogin(provider, providerId));
+        private async Task<Login> FindLogin(Providers provider, string providerId) => await _loginRepo.Find(new FindLogin(provider, providerId));
 
         private void InitializeIfNeeded()
         {
@@ -72,7 +72,7 @@ namespace HoneyDo.Infrastructure.Authentication
             var name = token.Claims.FirstOrDefault(claim => claim.Key == "name");
             var picture = token.Claims.FirstOrDefault(claim => claim.Key == "picture");
 
-            var existingLogin = FindLogin(Providers.Google, providerId);
+            var existingLogin = await FindLogin(Providers.Google, providerId);
             if (existingLogin != null)
             {
                 return null;
@@ -80,10 +80,10 @@ namespace HoneyDo.Infrastructure.Authentication
 
             var account = new Account(name.Value.ToString());
             account.UpdatePicture(picture.Value.ToString());
-            _accountRepo.Add(account);
+            await _accountRepo.Add(account);
 
             var login = new Login(account, Providers.Google, providerId, string.Empty);
-            _loginRepo.Add(login);
+            await _loginRepo.Add(login);
 
             return account;
         }
@@ -92,25 +92,25 @@ namespace HoneyDo.Infrastructure.Authentication
         {
             var token = await DecodeToken(firebaseToken);
             var providerId = token.Uid;
-            var login = FindLogin(Providers.Google, providerId);
+            var login = await FindLogin(Providers.Google, providerId);
             if (login == null)
             {
                 return null;
             }
 
-            var account = _accountRepo.Find(new FindAccount(login.AccountId));
+            var account = await _accountRepo.Find(new FindAccount(login.AccountId));
             return account;
         }
 
-        public Account FindAccountViaLoginModel(LoginModel model)
+        public async Task<Account> FindAccountViaLoginModel(LoginModel model)
         {
-            var login = FindLogin(Providers.Google, model.ProviderId);
+            var login = await FindLogin(Providers.Google, model.ProviderId);
             if (login == null)
             {
                 return null;
             }
 
-            var account = _accountRepo.Find(new FindAccount(login.AccountId));
+            var account = await _accountRepo.Find(new FindAccount(login.AccountId));
             return account;
         }
 
