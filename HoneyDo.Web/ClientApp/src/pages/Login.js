@@ -56,12 +56,17 @@ class Login extends Component {
     const { user } = this.state;
     let view = null;
     if (user.isValid) {
-      const { id, token, name } = user;
+      const { id, token, name, expires } = user;
+      const isExpired = user.isExpired();
       view = (
         <div>
           <h3>Token Data</h3>
           <p>Id: {id}</p>
           <p>Name: {name}</p>
+          <p>
+            Expires: {expires.toISOString()}{" "}
+            {isExpired ? "(expired)" : "(valid)"}
+          </p>
           <textarea rows="5" cols="50" readOnly={true} value={token} />
           <br />
           <Button onClick={() => this.onLoginClick("login")}>Refresh</Button>

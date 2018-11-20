@@ -18,10 +18,16 @@ export const getUserData = () => {
     return { isValid: false };
   }
   const decoded = decodeToken(token);
-  return {
+  const expires = new Date(decoded.exp * 1000);
+  const user = {
     id: decoded.jti,
     name: decoded.sub,
     token: token,
+    expires,
     isValid: true
   };
+  user.isExpired = function() {
+    return this.expires <= new Date();
+  }.bind(user);
+  return user;
 };
