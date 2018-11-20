@@ -2,16 +2,20 @@ import React, { Component } from "react";
 import Button from "../components/Button/index";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { getUserData, setToken, JwtData } from "../lib/jwt";
+import { getTokenData, setToken, JwtData } from "../lib/jwt";
 
-class Login extends Component {
-  state = {
-    user: new JwtData()
-  };
+interface LoginState {
+  user?: JwtData;
+}
 
-  constructor(props: any) {
+const initialState: LoginState = {};
+
+// Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
+class Login extends Component<{}, LoginState> {
+  state = initialState;
+
+  constructor(props: {}) {
     super(props);
-    this.onLoginClick = this.onLoginClick.bind(this);
   }
 
   componentDidMount() {
@@ -19,8 +23,8 @@ class Login extends Component {
   }
 
   setUserData() {
-    const user = getUserData();
-    if (user && user.isValid) {
+    const user = getTokenData();
+    if (user) {
       this.setState({ user });
     }
   }
@@ -46,7 +50,6 @@ class Login extends Component {
         }
       });
       const result = await tokenRequest.json();
-      this.setState({ token: result.token });
       setToken(result.token);
       this.setUserData();
     } catch (error) {
@@ -59,7 +62,7 @@ class Login extends Component {
   render() {
     const { user } = this.state;
     let view = null;
-    if (user.isValid) {
+    if (user) {
       const { id, token, name, expires } = user;
       const isExpired = user.isExpired();
       view = (
@@ -71,7 +74,7 @@ class Login extends Component {
             Expires: {expires ? expires.toISOString() : ""}{" "}
             {isExpired ? "(expired)" : "(valid)"}
           </p>
-          <textarea rows={5} cols={50} readOnly={true} value={token} />
+          <textarea rows={6} cols={50} readOnly={true} value={token} />
           <br />
           <Button onClick={() => this.onLoginClick("login")}>Refresh</Button>
         </div>
