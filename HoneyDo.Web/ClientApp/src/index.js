@@ -5,8 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import firebase from "firebase";
 import App from "./App";
 import Login from "./pages/Login";
-import User from "./pages/User";
-import Todos from "./pages/Todos";
+// import User from "./pages/User";
+// import Todos from "./pages/Todos";
 import registerServiceWorker from "./registerServiceWorker";
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
@@ -24,8 +24,8 @@ ReactDOM.render(
   <BrowserRouter basename={baseUrl}>
     <Switch>
       <Route exact path="/" component={App} />
-      <Route path="/todo" component={Todos} />
-      <Route path="/user" compoennt={User} />
+      {/* <Route path="/todo" component={Todos} />
+      <Route path="/user" compoennt={User} /> */}
       <Route path="/login" component={Login} />
     </Switch>
   </BrowserRouter>,
