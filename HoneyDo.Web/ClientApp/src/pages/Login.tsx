@@ -12,10 +12,9 @@ const initialState: LoginState = {};
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
 class Login extends Component<{}, LoginState> {
-  state = initialState;
-
   constructor(props: {}) {
     super(props);
+    this.state = initialState;
   }
 
   componentDidMount() {
