@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import Button from "../components/Button";
+import Button from "../components/Button/index";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { getUserData, setToken } from "../lib/jwt";
+import { getUserData, setToken, JwtData } from "../lib/jwt";
 
 class Login extends Component {
   state = {
-    user: { isValid: false }
+    user: new JwtData()
   };
 
-  constructor() {
-    super();
+  constructor(props: any) {
+    super(props);
     this.onLoginClick = this.onLoginClick.bind(this);
   }
 
@@ -25,13 +25,17 @@ class Login extends Component {
     }
   }
 
-  async onLoginClick(mode) {
+  async onLoginClick(mode: string) {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
-    firebase.auth().useDeviceLanguage();
+    const firebaseAuth = firebase && firebase.auth();
+    if (!firebase || !firebaseAuth.currentUser) {
+      return;
+    }
+    firebaseAuth.useDeviceLanguage();
     try {
-      await firebase.auth().signInWithPopup(provider);
-      const idToken = await firebase.auth().currentUser.getIdToken(false);
+      await firebaseAuth.signInWithPopup(provider);
+      const idToken = await firebaseAuth.currentUser.getIdToken(false);
       const url = `api/token/${mode}`;
       const tokenRequest = await fetch(url, {
         method: "GET",
@@ -64,10 +68,10 @@ class Login extends Component {
           <p>Id: {id}</p>
           <p>Name: {name}</p>
           <p>
-            Expires: {expires.toISOString()}{" "}
+            Expires: {expires ? expires.toISOString() : ""}{" "}
             {isExpired ? "(expired)" : "(valid)"}
           </p>
-          <textarea rows="5" cols="50" readOnly={true} value={token} />
+          <textarea rows={5} cols={50} readOnly={true} value={token} />
           <br />
           <Button onClick={() => this.onLoginClick("login")}>Refresh</Button>
         </div>

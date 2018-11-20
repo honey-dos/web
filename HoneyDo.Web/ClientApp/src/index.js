@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import firebase from "firebase";
 import App from "./App";
-import Login from "./pages/Login";
+import Login from "./pages/Login.tsx";
 // import User from "./pages/User";
 // import Todos from "./pages/Todos";
 import registerServiceWorker from "./registerServiceWorker";
