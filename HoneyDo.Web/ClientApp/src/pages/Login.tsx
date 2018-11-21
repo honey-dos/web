@@ -112,7 +112,7 @@ class Login extends Component<LoginProps, LoginState> {
       const isExpired = user.isExpired();
       view = (
         <div>
-          <Typography variant="h3">Token Data</Typography>
+          <Typography variant="h5">Token Data</Typography>
           <List>
             <ListItem>
               <ListItemText primary="Id" secondary={id} />
@@ -171,7 +171,7 @@ class Login extends Component<LoginProps, LoginState> {
     }
     return (
       <div>
-        <Typography variant="h1">Log In</Typography>
+        <Typography variant="h4">Log In</Typography>
         <Divider className={classes.divider} />
         {view}
       </div>

@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography";
 
 export default () => (
   <div>
-    <Typography variant="title" color="inherit">
+    <Typography variant="h5" color="inherit">
       Hello World!
     </Typography>
   </div>

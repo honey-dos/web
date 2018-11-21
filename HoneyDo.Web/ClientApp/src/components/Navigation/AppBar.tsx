@@ -11,10 +11,11 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { Link } from "react-router-dom";
+import { Hidden } from "@material-ui/core";
 
 const styles = {
   root: {
-    flexGrow: 1
+    display: "block"
   },
   flex: {
     flex: 1
@@ -22,6 +23,11 @@ const styles = {
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  toolbarContainer: {
+    maxWidth: 800,
+    marginRight: "auto",
+    marginLeft: "auto"
   }
 };
 
@@ -65,49 +71,53 @@ class PrimaryAppBar extends Component<Props, State> {
 
     return (
       <AppBar position="static" className={classes.root}>
-        <Toolbar variant="dense">
-          <IconButton
-            onClick={() => toggleDrawer()}
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="title" color="inherit" className={classes.flex}>
-            Honey-Dos
-          </Typography>
-          {isLoggedIn ? (
-            <div>
+        <div className={classes.toolbarContainer}>
+          <Toolbar variant="dense">
+            <Hidden lgUp={true}>
               <IconButton
-                aria-owns={open ? "menu-appbar" : undefined}
-                aria-haspopup="true"
-                onClick={this.handleMenu}
-                color="inherit">
-                <AccountCircle />
+                onClick={() => toggleDrawer()}
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="Menu">
+                <MenuIcon />
               </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
-                open={open}
-                onClose={this.handleClose}>
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
-          ) : (
-            <Link to={"/login"}>
-              <Button color="inherit">Login</Button>
-            </Link>
-          )}
-        </Toolbar>
+            </Hidden>
+            <Typography variant="h5" color="inherit" className={classes.flex}>
+              Honey-Dos
+            </Typography>
+            {isLoggedIn ? (
+              <div>
+                <IconButton
+                  aria-owns={open ? "menu-appbar" : undefined}
+                  aria-haspopup="true"
+                  onClick={this.handleMenu}
+                  color="inherit">
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  open={open}
+                  onClose={this.handleClose}>
+                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                </Menu>
+              </div>
+            ) : (
+              <Link to={"/login"}>
+                <Button color="inherit">Login</Button>
+              </Link>
+            )}
+          </Toolbar>
+        </div>
       </AppBar>
     );
   }
