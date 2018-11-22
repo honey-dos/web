@@ -13,14 +13,21 @@ const styleDefault = {
   boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)"
 };
 
-const ColoredButton = ({ style, children, ...other }) => (
-  <Button style={{ ...styleDefault, ...style }} {...other}>
-    {children}
-  </Button>
-);
+const ColoredButton = (props: {
+  style?: any;
+  children: any;
+  [key: string]: any;
+}) => {
+  const { style, children, ...other } = props;
+  return (
+    <Button style={{ ...styleDefault, ...style }} {...other}>
+      {children}
+    </Button>
+  );
+};
 
 ColoredButton.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
   style: PropTypes.object
 };
 

@@ -1,17 +1,20 @@
 import React, { Component } from "react";
-import Button from "../components/Button";
+import Button from "../components/Button/index";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { getUserData, setToken } from "../lib/jwt";
+import { getTokenData, setToken, JwtData } from "../lib/jwt";
 
-class Login extends Component {
-  state = {
-    user: { isValid: false }
-  };
+interface LoginState {
+  user?: JwtData;
+}
 
-  constructor() {
-    super();
-    this.onLoginClick = this.onLoginClick.bind(this);
+const initialState: LoginState = {};
+
+// Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
+class Login extends Component<{}, LoginState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -19,19 +22,23 @@ class Login extends Component {
   }
 
   setUserData() {
-    const user = getUserData();
-    if (user && user.isValid) {
+    const user = getTokenData();
+    if (user) {
       this.setState({ user });
     }
   }
 
-  async onLoginClick(mode) {
+  async onLoginClick(mode: string) {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
-    firebase.auth().useDeviceLanguage();
+    const firebaseAuth = firebase && firebase.auth();
+    if (!firebase || !firebaseAuth.currentUser) {
+      return;
+    }
+    firebaseAuth.useDeviceLanguage();
     try {
-      await firebase.auth().signInWithPopup(provider);
-      const idToken = await firebase.auth().currentUser.getIdToken(false);
+      await firebaseAuth.signInWithPopup(provider);
+      const idToken = await firebaseAuth.currentUser.getIdToken(false);
       const url = `api/token/${mode}`;
       const tokenRequest = await fetch(url, {
         method: "GET",
@@ -42,7 +49,6 @@ class Login extends Component {
         }
       });
       const result = await tokenRequest.json();
-      this.setState({ token: result.token });
       setToken(result.token);
       this.setUserData();
     } catch (error) {
@@ -55,7 +61,7 @@ class Login extends Component {
   render() {
     const { user } = this.state;
     let view = null;
-    if (user.isValid) {
+    if (user) {
       const { id, token, name, expires } = user;
       const isExpired = user.isExpired();
       view = (
@@ -64,10 +70,10 @@ class Login extends Component {
           <p>Id: {id}</p>
           <p>Name: {name}</p>
           <p>
-            Expires: {expires.toISOString()}{" "}
+            Expires: {expires ? expires.toISOString() : ""}{" "}
             {isExpired ? "(expired)" : "(valid)"}
           </p>
-          <textarea rows="5" cols="50" readOnly={true} value={token} />
+          <textarea rows={6} cols={50} readOnly={true} value={token} />
           <br />
           <Button onClick={() => this.onLoginClick("login")}>Refresh</Button>
         </div>

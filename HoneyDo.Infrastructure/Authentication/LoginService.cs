@@ -67,22 +67,22 @@ namespace HoneyDo.Infrastructure.Authentication
 
         public async Task<Account> RegisterViaToken(string firebaseToken)
         {
-            var token = await DecodeToken(firebaseToken);
-            var providerId = token.Uid;
-            var name = token.Claims.FirstOrDefault(claim => claim.Key == "name");
-            var picture = token.Claims.FirstOrDefault(claim => claim.Key == "picture");
+            FirebaseToken token = await DecodeToken(firebaseToken);
+            string providerId = token.Uid;
 
-            var existingLogin = await FindLogin(Providers.Google, providerId);
+            Login existingLogin = await FindLogin(Providers.Google, providerId);
             if (existingLogin != null)
             {
                 return null;
             }
+            string name = token.Claims.FirstOrDefault(claim => claim.Key == "name").Value.ToString();
+            string picture = token.Claims.FirstOrDefault(claim => claim.Key == "picture").Value.ToString();
 
-            var account = new Account(name.Value.ToString());
-            account.UpdatePicture(picture.Value.ToString());
+            Account account = new Account(name);
+            account.UpdatePicture(picture);
             await _accountRepo.Add(account);
 
-            var login = new Login(account, Providers.Google, providerId, string.Empty);
+            Login login = new Login(account, Providers.Google, providerId, string.Empty);
             await _loginRepo.Add(login);
 
             return account;
@@ -90,27 +90,27 @@ namespace HoneyDo.Infrastructure.Authentication
 
         public async Task<Account> FindAccountViaToken(string firebaseToken)
         {
-            var token = await DecodeToken(firebaseToken);
-            var providerId = token.Uid;
-            var login = await FindLogin(Providers.Google, providerId);
+            FirebaseToken token = await DecodeToken(firebaseToken);
+            string providerId = token.Uid;
+            Login login = await FindLogin(Providers.Google, providerId);
             if (login == null)
             {
                 return null;
             }
 
-            var account = await _accountRepo.Find(new FindAccount(login.AccountId));
+            Account account = await _accountRepo.Find(new FindAccount(login.AccountId));
             return account;
         }
 
         public async Task<Account> FindAccountViaLoginModel(LoginModel model)
         {
-            var login = await FindLogin(Providers.Google, model.ProviderId);
+            Login login = await FindLogin(Providers.Google, model.ProviderId);
             if (login == null)
             {
                 return null;
             }
 
-            var account = await _accountRepo.Find(new FindAccount(login.AccountId));
+            Account account = await _accountRepo.Find(new FindAccount(login.AccountId));
             return account;
         }
 
@@ -121,16 +121,16 @@ namespace HoneyDo.Infrastructure.Authentication
                 throw new ArgumentNullException(nameof(account));
             }
 
-            var claims = new[]
+            Claim[] claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, account.Name),
                 new Claim(JwtRegisteredClaimNames.Jti, account.Id.ToString()),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_loginOptions.Key));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_loginOptions.Key));
+            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var jwtToken = new JwtSecurityToken(_loginOptions.Issuer,
+            JwtSecurityToken jwtToken = new JwtSecurityToken(_loginOptions.Issuer,
             _loginOptions.Issuer,
             claims,
             expires: DateTime.Now.AddMilliseconds(_loginOptions.MillisecondsUntilExpiration),
