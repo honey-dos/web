@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { getTokenData, setToken, JwtData, logout } from "../lib/jwt";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
@@ -11,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import { UserContextData, UserContext } from "../providers/UserProvider";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -31,34 +31,22 @@ interface LoginProps {
 }
 
 interface LoginState {
-  user?: JwtData;
   isLoading: boolean;
 }
 
 const initialState: LoginState = { isLoading: false };
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
-class Login extends Component<LoginProps, LoginState> {
+class Login extends Component<LoginProps, LoginState, UserContextData> {
   static propTypes = {
     classes: PropTypes.object.isRequired
   };
 
+  static contextType = UserContext;
+
   constructor(props: LoginProps) {
     super(props);
     this.state = initialState;
-  }
-
-  componentDidMount() {
-    this.setUserData();
-  }
-
-  setUserData() {
-    const user = getTokenData();
-    if (user) {
-      this.setState({ user });
-    } else {
-      this.setState({ user: undefined });
-    }
   }
 
   async onLoginClick(mode: string) {
@@ -83,8 +71,9 @@ class Login extends Component<LoginProps, LoginState> {
         }
       });
       const result = await tokenRequest.json();
-      setToken(result.token);
-      this.setUserData();
+      const { token } = result;
+      const { updateToken } = this.context;
+      updateToken(token);
       this.setState({ isLoading: false });
     } catch (error) {
       // const { errorCode, errorMessage, email, credential } = error;
@@ -94,18 +83,19 @@ class Login extends Component<LoginProps, LoginState> {
   }
 
   logout() {
+    const { logout } = this.context;
     logout();
-    this.setUserData();
   }
 
   render() {
     const { classes } = this.props;
-    const { user, isLoading } = this.state;
+    const { isLoading } = this.state;
+    const { jwtData } = this.context;
     let view = null;
 
-    if (user) {
-      const { id, token, name, expires } = user;
-      const isExpired = user.isExpired();
+    if (jwtData) {
+      const { id, token, name, expires } = jwtData;
+      const isExpired = jwtData.isExpired();
       view = (
         <div>
           <Typography variant="h5">Token Data</Typography>
@@ -125,7 +115,7 @@ class Login extends Component<LoginProps, LoginState> {
             <ListItem>
               <ListItemText
                 primary="Expired"
-                secondary={expires > new Date() ? "No" : "Yes"}
+                secondary={isExpired ? "No" : "Yes"}
               />
             </ListItem>
           </List>
