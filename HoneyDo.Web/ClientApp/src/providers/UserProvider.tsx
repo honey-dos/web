@@ -24,10 +24,20 @@ export class UserProvider extends Component<{}, UserProviderState> {
     this.state = {};
   }
 
+  componentDidMount() {
+    this.setJwtData();
+  }
+
   updateToken(token: string): void {
     setToken(token);
+    this.setJwtData();
+  }
+
+  setJwtData() {
     const jwtData = getTokenData() || undefined;
-    this.setState({ jwtData });
+    if (jwtData) {
+      this.setState({ jwtData });
+    }
   }
 
   logout(): void {
