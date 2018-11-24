@@ -4,18 +4,26 @@ import Layout from "./components/Layout/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import { UserProvider } from "./providers/UserProvider";
-// import User from "./pages/User";
-// import Todos from "./pages/Todos";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+
+// when we start to create a bigger more customized theme we should move this configuration to it's own file theme.tsx for example
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true
+  }
+});
 
 export default () => (
-  <UserProvider>
-    <Layout>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        {/* <Route path="/todo" component={Todos} />
+  <MuiThemeProvider theme={theme}>
+    <UserProvider>
+      <Layout>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          {/* <Route path="/todo" component={Todos} />
       <Route path="/user" compoennt={User} /> */}
-        <Route path="/login" component={Login} />
-      </Switch>
-    </Layout>
-  </UserProvider>
+          <Route path="/login" component={Login} />
+        </Switch>
+      </Layout>
+    </UserProvider>
+  </MuiThemeProvider>
 );
