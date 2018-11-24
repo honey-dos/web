@@ -8,6 +8,10 @@ export const getToken = (): string | null => {
   return localStorage.getItem("token");
 };
 
+export const logout = (): void => {
+  setToken("");
+};
+
 export const decodeToken = (token: string): { [key: string]: any } => {
   return jwtDecodeToken(token);
 };

@@ -1,34 +1,56 @@
 import React, { Component } from "react";
-import Button from "../components/Button/index";
+import PropTypes from "prop-types";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { getTokenData, setToken, JwtData } from "../lib/jwt";
+import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
+import { UserContext } from "../providers/UserProvider";
 
-interface LoginState {
-  user?: JwtData;
+const styles = ({ spacing }: Theme) =>
+  createStyles({
+    button: {
+      margin: spacing.unit
+    },
+    textField: {
+      marginLeft: spacing.unit,
+      marginRight: spacing.unit
+    },
+    divider: {
+      marginBottom: 20
+    }
+  });
+
+interface LoginProps {
+  classes: { [key: string]: any };
 }
 
-const initialState: LoginState = {};
+interface LoginState {
+  isLoading: boolean;
+}
+
+const initialState: LoginState = { isLoading: false };
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
-class Login extends Component<{}, LoginState> {
-  constructor(props: {}) {
+class Login extends Component<LoginProps, LoginState> {
+  static propTypes = {
+    classes: PropTypes.object.isRequired
+  };
+
+  static contextType = UserContext;
+
+  constructor(props: LoginProps) {
     super(props);
     this.state = initialState;
   }
 
-  componentDidMount() {
-    this.setUserData();
-  }
-
-  setUserData() {
-    const user = getTokenData();
-    if (user) {
-      this.setState({ user });
-    }
-  }
-
   async onLoginClick(mode: string) {
+    this.setState({ isLoading: true });
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     const firebaseAuth = firebase && firebase.auth();
@@ -49,8 +71,10 @@ class Login extends Component<{}, LoginState> {
         }
       });
       const result = await tokenRequest.json();
-      setToken(result.token);
-      this.setUserData();
+      const { token } = result;
+      const { updateToken } = this.context;
+      updateToken(token);
+      this.setState({ isLoading: false });
     } catch (error) {
       // const { errorCode, errorMessage, email, credential } = error;
       // TODO: what do we do?
@@ -58,47 +82,87 @@ class Login extends Component<{}, LoginState> {
     }
   }
 
+  logout() {
+    const { logout } = this.context;
+    logout();
+  }
+
   render() {
-    const { user } = this.state;
+    const { classes } = this.props;
+    const { isLoading } = this.state;
+    const { jwtData } = this.context;
     let view = null;
-    if (user) {
-      const { id, token, name, expires } = user;
-      const isExpired = user.isExpired();
+
+    if (jwtData) {
+      const { id, token, name, expires } = jwtData;
+      const isExpired = jwtData.isExpired();
       view = (
         <div>
-          <h3>Token Data</h3>
-          <p>Id: {id}</p>
-          <p>Name: {name}</p>
-          <p>
-            Expires: {expires ? expires.toISOString() : ""}{" "}
-            {isExpired ? "(expired)" : "(valid)"}
-          </p>
-          <textarea rows={6} cols={50} readOnly={true} value={token} />
+          <Typography variant="h5">Token Data</Typography>
+          <List>
+            <ListItem>
+              <ListItemText primary="Id" secondary={id} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Name" secondary={name} />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Expires"
+                secondary={expires.toISOString()}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Expired"
+                secondary={isExpired ? "No" : "Yes"}
+              />
+            </ListItem>
+          </List>
+          <TextField
+            id="token"
+            label="Token"
+            multiline
+            rows={4}
+            fullWidth
+            value={token}
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            inputProps={{ readOnly: true }}
+          />
           <br />
-          <Button onClick={() => this.onLoginClick("login")}>Refresh</Button>
+          <Button
+            className={classes.button}
+            onClick={() => this.onLoginClick("login")}>
+            Refresh
+          </Button>
+          <Button
+            className={classes.button}
+            style={{ marginLeft: 10 }}
+            onClick={() => this.logout()}>
+            Logout
+          </Button>
         </div>
       );
     } else {
       view = (
-        <div>
-          <Button onClick={() => this.onLoginClick("register")}>
-            Register
-          </Button>
-          <br />
-          <br />
-          <Button onClick={() => this.onLoginClick("login")}>Login</Button>
-        </div>
+        <Button
+          className={classes.button}
+          onClick={() => this.onLoginClick("register")}
+          disabled={isLoading}>
+          Google
+        </Button>
       );
     }
     return (
       <div>
-        <h1>Login page</h1>
-        <hr />
-        <br />
+        <Typography variant="h4">Log In</Typography>
+        <Divider className={classes.divider} />
         {view}
       </div>
     );
   }
 }
 
-export default Login;
+export default withStyles(styles)(Login);

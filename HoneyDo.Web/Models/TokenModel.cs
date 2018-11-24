@@ -5,11 +5,9 @@ namespace HoneyDo.Web.Models
     public class TokenModel
     {
         public string Token { get; set; }
-        public string Error { get; set; }
-        public TokenModel(string token, string error = "")
+        public TokenModel(string token)
         {
             Token = token;
-            Error = error;
         }
     }
 }
