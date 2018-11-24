@@ -10,7 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import { UserContextData, UserContext } from "../providers/UserProvider";
+import { UserContext } from "../providers/UserProvider";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -37,7 +37,7 @@ interface LoginState {
 const initialState: LoginState = { isLoading: false };
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
-class Login extends Component<LoginProps, LoginState, UserContextData> {
+class Login extends Component<LoginProps, LoginState> {
   static propTypes = {
     classes: PropTypes.object.isRequired
   };
