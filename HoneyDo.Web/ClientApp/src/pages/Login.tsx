@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, RefObject } from "react";
 import PropTypes from "prop-types";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -16,10 +16,6 @@ const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
       margin: spacing.unit
-    },
-    textField: {
-      marginLeft: spacing.unit,
-      marginRight: spacing.unit
     },
     divider: {
       marginBottom: 20
@@ -41,12 +37,14 @@ class Login extends Component<LoginProps, LoginState> {
   static propTypes = {
     classes: PropTypes.object.isRequired
   };
+  tokenTextArea: RefObject<HTMLTextAreaElement>;
 
   static contextType = UserContext;
 
   constructor(props: LoginProps) {
     super(props);
     this.state = initialState;
+    this.tokenTextArea = React.createRef();
   }
 
   async onLoginClick(mode: string) {
@@ -87,6 +85,13 @@ class Login extends Component<LoginProps, LoginState> {
     logout();
   }
 
+  copyToken() {
+    if (this.tokenTextArea && this.tokenTextArea.current) {
+      this.tokenTextArea.current.select();
+      document.execCommand("copy");
+    }
+  }
+
   render() {
     const { classes } = this.props;
     const { isLoading } = this.state;
@@ -115,7 +120,7 @@ class Login extends Component<LoginProps, LoginState> {
             <ListItem>
               <ListItemText
                 primary="Expired"
-                secondary={isExpired ? "No" : "Yes"}
+                secondary={!isExpired ? "No" : "Yes"}
               />
             </ListItem>
           </List>
@@ -130,8 +135,12 @@ class Login extends Component<LoginProps, LoginState> {
             margin="normal"
             variant="outlined"
             inputProps={{ readOnly: true }}
+            inputRef={this.tokenTextArea}
           />
           <br />
+          <Button className={classes.button} onClick={() => this.copyToken()}>
+            Copy Token
+          </Button>
           <Button
             className={classes.button}
             onClick={() => this.onLoginClick("login")}>

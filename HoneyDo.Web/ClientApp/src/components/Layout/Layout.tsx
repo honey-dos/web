@@ -8,7 +8,8 @@ const styles = ({ palette }: Theme) =>
     root: {
       maxWidth: 800,
       marginLeft: "auto",
-      marginRight: "auto"
+      marginRight: "auto",
+      padding: 8
     }
   });
 

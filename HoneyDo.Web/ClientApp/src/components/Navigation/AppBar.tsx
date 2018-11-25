@@ -73,7 +73,8 @@ class PrimaryAppBar extends Component<Props, State> {
       <AppBar position="static" className={classes.root}>
         <div className={classes.toolbarContainer}>
           <Toolbar variant="dense">
-            <Hidden lgUp={true}>
+            {/* Right now the follow <Hidden> will never show,  I'm leaving it here for when we have a menu, and we'll ad it back in. */}
+            <Hidden mdUp={true} mdDown={true}>
               <IconButton
                 onClick={() => toggleDrawer()}
                 className={classes.menuButton}
