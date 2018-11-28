@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router";
 import Layout from "./components/Layout/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Tasks from "./pages/Tasks";
 import { UserProvider } from "./providers/UserProvider";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 
@@ -19,8 +20,8 @@ export default () => (
       <Layout>
         <Switch>
           <Route exact path="/" component={Home} />
-          {/* <Route path="/todo" component={Todos} />
-      <Route path="/user" compoennt={User} /> */}
+          <Route path="/tasks" component={Tasks} />
+          {/* <Route path="/user" compoennt={User} /> */}
           <Route path="/login" component={Login} />
         </Switch>
       </Layout>
