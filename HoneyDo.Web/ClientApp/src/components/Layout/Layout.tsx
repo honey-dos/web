@@ -10,6 +10,7 @@ const styles = ({ palette }: Theme) =>
       marginLeft: "auto",
       marginRight: "auto",
       padding: 8
+      // backgroundColor: palette.background.default
     }
   });
 
