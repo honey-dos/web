@@ -1,18 +1,7 @@
 import React, { Component } from "react";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
-
-interface Task {
-  id: string;
-  name: string;
-  checked: boolean;
-  dueDate?: Date;
-}
+import ListItem from "./ListItem";
+import { Task } from "../../lib/Task";
 
 interface TasksListState {
   tasks: Task[];
@@ -50,6 +39,7 @@ class TasksList extends Component<{}, TasksListState> {
     super(props);
     this.state = initialState;
   }
+
   handleToggle = (id: string) => () => {
     const tasks = this.state.tasks;
     const task = tasks.find(tsk => tsk.id === id);
@@ -59,6 +49,11 @@ class TasksList extends Component<{}, TasksListState> {
     task.checked = !task.checked;
     this.setState({ tasks });
   };
+
+  handleEdit = () => (task: Task) => {
+    console.log(`editing task ${task.name}`);
+  };
+
   render() {
     const tasks = this.state.tasks;
     return (
@@ -66,21 +61,11 @@ class TasksList extends Component<{}, TasksListState> {
         {tasks.map(task => (
           <ListItem
             key={task.id}
-            role={undefined}
-            dense
-            button
-            onClick={this.handleToggle(task.id)}>
-            <Checkbox checked={task.checked} tabIndex={-1} disableRipple />
-            <ListItemText
-              primary={task.name}
-              secondary={task.dueDate ? task.dueDate.toLocaleString() : ""}
-            />
-            <ListItemSecondaryAction>
-              <IconButton aria-label="Edit">
-                <EditIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
+            task={task}
+            onClick={this.handleToggle(task.id)}
+            onCheck={this.handleToggle(task.id)}
+            onEdit={this.handleEdit()}
+          />
         ))}
       </List>
     );
