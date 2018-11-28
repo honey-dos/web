@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import List from "@material-ui/core/List";
-import ListItem from "./ListItem";
+import TaskListItem from "./ListItem";
 import { Task } from "../../lib/Task";
 
 interface TasksListState {
@@ -50,21 +50,21 @@ class TasksList extends Component<{}, TasksListState> {
     this.setState({ tasks });
   };
 
-  handleEdit = () => (task: Task) => {
+  handleEdit(task: Task) {
     console.log(`editing task ${task.name}`);
-  };
+  }
 
   render() {
     const tasks = this.state.tasks;
     return (
       <List>
         {tasks.map(task => (
-          <ListItem
+          <TaskListItem
             key={task.id}
             task={task}
             onClick={this.handleToggle(task.id)}
             onCheck={this.handleToggle(task.id)}
-            onEdit={this.handleEdit()}
+            onEdit={this.handleEdit}
           />
         ))}
       </List>

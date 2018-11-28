@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import TasksList from "../components/Tasks/List";
+import TaskForm from "../components/Tasks/Form";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 
@@ -9,6 +10,10 @@ const styles = ({ spacing }: Theme) =>
     button: {
       margin: spacing.unit,
       float: "right"
+    },
+    buttonContainer: {
+      display: "flex",
+      flexDirection: "row-reverse"
     }
   });
 
@@ -25,11 +30,14 @@ class Tasks extends Component<TasksProps, {}> {
     return (
       <div>
         <TasksList />
-        <Button
-          className={classes.button}
-          onClick={() => console.log("add task")}>
-          Add Task
-        </Button>
+        <TaskForm />
+        <div className={classes.buttonContainer}>
+          <Button
+            className={classes.button}
+            onClick={() => console.log("add task")}>
+            Add Task
+          </Button>
+        </div>
       </div>
     );
   }
