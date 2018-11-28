@@ -52,12 +52,17 @@ class Login extends Component<LoginProps, LoginState> {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     const firebaseAuth = firebase && firebase.auth();
-    if (!firebase || !firebaseAuth.currentUser) {
+    if (!firebaseAuth) {
+      this.setState({ isLoading: false });
       return;
     }
     firebaseAuth.useDeviceLanguage();
     try {
       await firebaseAuth.signInWithPopup(provider);
+      if (!firebaseAuth.currentUser) {
+        this.setState({ isLoading: false });
+        return;
+      }
       const idToken = await firebaseAuth.currentUser.getIdToken(false);
       const url = `api/token/${mode}`;
       const tokenRequest = await fetch(url, {
@@ -77,6 +82,7 @@ class Login extends Component<LoginProps, LoginState> {
       // const { errorCode, errorMessage, email, credential } = error;
       // TODO: what do we do?
       console.error(error);
+      this.setState({ isLoading: false });
     }
   }
 

@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { JwtData, setToken, getTokenData, logout } from "../lib/jwt";
 
 export interface UserContextData {
@@ -42,6 +44,8 @@ export class UserProvider extends Component<{}, UserProviderState> {
 
   logout(): void {
     logout();
+    const firebaseAuth = firebase && firebase.auth();
+    firebaseAuth.signOut();
     this.setState({ jwtData: undefined });
   }
 
