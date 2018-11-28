@@ -1,8 +1,8 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 
-const Home = ({ classes }: { classes: { [key: string]: any } }) => (
-  <div className={classes.root}>
+const Home = () => (
+  <div>
     <Typography variant="body1" color="inherit">
       Ever have issues getting your significant other to do choirs around the
       living space? Hate having to bug them all the time to get it done? Have a
