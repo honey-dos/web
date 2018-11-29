@@ -7,6 +7,7 @@ import { Task, TaskFormModel } from "../../lib/Task";
 interface TasksListProps {
   tasks: Task[];
   handleUpdate: (task: Task) => void;
+  toggleCompleted: (task: Task) => void;
 }
 
 interface TasksListState {
@@ -24,13 +25,8 @@ class TasksList extends Component<TasksListProps, TasksListState> {
   }
 
   handleToggle = (task: Task) => {
-    const { handleUpdate } = this.props;
-    if (!task) {
-      return;
-    }
-    // TODO refactor
-    // task.checked = !task.checked;
-    // handleUpdate(task);
+    const { toggleCompleted } = this.props;
+    toggleCompleted(task);
   };
 
   handleEdit(task: Task) {

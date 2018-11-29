@@ -61,6 +61,15 @@ class Tasks extends Component<TasksProps, TasksState> {
     this.setState({ isFormOpen });
   };
 
+  toggleCompleted = async (task: Task) => {
+    const { completeTask }: TaskContextData = this.context;
+    const updatedTask = await completeTask(task, !task.isCompleted());
+    if (!updatedTask) {
+      return;
+    }
+    this.handleTaskUpdate(updatedTask);
+  };
+
   handleTaskUpdate = (task: Task) => {
     const { tasks } = this.state;
     const taskIndex = tasks.findIndex(tsk => tsk.id === task.id);
@@ -79,6 +88,7 @@ class Tasks extends Component<TasksProps, TasksState> {
       <div>
         <TasksList
           tasks={tasks}
+          toggleCompleted={task => this.toggleCompleted(task)}
           handleUpdate={task => this.handleTaskUpdate(task)}
         />
         {!isFormOpen ? (
