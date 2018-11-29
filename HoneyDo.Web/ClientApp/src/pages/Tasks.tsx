@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import TasksList from "../components/Tasks/List";
 import TaskForm from "../components/Tasks/Form";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Task } from "../lib/Task";
+import { Task, mockTasks, TaskFormModel } from "../lib/Task";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -24,24 +23,34 @@ interface TasksProps {
 
 interface TasksState {
   isFormOpen: boolean;
+  tasks: Task[];
 }
 
 const initialState: TasksState = {
-  isFormOpen: false
+  isFormOpen: false,
+  tasks: []
 };
 
 class Tasks extends Component<TasksProps, TasksState> {
-  static propTypes = {
-    classes: PropTypes.object.isRequired
-  };
-
   constructor(props: TasksProps) {
     super(props);
     this.state = initialState;
   }
 
-  handleSave = (task: Task) => {
-    console.log(task);
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ tasks: mockTasks });
+    }, 1500);
+  }
+
+  handleSave = () => (taskModel: TaskFormModel) => {
+    const { tasks } = this.state;
+    const newTask: Task = {
+      id: "z",
+      checked: false,
+      ...taskModel
+    };
+    this.setState({ tasks: [...tasks, newTask] });
     this.toggleForm();
   };
 
@@ -50,12 +59,26 @@ class Tasks extends Component<TasksProps, TasksState> {
     this.setState({ isFormOpen });
   };
 
+  handleTaskUpdate = (task: Task) => {
+    const { tasks } = this.state;
+    const taskIndex = tasks.findIndex(tsk => tsk.id === task.id);
+    const updateTasks: Task[] = [
+      ...tasks.slice(0, taskIndex),
+      task,
+      ...tasks.slice(taskIndex + 1)
+    ];
+    this.setState({ tasks: updateTasks });
+  };
+
   render() {
     const { classes } = this.props;
-    const { isFormOpen } = this.state;
+    const { isFormOpen, tasks } = this.state;
     return (
       <div>
-        <TasksList />
+        <TasksList
+          tasks={tasks}
+          handleUpdate={task => this.handleTaskUpdate(task)}
+        />
         {!isFormOpen ? (
           <div className={classes.buttonContainer}>
             <Button
@@ -67,7 +90,7 @@ class Tasks extends Component<TasksProps, TasksState> {
         ) : (
           <TaskForm
             onCancel={() => this.toggleForm()}
-            onSave={task => this.handleSave(task)}
+            onSave={this.handleSave()}
           />
         )}
       </div>

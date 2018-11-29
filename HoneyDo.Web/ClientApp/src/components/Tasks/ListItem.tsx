@@ -15,12 +15,7 @@ interface ListItemProps {
 }
 
 const TaskListItem = ({ task, onCheck, onClick, onEdit }: ListItemProps) => (
-  <ListItem
-    key={task.id}
-    role={undefined}
-    dense
-    button
-    onClick={() => onClick(task)}>
+  <ListItem role={undefined} dense button onClick={() => onClick(task)}>
     <Checkbox
       checked={task.checked}
       tabIndex={-1}

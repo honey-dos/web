@@ -1,9 +1,8 @@
 import React, { Component, ChangeEvent, RefObject, KeyboardEvent } from "react";
-import PropTypes from "prop-types";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { Task } from "../../lib/Task";
+import { Task, TaskFormModel } from "../../lib/Task";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -18,8 +17,9 @@ const styles = ({ spacing }: Theme) =>
   });
 
 interface TaskFormProps {
+  task?: Task;
   classes: { [key: string]: any };
-  onSave: (task: Task) => void;
+  onSave: (task: TaskFormModel) => void;
   onCancel: () => void;
 }
 
@@ -27,21 +27,13 @@ interface TaskFormState {
   name: string;
 }
 
-const initialState: TaskFormState = {
-  name: ""
-};
-
 class TaskForm extends Component<TaskFormProps, TaskFormState> {
-  static propTypes = {
-    classes: PropTypes.object.isRequired,
-    onSave: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
-  };
   nameInput: RefObject<HTMLInputElement>;
 
   constructor(props: TaskFormProps) {
     super(props);
-    this.state = initialState;
+    const name = (props.task && props.task.name) || "";
+    this.state = { name };
     this.nameInput = React.createRef();
   }
 
@@ -64,12 +56,10 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
 
   handleSave = () => {
     const { name } = this.state;
-    const task: Task = {
-      id: "z",
-      name,
-      checked: false
+    const newTask: TaskFormModel = {
+      name
     };
-    this.props.onSave(task);
+    this.props.onSave(newTask);
   };
 
   render() {
