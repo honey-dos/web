@@ -67,7 +67,7 @@ class PrimaryAppBar extends Component<Props, State> {
   };
 
   render() {
-    const { isLoggedIn, logout }: UserContextData = this.context;
+    const { isLoggedIn }: UserContextData = this.context;
     const { classes, toggleDrawer } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -86,9 +86,11 @@ class PrimaryAppBar extends Component<Props, State> {
                 <MenuIcon />
               </IconButton>
             </Hidden>
-            <Typography variant="h5" color="inherit" className={classes.flex}>
-              Honey-Dos
-            </Typography>
+            <Link to={"/"} className={classes.flex}>
+              <Typography variant="h5" color="inherit">
+                Honey-Dos
+              </Typography>
+            </Link>
             {isLoggedIn() ? (
               <div>
                 <IconButton
@@ -126,9 +128,14 @@ class PrimaryAppBar extends Component<Props, State> {
                 </Menu>
               </div>
             ) : (
-              <Link to={"/login"}>
-                <Button color="inherit">Login</Button>
-              </Link>
+              <div>
+                <Link to={"/login"}>
+                  <Button color="inherit">Login</Button>
+                </Link>
+                <Link to={"/login"}>
+                  <Button color="inherit">Sign Up</Button>
+                </Link>
+              </div>
             )}
           </Toolbar>
         </div>
