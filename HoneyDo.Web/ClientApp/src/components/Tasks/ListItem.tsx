@@ -17,7 +17,7 @@ interface ListItemProps {
 const TaskListItem = ({ task, onCheck, onClick, onEdit }: ListItemProps) => (
   <ListItem role={undefined} dense button onClick={() => onClick(task)}>
     <Checkbox
-      checked={task.checked}
+      checked={task.isCompleted()}
       tabIndex={-1}
       onClick={() => onCheck(task)}
       disableRipple

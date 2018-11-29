@@ -28,8 +28,9 @@ class TasksList extends Component<TasksListProps, TasksListState> {
     if (!task) {
       return;
     }
-    task.checked = !task.checked;
-    handleUpdate(task);
+    // TODO refactor
+    // task.checked = !task.checked;
+    // handleUpdate(task);
   };
 
   handleEdit(task: Task) {

@@ -3,7 +3,7 @@ import TasksList from "../components/Tasks/List";
 import TaskForm from "../components/Tasks/Form";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Task, mockTasks, TaskFormModel } from "../lib/Task";
+import { Task, TaskFormModel, TaskModel } from "../lib/Task";
 import { UserContext } from "../providers/UserProvider";
 import { JwtData } from "../lib/jwt";
 
@@ -56,18 +56,20 @@ class Tasks extends Component<TasksProps, TasksState> {
         Authorization: `Bearer ${jwtData.token}`
       }
     });
-    const tasks: Task[] = await tokenRequest.json();
-    console.log(tasks);
+    const taskModels: TaskModel[] = await tokenRequest.json();
+    const tasks = taskModels.map(i => new Task(i));
+    this.setState({ tasks });
   }
 
   handleSave = () => (taskModel: TaskFormModel) => {
-    const { tasks } = this.state;
-    const newTask: Task = {
-      id: "z",
-      checked: false,
-      ...taskModel
-    };
-    this.setState({ tasks: [...tasks, newTask] });
+    // TODO refactor
+    // const { tasks } = this.state;
+    // const newTask: Task = {
+    //   id: "z",
+    //   checked: false,
+    //   ...taskModel
+    // };
+    // this.setState({ tasks: [...tasks, newTask] });
     this.toggleForm();
   };
 
