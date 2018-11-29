@@ -7,15 +7,20 @@ export interface UserContextData {
   jwtData?: JwtData;
   updateToken: (token: string) => void;
   logout: () => void;
+  isLoggedIn: () => boolean;
+  isInitialized: boolean;
 }
 
 interface UserProviderState {
   jwtData?: JwtData;
+  isInitialized: boolean;
 }
 
 export const UserContext = React.createContext<UserContextData>({
   updateToken: () => {},
-  logout: () => {}
+  logout: () => {},
+  isLoggedIn: () => false,
+  isInitialized: false
 });
 
 const { Provider, Consumer } = UserContext;
@@ -23,7 +28,7 @@ const { Provider, Consumer } = UserContext;
 export class UserProvider extends Component<{}, UserProviderState> {
   constructor(props: {}) {
     super(props);
-    this.state = {};
+    this.state = { isInitialized: false };
   }
 
   componentDidMount() {
@@ -38,8 +43,10 @@ export class UserProvider extends Component<{}, UserProviderState> {
   setJwtData() {
     const jwtData = getTokenData() || undefined;
     if (jwtData) {
+      console.log("jwtData set");
       this.setState({ jwtData });
     }
+    this.setState({ isInitialized: true });
   }
 
   logout(): void {
@@ -49,15 +56,25 @@ export class UserProvider extends Component<{}, UserProviderState> {
     this.setState({ jwtData: undefined });
   }
 
+  isLoggedIn = (): boolean => {
+    if (this.state.jwtData) {
+      return !this.state.jwtData.isExpired();
+    }
+    return false;
+  };
+
   render() {
     const { children } = this.props;
+    const { isInitialized, jwtData } = this.state;
 
     return (
       <Provider
         value={{
-          jwtData: this.state.jwtData,
+          jwtData: jwtData,
           updateToken: (token: string) => this.updateToken(token),
-          logout: () => this.logout()
+          logout: () => this.logout(),
+          isLoggedIn: () => this.isLoggedIn(),
+          isInitialized: isInitialized
         }}>
         {children}
       </Provider>
