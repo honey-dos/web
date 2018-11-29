@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import { UserContext } from "./UserContext";
 import { JwtData } from "../lib/jwt";
 
+export interface IFetch {
+  (input: RequestInfo, init?: RequestInit): Promise<Response>;
+}
+
 export interface FetchContextData {
-  fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+  fetch: IFetch;
 }
 
 export const FetchContext = React.createContext<FetchContextData>({
@@ -15,7 +19,7 @@ const { Provider, Consumer } = FetchContext;
 export class FetchProvider extends Component {
   static contextType = UserContext;
 
-  appFetch = () => (
+  appFetch = (): IFetch => (
     input: RequestInfo,
     init?: RequestInit
   ): Promise<Response> => {

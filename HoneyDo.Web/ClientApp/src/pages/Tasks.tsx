@@ -3,8 +3,8 @@ import TasksList from "../components/Tasks/List";
 import TaskForm from "../components/Tasks/Form";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Task, TaskFormModel, TaskModel } from "../lib/Task";
-import { TaskContext } from "../contexts/TaskContext";
+import { Task, TaskFormModel } from "../lib/Task";
+import { TaskContext, TaskContextData } from "../contexts/TaskContext";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -41,20 +41,18 @@ class Tasks extends Component<TasksProps, TasksState> {
   }
 
   async componentDidMount() {
-    const { getTasks } = this.context;
+    const { getTasks }: TaskContextData = this.context;
     const tasks = await getTasks();
     this.setState({ tasks });
   }
 
-  handleSave = () => (taskModel: TaskFormModel) => {
-    // TODO refactor
-    // const { tasks } = this.state;
-    // const newTask: Task = {
-    //   id: "z",
-    //   checked: false,
-    //   ...taskModel
-    // };
-    // this.setState({ tasks: [...tasks, newTask] });
+  handleSave = () => async (taskFormModel: TaskFormModel) => {
+    const { createTask }: TaskContextData = this.context;
+    const task = await createTask(taskFormModel);
+    if (task) {
+      const { tasks } = this.state;
+      this.setState({ tasks: [...tasks, task] });
+    }
     this.toggleForm();
   };
 

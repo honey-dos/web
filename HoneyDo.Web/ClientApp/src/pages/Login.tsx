@@ -9,7 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import { UserContext } from "../contexts/UserContext";
+import { UserContext, UserContextData } from "../contexts/UserContext";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -71,7 +71,7 @@ class Login extends Component<LoginProps, LoginState> {
       });
       const result = await tokenRequest.json();
       const { token } = result;
-      const { updateToken } = this.context;
+      const { updateToken }: UserContextData = this.context;
       updateToken(token);
       this.setState({ isLoading: false });
     } catch (error) {
@@ -83,7 +83,7 @@ class Login extends Component<LoginProps, LoginState> {
   }
 
   logout() {
-    const { logout } = this.context;
+    const { logout }: UserContextData = this.context;
     logout();
   }
 
@@ -97,7 +97,7 @@ class Login extends Component<LoginProps, LoginState> {
   render() {
     const { classes } = this.props;
     const { isLoading } = this.state;
-    const { jwtData } = this.context;
+    const { jwtData }: UserContextData = this.context;
     let view = null;
 
     if (jwtData) {
