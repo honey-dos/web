@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from "react-router";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Tasks from "./pages/Tasks";
-import { UserConsumer, UserContextData } from "./providers/UserProvider";
+import { UserConsumer, UserContextData } from "./contexts/UserContext";
 
 function PrivateRoute({
   component,

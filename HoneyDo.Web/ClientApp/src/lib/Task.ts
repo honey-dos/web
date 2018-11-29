@@ -34,4 +34,5 @@ export class Task {
 
 export interface TaskFormModel {
   name: string;
+  dueDate?: Date;
 }

@@ -4,8 +4,7 @@ import TaskForm from "../components/Tasks/Form";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Task, TaskFormModel, TaskModel } from "../lib/Task";
-import { UserContext } from "../providers/UserProvider";
-import { JwtData } from "../lib/jwt";
+import { TaskContext } from "../contexts/TaskContext";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
@@ -34,7 +33,7 @@ const initialState: TasksState = {
 };
 
 class Tasks extends Component<TasksProps, TasksState> {
-  static contextType = UserContext;
+  static contextType = TaskContext;
 
   constructor(props: TasksProps) {
     super(props);
@@ -42,22 +41,8 @@ class Tasks extends Component<TasksProps, TasksState> {
   }
 
   async componentDidMount() {
-    const { jwtData }: { jwtData: JwtData } = this.context;
-    if (!jwtData) {
-      console.log("no jwtData");
-      return;
-    }
-    const url = `api/todos/`;
-    const tokenRequest = await fetch(url, {
-      method: "GET",
-      mode: "cors",
-      cache: "no-cache",
-      headers: {
-        Authorization: `Bearer ${jwtData.token}`
-      }
-    });
-    const taskModels: TaskModel[] = await tokenRequest.json();
-    const tasks = taskModels.map(i => new Task(i));
+    const { getTasks } = this.context;
+    const tasks = await getTasks();
     this.setState({ tasks });
   }
 
