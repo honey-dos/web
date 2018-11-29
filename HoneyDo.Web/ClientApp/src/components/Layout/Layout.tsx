@@ -1,5 +1,4 @@
 import React, { Component, ReactNode } from "react";
-import PropTypes from "prop-types";
 import AppBar from "../Navigation/AppBar";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
@@ -28,11 +27,6 @@ const initialState: LayoutState = {
 };
 
 class Layout extends Component<Props, LayoutState> {
-  static propTypes = {
-    children: PropTypes.object,
-    classes: PropTypes.object.isRequired
-  };
-
   constructor(props: Props) {
     super(props);
     this.state = initialState;

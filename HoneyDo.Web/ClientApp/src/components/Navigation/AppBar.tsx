@@ -1,5 +1,4 @@
 import React, { Component, MouseEvent } from "react";
-import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -46,11 +45,6 @@ const initialState: State = {
 };
 
 class PrimaryAppBar extends Component<Props, State> {
-  static propTypes = {
-    classes: PropTypes.object.isRequired,
-    toggleDrawer: PropTypes.func.isRequired
-  };
-
   constructor(props: any) {
     super(props);
     this.state = initialState;

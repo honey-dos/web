@@ -1,5 +1,4 @@
 import React, { Component, RefObject } from "react";
-import PropTypes from "prop-types";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
@@ -34,9 +33,6 @@ const initialState: LoginState = { isLoading: false };
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
 class Login extends Component<LoginProps, LoginState> {
-  static propTypes = {
-    classes: PropTypes.object.isRequired
-  };
   tokenTextArea: RefObject<HTMLTextAreaElement>;
 
   static contextType = UserContext;
