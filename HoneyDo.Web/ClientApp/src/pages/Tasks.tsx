@@ -78,6 +78,7 @@ class Tasks extends Component<TasksProps, TasksState> {
   handleTaskUpdate = async (task: Task, taskFormModel: TaskFormModel) => {
     const { updateTask }: TaskContextData = this.context;
     const updatedTask = await updateTask(task, taskFormModel);
+    this.setState({ editTask: undefined });
     if (!updatedTask) {
       return;
     }
