@@ -67,10 +67,19 @@ class Tasks extends Component<TasksProps, TasksState> {
     if (!updatedTask) {
       return;
     }
-    this.handleTaskUpdate(updatedTask);
+    this.updateExistingTask(updatedTask);
   };
 
-  handleTaskUpdate = (task: Task) => {
+  handleTaskUpdate = async (task: Task, taskFormModel: TaskFormModel) => {
+    const { updateTask }: TaskContextData = this.context;
+    const updatedTask = await updateTask(task, taskFormModel);
+    if (!updatedTask) {
+      return;
+    }
+    this.updateExistingTask(updatedTask);
+  };
+
+  updateExistingTask = (task: Task) => {
     const { tasks } = this.state;
     const taskIndex = tasks.findIndex(tsk => tsk.id === task.id);
     const updateTasks: Task[] = [
@@ -88,8 +97,10 @@ class Tasks extends Component<TasksProps, TasksState> {
       <div>
         <TasksList
           tasks={tasks}
-          toggleCompleted={task => this.toggleCompleted(task)}
-          handleUpdate={task => this.handleTaskUpdate(task)}
+          onItemClick={task => this.toggleCompleted(task)}
+          onTaskUpdate={(task, taskFormModel) =>
+            this.handleTaskUpdate(task, taskFormModel)
+          }
         />
         {!isFormOpen ? (
           <div className={classes.buttonContainer}>

@@ -6,8 +6,8 @@ import { Task, TaskFormModel } from "../../lib/Task";
 
 interface TasksListProps {
   tasks: Task[];
-  handleUpdate: (task: Task) => void;
-  toggleCompleted: (task: Task) => void;
+  onTaskUpdate: (task: Task, taskFormModel: TaskFormModel) => void;
+  onItemClick: (task: Task) => void;
 }
 
 interface TasksListState {
@@ -25,23 +25,20 @@ class TasksList extends Component<TasksListProps, TasksListState> {
   }
 
   handleToggle = (task: Task) => {
-    const { toggleCompleted } = this.props;
-    toggleCompleted(task);
+    const { onItemClick } = this.props;
+    onItemClick(task);
   };
 
   handleEdit(task: Task) {
     this.setState({ editId: task.id });
   }
 
-  handleSave = (task: Task) => (taskModel: TaskFormModel) => {
-    const { handleUpdate } = this.props;
-    if (!taskModel) {
+  handleSave = (task: Task) => (taskFormModel: TaskFormModel) => {
+    const { onTaskUpdate } = this.props;
+    if (!taskFormModel) {
       return;
     }
-    handleUpdate({
-      ...task,
-      ...taskModel
-    });
+    onTaskUpdate(task, taskFormModel);
     this.cancelEdit();
   };
 

@@ -14,16 +14,22 @@ export interface ICompleteTask {
   (task: Task, isCompleted: boolean): Promise<Task | null>;
 }
 
+export interface IUpdateTask {
+  (task: Task, taskFormModel: TaskFormModel): Promise<Task | null>;
+}
+
 export interface TaskContextData {
   getTasks: IGetTasks;
   createTask: ICreateTask;
   completeTask: ICompleteTask;
+  updateTask: IUpdateTask;
 }
 
 export const TaskContext = React.createContext<TaskContextData>({
   getTasks: async () => [],
   createTask: async () => null,
-  completeTask: async () => null
+  completeTask: async () => null,
+  updateTask: async () => null
 });
 
 const { Provider, Consumer } = TaskContext;
@@ -73,6 +79,23 @@ export class TaskProvider extends Component {
     return new Task(taskModel);
   };
 
+  updateTask: IUpdateTask = async (
+    task: Task,
+    taskFormModel: TaskFormModel
+  ) => {
+    const { fetch }: { fetch: IFetch } = this.context;
+    const url = `api/todos/${task.id}`;
+    const tokenRequest = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify(taskFormModel)
+    });
+    const taskModel: TaskModel = await tokenRequest.json();
+    return new Task(taskModel);
+  };
+
   render() {
     const { children } = this.props;
     fetch;
@@ -83,7 +106,9 @@ export class TaskProvider extends Component {
           getTasks: () => this.getTasks(),
           createTask: taskFormModel => this.createTask(taskFormModel),
           completeTask: (task, isCompleted) =>
-            this.completeTask(task, isCompleted)
+            this.completeTask(task, isCompleted),
+          updateTask: (task, taskFormModel) =>
+            this.updateTask(task, taskFormModel)
         }}>
         {children}
       </Provider>
