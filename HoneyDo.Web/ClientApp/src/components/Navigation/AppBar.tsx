@@ -6,11 +6,12 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import MenuIcon from "@material-ui/icons/Menu";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import Settings from "@material-ui/icons/Settings";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { Link } from "react-router-dom";
 import { Hidden } from "@material-ui/core";
+import { UserContext, UserContextData } from "../../contexts/UserContext";
 
 const styles = {
   root: {
@@ -32,7 +33,6 @@ const styles = {
 
 interface Props {
   classes: { [key: string]: any };
-  isLoggedIn: boolean;
   toggleDrawer: () => void;
 }
 
@@ -45,6 +45,8 @@ const initialState: State = {
 };
 
 class PrimaryAppBar extends Component<Props, State> {
+  static contextType = UserContext;
+
   constructor(props: any) {
     super(props);
     this.state = initialState;
@@ -54,12 +56,19 @@ class PrimaryAppBar extends Component<Props, State> {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  logout = () => {
+    const { logout }: UserContextData = this.context;
+    logout();
+    this.handleClose();
+  };
+
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
   render() {
-    const { classes, isLoggedIn, toggleDrawer } = this.props;
+    const { isLoggedIn, logout }: UserContextData = this.context;
+    const { classes, toggleDrawer } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -80,14 +89,14 @@ class PrimaryAppBar extends Component<Props, State> {
             <Typography variant="h5" color="inherit" className={classes.flex}>
               Honey-Dos
             </Typography>
-            {isLoggedIn ? (
+            {isLoggedIn() ? (
               <div>
                 <IconButton
                   aria-owns={open ? "menu-appbar" : undefined}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit">
-                  <AccountCircle />
+                  <Settings />
                 </IconButton>
                 <Menu
                   id="menu-appbar"
@@ -102,8 +111,18 @@ class PrimaryAppBar extends Component<Props, State> {
                   }}
                   open={open}
                   onClose={this.handleClose}>
-                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                  <Link to={"/"}>
+                    <MenuItem onClick={this.handleClose}>Home</MenuItem>
+                  </Link>
+                  <Link to={"/tasks"}>
+                    <MenuItem onClick={this.handleClose}>Tasks</MenuItem>
+                  </Link>
+                  <Link to={"/login"}>
+                    <MenuItem onClick={this.handleClose}>Login Page</MenuItem>
+                  </Link>
+                  <Link to={"/login"}>
+                    <MenuItem onClick={this.logout}>Logout</MenuItem>
+                  </Link>
                 </Menu>
               </div>
             ) : (
