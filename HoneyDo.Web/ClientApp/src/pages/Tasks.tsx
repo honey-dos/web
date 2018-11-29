@@ -59,7 +59,7 @@ class Tasks extends Component<TasksProps, TasksState> {
 
   toggleForm = () => {
     const isFormOpen = !this.state.isFormOpen;
-    this.setState({ isFormOpen });
+    this.setState({ isFormOpen, editTask: undefined });
   };
 
   toggleCompleted = async (task: Task) => {
