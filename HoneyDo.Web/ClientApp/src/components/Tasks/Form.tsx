@@ -25,6 +25,7 @@ interface TaskFormProps {
 
 interface TaskFormState {
   name: string;
+  hasError: boolean;
 }
 
 class TaskForm extends Component<TaskFormProps, TaskFormState> {
@@ -33,7 +34,7 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
   constructor(props: TaskFormProps) {
     super(props);
     const name = (props.task && props.task.name) || "";
-    this.state = { name };
+    this.state = { name, hasError: false };
     this.nameInput = React.createRef();
   }
 
@@ -45,7 +46,7 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
 
   handleChange = () => (event: ChangeEvent<HTMLInputElement>) => {
     const name = event.target.value;
-    this.setState({ name });
+    this.setState({ name, hasError: false });
   };
 
   saveOnEnter = () => (event: KeyboardEvent<HTMLDivElement>) => {
@@ -56,6 +57,10 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
 
   handleSave = () => {
     const { name } = this.state;
+    if (!name || name.trim().length === 0) {
+      this.setState({ hasError: true });
+      return;
+    }
     const newTask: TaskFormModel = {
       name
     };
@@ -64,6 +69,7 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
 
   render() {
     const { classes, onCancel } = this.props;
+    const { hasError } = this.state;
     return (
       <div>
         <TextField
@@ -76,6 +82,8 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
           variant="outlined"
           fullWidth
           inputRef={this.nameInput}
+          error={hasError}
+          helperText={hasError ? "Name is required." : null}
         />
         <div className={classes.buttonContainer}>
           <Button className={classes.button} onClick={() => this.handleSave()}>
