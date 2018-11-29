@@ -23,6 +23,7 @@ interface TasksProps {
 }
 
 interface TasksState {
+  editTask?: Task;
   isFormOpen: boolean;
   tasks: Task[];
 }
@@ -70,6 +71,10 @@ class Tasks extends Component<TasksProps, TasksState> {
     this.updateExistingTask(updatedTask);
   };
 
+  editTask = (task?: Task) => {
+    this.setState({ editTask: task, isFormOpen: false });
+  };
+
   handleTaskUpdate = async (task: Task, taskFormModel: TaskFormModel) => {
     const { updateTask }: TaskContextData = this.context;
     const updatedTask = await updateTask(task, taskFormModel);
@@ -92,12 +97,16 @@ class Tasks extends Component<TasksProps, TasksState> {
 
   render() {
     const { classes } = this.props;
-    const { isFormOpen, tasks } = this.state;
+    const { isFormOpen, tasks, editTask } = this.state;
     return (
       <div>
         <TasksList
+          editTask={editTask}
           tasks={tasks}
           onItemClick={task => this.toggleCompleted(task)}
+          onItemEdit={task => this.editTask(task)}
+          onCheck={task => this.toggleCompleted(task)}
+          onCancelEdit={() => this.editTask()}
           onTaskUpdate={(task, taskFormModel) =>
             this.handleTaskUpdate(task, taskFormModel)
           }

@@ -19,7 +19,10 @@ const TaskListItem = ({ task, onCheck, onClick, onEdit }: ListItemProps) => (
     <Checkbox
       checked={task.isCompleted()}
       tabIndex={-1}
-      onClick={() => onCheck(task)}
+      onClick={event => {
+        event.stopPropagation();
+        onCheck(task);
+      }}
       disableRipple
     />
     <ListItemText
