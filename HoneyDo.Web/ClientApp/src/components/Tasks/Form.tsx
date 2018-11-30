@@ -38,6 +38,7 @@ interface TaskFormProps {
   classes: { [key: string]: any };
   onSave: (task: TaskFormModel) => void;
   onCancel: () => void;
+  onDelete?: () => void;
   width: string;
 }
 
@@ -94,7 +95,7 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
   };
 
   render() {
-    const { classes, onCancel, width } = this.props;
+    const { classes, task, onCancel, onDelete, width } = this.props;
     const { hasError, dueDate } = this.state;
     return (
       <div>
@@ -128,6 +129,13 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
           <Button className={classes.button} onClick={() => onCancel()}>
             Cancel
           </Button>
+          {task ? (
+            <Button
+              className={classes.button}
+              onClick={() => (onDelete ? onDelete() : null)}>
+              Delete
+            </Button>
+          ) : null}
         </div>
       </div>
     );

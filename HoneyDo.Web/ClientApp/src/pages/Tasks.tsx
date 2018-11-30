@@ -85,6 +85,21 @@ class Tasks extends Component<TasksProps, TasksState> {
     this.updateExistingTask(updatedTask);
   };
 
+  handleDelete = async (task: Task) => {
+    const { deleteTask }: TaskContextData = this.context;
+    const isDeleted = await deleteTask(task);
+    if (!isDeleted) {
+      return;
+    }
+    const { tasks } = this.state;
+    const taskIndex = tasks.findIndex(tsk => tsk.id === task.id);
+    const updateTasks: Task[] = [
+      ...tasks.slice(0, taskIndex),
+      ...tasks.slice(taskIndex + 1)
+    ];
+    this.setState({ tasks: updateTasks, editTask: undefined });
+  };
+
   updateExistingTask = (task: Task) => {
     const { tasks } = this.state;
     const taskIndex = tasks.findIndex(tsk => tsk.id === task.id);
@@ -108,6 +123,7 @@ class Tasks extends Component<TasksProps, TasksState> {
           onItemEdit={task => this.editTask(task)}
           onCheck={task => this.toggleCompleted(task)}
           onCancelEdit={() => this.editTask()}
+          onDelete={task => this.handleDelete(task)}
           onTaskUpdate={(task, taskFormModel) =>
             this.handleTaskUpdate(task, taskFormModel)
           }
