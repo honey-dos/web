@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component, RefObject } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
@@ -10,16 +9,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import { UserContext } from "../providers/UserProvider";
+import { UserContext, UserContextData } from "../contexts/UserContext";
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
       margin: spacing.unit
-    },
-    textField: {
-      marginLeft: spacing.unit,
-      marginRight: spacing.unit
     },
     divider: {
       marginBottom: 20
@@ -38,15 +33,14 @@ const initialState: LoginState = { isLoading: false };
 
 // Component<{props class or interface}, {state class or interface}, {I don't know what this is yet}>
 class Login extends Component<LoginProps, LoginState> {
-  static propTypes = {
-    classes: PropTypes.object.isRequired
-  };
+  tokenTextArea: RefObject<HTMLTextAreaElement>;
 
   static contextType = UserContext;
 
   constructor(props: LoginProps) {
     super(props);
     this.state = initialState;
+    this.tokenTextArea = React.createRef();
   }
 
   async onLoginClick(mode: string) {
@@ -54,12 +48,17 @@ class Login extends Component<LoginProps, LoginState> {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     const firebaseAuth = firebase && firebase.auth();
-    if (!firebase || !firebaseAuth.currentUser) {
+    if (!firebaseAuth) {
+      this.setState({ isLoading: false });
       return;
     }
     firebaseAuth.useDeviceLanguage();
     try {
       await firebaseAuth.signInWithPopup(provider);
+      if (!firebaseAuth.currentUser) {
+        this.setState({ isLoading: false });
+        return;
+      }
       const idToken = await firebaseAuth.currentUser.getIdToken(false);
       const url = `api/token/${mode}`;
       const tokenRequest = await fetch(url, {
@@ -72,25 +71,33 @@ class Login extends Component<LoginProps, LoginState> {
       });
       const result = await tokenRequest.json();
       const { token } = result;
-      const { updateToken } = this.context;
+      const { updateToken }: UserContextData = this.context;
       updateToken(token);
       this.setState({ isLoading: false });
     } catch (error) {
       // const { errorCode, errorMessage, email, credential } = error;
       // TODO: what do we do?
       console.error(error);
+      this.setState({ isLoading: false });
     }
   }
 
   logout() {
-    const { logout } = this.context;
+    const { logout }: UserContextData = this.context;
     logout();
+  }
+
+  copyToken() {
+    if (this.tokenTextArea && this.tokenTextArea.current) {
+      this.tokenTextArea.current.select();
+      document.execCommand("copy");
+    }
   }
 
   render() {
     const { classes } = this.props;
     const { isLoading } = this.state;
-    const { jwtData } = this.context;
+    const { jwtData }: UserContextData = this.context;
     let view = null;
 
     if (jwtData) {
@@ -115,7 +122,7 @@ class Login extends Component<LoginProps, LoginState> {
             <ListItem>
               <ListItemText
                 primary="Expired"
-                secondary={isExpired ? "No" : "Yes"}
+                secondary={!isExpired ? "No" : "Yes"}
               />
             </ListItem>
           </List>
@@ -130,8 +137,12 @@ class Login extends Component<LoginProps, LoginState> {
             margin="normal"
             variant="outlined"
             inputProps={{ readOnly: true }}
+            inputRef={this.tokenTextArea}
           />
           <br />
+          <Button className={classes.button} onClick={() => this.copyToken()}>
+            Copy Token
+          </Button>
           <Button
             className={classes.button}
             onClick={() => this.onLoginClick("login")}>
