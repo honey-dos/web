@@ -9,6 +9,7 @@ interface TasksListProps {
   tasks: Task[];
   onTaskUpdate: (task: Task, taskFormModel: TaskFormModel) => void;
   onCancelEdit: () => void;
+  onDelete: (task: Task) => void;
   onItemClick: (task: Task) => void;
   onItemEdit: (task: Task) => void;
   onCheck: (task: Task) => void;
@@ -21,7 +22,8 @@ const TasksList = ({
   onCheck,
   onItemClick,
   onItemEdit,
-  onTaskUpdate
+  onTaskUpdate,
+  onDelete
 }: TasksListProps) => {
   const editId = editTask ? editTask.id : "";
   return (
@@ -33,6 +35,7 @@ const TasksList = ({
             task={task}
             onCancel={() => onCancelEdit()}
             onSave={taskFormModel => onTaskUpdate(task, taskFormModel)}
+            onDelete={() => onDelete(task)}
           />
         ) : (
           <TaskListItem

@@ -18,18 +18,24 @@ export interface IUpdateTask {
   (task: Task, taskFormModel: TaskFormModel): Promise<Task | null>;
 }
 
+export interface IDeleteTask {
+  (task: Task): Promise<boolean>;
+}
+
 export interface TaskContextData {
   getTasks: IGetTasks;
   createTask: ICreateTask;
   completeTask: ICompleteTask;
   updateTask: IUpdateTask;
+  deleteTask: IDeleteTask;
 }
 
 export const TaskContext = React.createContext<TaskContextData>({
   getTasks: async () => [],
   createTask: async () => null,
   completeTask: async () => null,
-  updateTask: async () => null
+  updateTask: async () => null,
+  deleteTask: async () => false
 });
 
 const { Provider, Consumer } = TaskContext;
@@ -40,11 +46,11 @@ export class TaskProvider extends Component {
   getTasks: IGetTasks = async (): Promise<Task[]> => {
     const { fetch }: { fetch: IFetch } = this.context;
     const url = `api/todos/`;
-    const tokenRequest = await fetch(url, {
+    const taskRequest = await fetch(url, {
       method: "GET",
       cache: "no-cache"
     });
-    const taskModels: TaskModel[] = await tokenRequest.json();
+    const taskModels: TaskModel[] = await taskRequest.json();
     const tasks = taskModels.map(i => new Task(i));
     return tasks;
   };
@@ -54,14 +60,14 @@ export class TaskProvider extends Component {
   ): Promise<Task> => {
     const { fetch }: { fetch: IFetch } = this.context;
     const url = `api/todos/`;
-    const tokenRequest = await fetch(url, {
+    const taskRequest = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
       },
       body: JSON.stringify(taskFormModel)
     });
-    const taskModel: TaskModel = await tokenRequest.json();
+    const taskModel: TaskModel = await taskRequest.json();
     return new Task(taskModel);
   };
 
@@ -72,10 +78,10 @@ export class TaskProvider extends Component {
     const { fetch }: { fetch: IFetch } = this.context;
     const url = `api/todos/${task.id}/complete`;
     const method = isCompleted ? "PUT" : "DELETE";
-    const tokenRequest = await fetch(url, {
+    const taskRequest = await fetch(url, {
       method
     });
-    const taskModel: TaskModel = await tokenRequest.json();
+    const taskModel: TaskModel = await taskRequest.json();
     return new Task(taskModel);
   };
 
@@ -85,15 +91,27 @@ export class TaskProvider extends Component {
   ) => {
     const { fetch }: { fetch: IFetch } = this.context;
     const url = `api/todos/${task.id}`;
-    const tokenRequest = await fetch(url, {
+    const taskRequest = await fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
       },
       body: JSON.stringify(taskFormModel)
     });
-    const taskModel: TaskModel = await tokenRequest.json();
+    const taskModel: TaskModel = await taskRequest.json();
     return new Task(taskModel);
+  };
+
+  deleteTask: IDeleteTask = async (task: Task) => {
+    const { fetch }: { fetch: IFetch } = this.context;
+    const url = `api/todos/${task.id}`;
+    const taskRequest = await fetch(url, {
+      method: "Delete",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      }
+    });
+    return taskRequest.status === 204;
   };
 
   render() {
@@ -108,7 +126,8 @@ export class TaskProvider extends Component {
           completeTask: (task, isCompleted) =>
             this.completeTask(task, isCompleted),
           updateTask: (task, taskFormModel) =>
-            this.updateTask(task, taskFormModel)
+            this.updateTask(task, taskFormModel),
+          deleteTask: task => this.deleteTask(task)
         }}>
         {children}
       </Provider>
