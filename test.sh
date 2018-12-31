@@ -13,7 +13,7 @@ then
 	exit 1
 fi
 
-if ! npm run test:ci --prefix HoneyDo.Web/ClientApp;
+if ! npm run test --prefix HoneyDo.Web/ClientApp;
 then
 	echo 
 	echo "jest Tests failed"
