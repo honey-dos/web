@@ -3,6 +3,7 @@ branches:
   only:
   - master
   - develop
+  - feature/#14-move-to-travis-ci
 
 language: csharp
 mono: none
@@ -18,4 +19,4 @@ deploy:
   app: honey-dos-staging
   on:
     repo: honey-dos/web
-    branch: feature/#14-move-to-travis-ci
+    all_branches: true
