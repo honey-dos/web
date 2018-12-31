@@ -36,7 +36,7 @@ namespace HoneyDo.Web
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
             {
-                options.ConnectionString = _configuration.GetConnectionString("HoneyDoContext");
+                options.ConnectionString = _configuration["HoneyDoContext"];
             });
 
             services.Configure<LoginOptions>(options =>
