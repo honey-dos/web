@@ -1,0 +1,20 @@
+matrix:
+  include:
+    - language: csharp
+      solution: HoneyDo.sln
+      script:
+        - ./test.sh
+    - language: node_js
+      node_js: "iojs"
+      cache: npm
+      before_script:
+        - cd HoneyDo.Web/ClientApp
+      
+# deploy:
+#   provider: heroku
+#   api_key:
+#     secure: W5fV6Iinq5VwxklUDe1MXgEJxvoOeJJpVZybw9TtkbPcnX6G7aDEC3XDYyq4np35w/t/5YXWCaO2ePhGJZNgtEXKLKdtiHMenm/C1IOFbIpzjQUPlt7Yna/JVojOzQyWr+E7gQXkNbAYgDY8wJ6i+Xxp06j4iKcbbXdEwKz3iJuZzy7yvlP6nmi0lZxfSkTYO8PGDhmjQtDKBxT52i/j6ZVeTXjMCbleUf14+xbejqr9YCyK9leo9uWCkmNrfqhrmzoy7659xqKPZDaMtuD4kdlv65XG1oMUOZt3fFFnpWpg15Apv22iLGZSj4OQh1HxEz3xEJnCQIgB4CZ9MhRZItor9qehUi5s8iZ8961KefyXRvZfD9KGEfr/cbmYqtFapA4lHRemuerun/PZAGXC30nz2eYC6U3hU0OS8Pn9tUkw9UR2ssn/pM3/LO5H/AZCCF4MZHWCY8SOjgLeRFcR3Wlhnqe6M6H55XgHKyiVGIN9XJFK37AgZqtRSzki8BBY2+UYGMPYNgIuV8BEwQiJwHaL5iVqnEC/zv5aKxikL9HXY5gZnMo3tMqs5peWUT+SFdB93ysEqLXbMeNK3Op8aDPNWsKnMxqc4cNU7/bOQIeXXpjiHEItEw4GcolqQTIImC8QFP7/ufXP9l6G18hk7PNQhvruJ9Mg5Sasc22as2o=
+#   app: honey-dos-staging
+#   on:
+#     repo: honey-dos/web
+#     branch: develop
