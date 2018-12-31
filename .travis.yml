@@ -1,16 +1,9 @@
-matrix:
-  include:
-    - language: csharp
-      mono: none
-      dotnet: 2.1.403
-      solution: HoneyDo.sln
-      script:
-        - ./test.sh
-    - language: node_js
-      node_js: "node"
-      cache: npm
-      before_script:
-        - cd HoneyDo.Web/ClientApp
+language: csharp
+mono: none
+dotnet: 2.1.403
+solution: HoneyDo.sln
+script:
+  - ./test.sh
       
 # deploy:
 #   provider: heroku
