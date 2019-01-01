@@ -19,7 +19,7 @@
 3. source your startup script (ie `source ~/.zshrc`)
    - you can also close your shell(s) and open new shell instances
 4. make init script executable `chmod +x init.sh`
-5. add `FirebaseJson` to dotnet secrets `dotnet user-secrets set FirebaseJson "{singleLineEscapedQuotesFirebaseJson}"`
+5. add `FirebaseJson` to dotnet secrets `dotnet user-secrets set FirebaseJson "{singleLineEscapedQuotesFirebaseJson}"` in the `HoneyDo.Web` directory.
   - Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
   - Reduce it to single line
   - Escape quotes `\"`
