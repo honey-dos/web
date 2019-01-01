@@ -58,9 +58,10 @@ namespace HoneyDo.Infrastructure.Authentication
         {
             if (FirebaseApp.DefaultInstance == null)
             {
+                var test = new AppOptions();
                 FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = GoogleCredential.FromFile(_loginOptions.PathToCredentialsJson)
+                    Credential = GoogleCredential.FromJson(_loginOptions.FirebaseJson)
                 });
             }
         }
