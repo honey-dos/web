@@ -36,7 +36,7 @@ namespace HoneyDo.Web
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
             {
-                options.ConnectionString = _configuration.GetConnectionString("HoneyDoContext");
+                options.ConnectionString = _configuration["HoneyDoContext"];
             });
 
             services.Configure<LoginOptions>(options =>
@@ -44,7 +44,7 @@ namespace HoneyDo.Web
                 options.Issuer = _configuration["JwtIssuer"];
                 options.MillisecondsUntilExpiration = long.Parse(_configuration["JwtExpireMilliseconds"]);
                 options.Key = _configuration["JwtKey"];
-                options.PathToCredentialsJson = _configuration["PathToCredentialsJson"];
+                options.FirebaseJson = _configuration["FirebaseJson"];
             });
 
             services.AddDbContext<HoneyDoContext>();
