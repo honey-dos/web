@@ -1,11 +1,14 @@
+import "typeface-roboto";
+import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import firebase from "firebase";
-import App from "./App";
+import firebase from "firebase/app";
 import registerServiceWorker from "./registerServiceWorker";
+import App from "./App";
 
-const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
+const baseUrl =
+  document.getElementsByTagName("base")[0].getAttribute("href") || undefined;
 const rootElement = document.getElementById("root");
 
 const config = {

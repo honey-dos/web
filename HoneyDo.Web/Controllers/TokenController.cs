@@ -65,7 +65,7 @@ namespace HoneyDo.Web.Controllers
             var account = await _loginService.RegisterViaToken(idToken);
             if (account == null)
             {
-                return BadRequest(new TokenModel(string.Empty, "exists"));
+                return await Login();
             }
             var jwt = _loginService.GenerateToken(account);
             return Ok(new TokenModel(jwt));
