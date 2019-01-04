@@ -108,6 +108,10 @@ namespace HoneyDo.Web.Controllers
             }
 
             todo.UpdateName(model.Name);
+            if (model.DueDate != todo.DueDate)
+            {
+                todo.UpdateDueDate(model.DueDate);
+            }
             await _todoRepository.Update(todo);
             return Ok(todo);
         }
