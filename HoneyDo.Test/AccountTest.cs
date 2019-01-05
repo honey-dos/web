@@ -24,5 +24,22 @@ namespace HoneyDo.Test
             account.UpdateName("blah blah blah");
             Assert.Equal("blah blah blah", account.Name);
         }
+
+        [Fact]
+        public void DisableAccount()
+        {
+            var account = new Account("foobar");
+            account.Disable();
+            Assert.Equal(false, account.IsEnabled);
+        }
+
+        [Fact]
+        public void EnableAccount()
+        {
+            var account = new Account("foobar");
+            account.Disable();
+            account.Enable();
+            Assert.Equal(true, account.IsEnabled);
+        }
     }
 }
