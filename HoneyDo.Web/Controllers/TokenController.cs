@@ -46,13 +46,15 @@ namespace HoneyDo.Web.Controllers
 
         /// <summary>
         /// Create token for registered user.
+        /// </summary>
+        /// <remarks>
         /// Expects the following header:
         /// 
         ///     {
         ///         "Id-Token": "{token from firebase}
         ///     }
         /// 
-        /// </summary>
+        /// </remarks>
         /// <returns> Newly created JWT</returns>
         /// <response code="200">Returns the newly created JWT</response>
         /// <response code="400">Failed to find Id-Token header, validate Id-Token or find account</response>
@@ -79,13 +81,15 @@ namespace HoneyDo.Web.Controllers
 
         /// <summary>
         /// Registers account and creates token.
+        /// </summary>
+        /// <remarks>
         /// Expects the following header:
         /// 
         ///     {
         ///         "Id-Token": "{token from firebase}
         ///     }
         /// 
-        /// </summary>
+        /// </remarks>
         /// <returns> Newly created JWT.</returns>
         /// <response code="200">Returns the newly created JWT.</response>
         /// <response code="400">Failed to find Id-Token header or validate Id-Token</response>
