@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HoneyDo.Web.Services
 {
+#pragma warning disable CS1591
     public class AccountAccessor : IAccountAccessor
     {
         private readonly IHttpContextAccessor _httpAccessor;
@@ -49,4 +50,5 @@ namespace HoneyDo.Web.Services
             return _account;
         }
     }
+#pragma warning restore CS1591
 }
