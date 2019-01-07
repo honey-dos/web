@@ -35,7 +35,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet("login")]
-        public async Task<IActionResult> Login()
+        public async Task<ActionResult<TokenModel>> Login()
         {
             var idToken = GetIdToken();
             if (string.IsNullOrEmpty(idToken))
@@ -54,7 +54,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet("register")]
-        public async Task<IActionResult> Register()
+        public async Task<ActionResult<TokenModel>> Register()
         {
             var idToken = GetIdToken();
             if (string.IsNullOrEmpty(idToken))
@@ -72,7 +72,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPost("test-token"), AllowAnonymous]
-        public async Task<IActionResult> TestToken([FromBody] LoginModel model)
+        public async Task<ActionResult<TokenModel>> TestToken([FromBody] LoginModel model)
         {
             if (!_environment.IsDevelopment())
             {

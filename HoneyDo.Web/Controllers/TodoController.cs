@@ -24,7 +24,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTodos()
+        public async Task<ActionResult<List<Todo>>> GetTodos()
         {
             var account = await _accountAccessor.GetAccount();
             var todos = await _todoRepository.Query(new TodosForUser(account));
@@ -32,7 +32,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTodo(Guid id)
+        public async Task<ActionResult<Todo>> GetTodo(Guid id)
         {
             var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
@@ -50,7 +50,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTodo([FromBody] TodoCreateFormModel model)
+        public async Task<ActionResult<Todo>> CreateTodo([FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
@@ -68,7 +68,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodo(Guid id)
+        public async Task<ActionResult> DeleteTodo(Guid id)
         {
             var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
@@ -87,7 +87,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
+        public async Task<ActionResult<Todo>> UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
         {
             if (!model.IsValid)
             {
@@ -117,7 +117,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPut("{id}/complete"), HttpDelete("{id}/complete")]
-        public async Task<IActionResult> Complete(Guid id)
+        public async Task<ActionResult<Todo>> Complete(Guid id)
         {
             var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
@@ -146,7 +146,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpPut("{id}/due"), HttpDelete("{id}/due")]
-        public async Task<IActionResult> Due(Guid id, [FromBody] DateTime? dueDate)
+        public async Task<ActionResult<Todo>> Due(Guid id, [FromBody] DateTime? dueDate)
         {
             var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
