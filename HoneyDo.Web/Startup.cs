@@ -42,9 +42,17 @@ namespace HoneyDo.Web
             {
                 c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                var domainInfo = Assembly.GetAssembly(typeof(Todo));
+                var domainXmlFile = $"{domainInfo.GetName().Name}.xml";
+                var domainXmlPath = Path.Combine(AppContext.BaseDirectory, domainXmlFile);
+                c.IncludeXmlComments(domainXmlPath);
+                var infrastructureInfo = Assembly.GetAssembly(typeof(LoginModel));
+                var infrastructureXmlFile = $"{infrastructureInfo.GetName().Name}.xml";
+                var infrastructureXmlPath = Path.Combine(AppContext.BaseDirectory, infrastructureXmlFile);
+                c.IncludeXmlComments(infrastructureXmlPath);
+                var webXmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var webXmlPath = Path.Combine(AppContext.BaseDirectory, webXmlFile);
+                c.IncludeXmlComments(webXmlPath);
             });
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
