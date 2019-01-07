@@ -10,7 +10,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace HoneyDo.Web.Controllers
 {
-    [Route("api/token")]
+    [Route("api/token"), ApiController]
     public class TokenController : Controller
     {
         private readonly LoginService _loginService;

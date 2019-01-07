@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HoneyDo.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace HoneyDo.Web
 {
@@ -33,6 +34,10 @@ namespace HoneyDo.Web
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
+            });
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
             {
@@ -95,6 +100,11 @@ namespace HoneyDo.Web
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Honey-Dos API v1");
+            });
 
             app.UseMvc(routes =>
             {

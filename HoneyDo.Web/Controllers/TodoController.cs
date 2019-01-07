@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HoneyDo.Web.Controllers
 {
-    [Route("api/todos"), Authorize]
+    [Route("api/todos"), Authorize, ApiController]
     public class TodoController : Controller
     {
         private readonly IRepository<Todo> _todoRepository;
@@ -52,11 +52,6 @@ namespace HoneyDo.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<Todo>> CreateTodo([FromBody] TodoCreateFormModel model)
         {
-            if (!model.IsValid)
-            {
-                return BadRequest();
-            }
-
             var account = await _accountAccessor.GetAccount();
             var todo = new Todo(model.Name, account);
             if (model.DueDate.HasValue)
@@ -89,11 +84,6 @@ namespace HoneyDo.Web.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Todo>> UpdateTodo(Guid id, [FromBody] TodoCreateFormModel model)
         {
-            if (!model.IsValid)
-            {
-                return BadRequest();
-            }
-
             var todo = await _todoRepository.Find(new TodoById(id));
 
             if (todo == null)
