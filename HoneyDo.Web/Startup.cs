@@ -4,12 +4,9 @@ using HoneyDo.Infrastructure.Context;
 using HoneyDo.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,6 +38,7 @@ namespace HoneyDo.Web
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
+                c.EnableAnnotations();
                 // Set the comments path for the Swagger JSON and UI.
                 var domainInfo = Assembly.GetAssembly(typeof(Todo));
                 var domainXmlFile = $"{domainInfo.GetName().Name}.xml";

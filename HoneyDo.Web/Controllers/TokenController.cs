@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Infrastructure.Authentication;
@@ -7,12 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HoneyDo.Web.Controllers
 {
-    /// <summary>
-    /// controller to handle token creation and registration
-    /// </summary>
     [ApiController]
     [Route("api/token")]
     [Produces("application/json")]
@@ -21,11 +18,6 @@ namespace HoneyDo.Web.Controllers
         private readonly LoginService _loginService;
         private readonly IHostingEnvironment _environment;
 
-        /// <summary>
-        /// controller constructor
-        /// </summary>
-        /// <param name="loginService">login service, handles token creation and registration</param>
-        /// <param name="environment">hosting environment</param>
         public TokenController(LoginService loginService,
             IHostingEnvironment environment)
         {
@@ -44,9 +36,6 @@ namespace HoneyDo.Web.Controllers
             return idToken;
         }
 
-        /// <summary>
-        /// Create token for registered user.
-        /// </summary>
         /// <remarks>
         /// Expects the following header:
         /// 
@@ -55,12 +44,10 @@ namespace HoneyDo.Web.Controllers
         ///     }
         /// 
         /// </remarks>
-        /// <returns> Newly created JWT</returns>
-        /// <response code="200">Returns the newly created JWT</response>
-        /// <response code="400">Failed to find Id-Token header, validate Id-Token or find account</response>
         [HttpGet("login")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [SwaggerOperation(Summary = "Create JWT for registered user.", OperationId = "CreateToken")]
+        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(400, "Failed to find Id-Token header, validate Id-Token or find account.")]
         public async Task<ActionResult<TokenModel>> Login()
         {
             var idToken = GetIdToken();
@@ -79,9 +66,6 @@ namespace HoneyDo.Web.Controllers
             return Ok(new TokenModel(jwt));
         }
 
-        /// <summary>
-        /// Registers account and creates token.
-        /// </summary>
         /// <remarks>
         /// Expects the following header:
         /// 
@@ -90,12 +74,10 @@ namespace HoneyDo.Web.Controllers
         ///     }
         /// 
         /// </remarks>
-        /// <returns> Newly created JWT.</returns>
-        /// <response code="200">Returns the newly created JWT.</response>
-        /// <response code="400">Failed to find Id-Token header or validate Id-Token</response>
         [HttpGet("register")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [SwaggerOperation(Summary = "Registers account and creates JWT.", OperationId = "Register")]
+        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(400, "Failed to find Id-Token header or validate Id-Token.")]
         public async Task<ActionResult<TokenModel>> Register()
         {
             var idToken = GetIdToken();
@@ -113,9 +95,6 @@ namespace HoneyDo.Web.Controllers
             return Ok(new TokenModel(jwt));
         }
 
-        /// <summary>
-        /// Creates a valid token for the provided login if valid.
-        /// </summary>
         /// <remarks>
         /// Sample request:
         ///
@@ -127,17 +106,15 @@ namespace HoneyDo.Web.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="model"></param>
-        /// <returns>Newly created JWT.</returns>
-        /// <response code="201">Returns the newly created JWT.</response>
-        /// <response code="400">Login for provided provider and id not found.</response>
-        /// <response code="404">Does not exist in current environment.</response>
         [HttpPost("test-token")]
         [AllowAnonymous]
+        [SwaggerOperation(Summary = "Create JWT for for provided login information.",
+            OperationId = "CreateTestToken",
+            Consumes = new[] { "application/json" })]
+        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(400, "Login for provided provider and id not found.")]
+        [SwaggerResponse(404, "Does not exist in current environment.")]
         [Consumes("application/json")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         public async Task<ActionResult<TokenModel>> TestToken([FromBody] LoginModel model)
         {
             if (!_environment.IsDevelopment())
