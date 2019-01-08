@@ -74,7 +74,7 @@ namespace HoneyDo.Web.Controllers
             Consumes = new[] { "application/json" })]
         [SwaggerResponse(201, "The todo was created.")]
         public async Task<ActionResult<Todo>> CreateTodo(
-            [FromBody]
+            [FromBody, Required]
             [SwaggerParameter("Todo values, optional: dueDate")]
                 TodoCreateFormModel model)
         {
@@ -131,7 +131,7 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> UpdateTodo(
             [SwaggerParameter("Id of todo to be updated.")] Guid id,
-            [FromBody]
+            [FromBody, Required]
             [SwaggerParameter("Todo values, optional: dueDate")]
                 TodoCreateFormModel model)
         {
