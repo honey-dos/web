@@ -3,7 +3,7 @@ using System;
 namespace HoneyDo.Domain.Entities
 {
     /// <summary>
-    /// Honey-Dos User Account
+    /// Honey-Dos User Account.
     /// </summary>
     public class Account
     {
@@ -12,11 +12,11 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public Guid Id { get; private set; }
         /// <summary>
-        /// User's give name.
+        /// User's given name.
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
-        /// True if the account is enabled.
+        /// True if the account is enabled, false if disabled.
         /// </summary>
         public bool IsEnabled { get; private set; }
         /// <summary>

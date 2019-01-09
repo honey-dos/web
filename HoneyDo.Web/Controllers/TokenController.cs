@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Infrastructure.Authentication;
@@ -108,14 +109,16 @@ namespace HoneyDo.Web.Controllers
         /// </remarks>
         [HttpPost("test-token")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Create JWT for for provided login information.",
+        [SwaggerOperation(Summary = "Create JWT for provided login information.",
             OperationId = "CreateTestToken",
             Consumes = new[] { "application/json" })]
         [SwaggerResponse(200, "Returns valid JWT.")]
         [SwaggerResponse(400, "Login for provided provider and id not found.")]
         [SwaggerResponse(404, "Does not exist in current environment.")]
-        [Consumes("application/json")]
-        public async Task<ActionResult<TokenModel>> TestToken([FromBody] LoginModel model)
+        public async Task<ActionResult<TokenModel>> TestToken(
+            [FromBody, Required]
+            [SwaggerParameter("Values to use when searching for login.")]
+            LoginModel model)
         {
             if (!_environment.IsDevelopment())
             {

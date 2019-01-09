@@ -9,12 +9,12 @@ namespace HoneyDo.Web.Models
     public class TodoCreateFormModel
     {
         /// <summary>
-        /// Name todo will be set to.
+        /// The name the todo will be set to.
         /// </summary>
         [Required]
         public string Name { get; set; }
         /// <summary>
-        /// DueDate todo will be set to.
+        /// The DueDate the todo will be set to (optional).
         /// </summary>
         public DateTime? DueDate { get; set; }
     }

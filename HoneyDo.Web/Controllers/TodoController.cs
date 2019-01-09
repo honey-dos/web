@@ -27,7 +27,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Gets all the todos the user as access to.", OperationId = "GetTodos")]
+        [SwaggerOperation(Summary = "Gets all the todos that the user has access to.", OperationId = "GetTodos")]
         [SwaggerResponse(200, "All todos for the user.", typeof(List<Todo>))]
         public async Task<ActionResult<List<Todo>>> GetTodos()
         {
@@ -72,25 +72,21 @@ namespace HoneyDo.Web.Controllers
         [SwaggerOperation(Summary = "Create a new Todo.",
             OperationId = "CreateTodo",
             Consumes = new[] { "application/json" })]
-        [SwaggerResponse(201, "The todo was created.")]
+        [SwaggerResponse(201, "The todo was created.", typeof(Todo))]
         public async Task<ActionResult<Todo>> CreateTodo(
             [FromBody, Required]
             [SwaggerParameter("Todo values, optional: dueDate")]
                 TodoCreateFormModel model)
         {
             var account = await _accountAccessor.GetAccount();
-            var todo = new Todo(model.Name, account);
-            if (model.DueDate.HasValue)
-            {
-                todo.UpdateDueDate(model.DueDate);
-            }
+            var todo = new Todo(model.Name, account, model.DueDate);
             await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Deletes a specific todo.", OperationId = "DeleteTodo")]
-        [SwaggerResponse(204, "Todo was successfully deleted")]
+        [SwaggerResponse(204, "Todo was successfully deleted.")]
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult> DeleteTodo(
@@ -126,7 +122,7 @@ namespace HoneyDo.Web.Controllers
         [SwaggerOperation(Summary = "Updates a specific todo.",
             OperationId = "UpdateTodo",
             Consumes = new[] { "application/json" })]
-        [SwaggerResponse(200, "Returns successfully updatd Todo.")]
+        [SwaggerResponse(200, "Returns successfully updated Todo.", typeof(Todo))]
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> UpdateTodo(
@@ -159,7 +155,7 @@ namespace HoneyDo.Web.Controllers
 
         [HttpPut("{id}/complete")]
         [SwaggerOperation(Summary = "Completes a specific todo.", OperationId = "CompleteTodo")]
-        [SwaggerResponse(200, "Returns sucessfully completed Todo.")]
+        [SwaggerResponse(200, "Returns sucessfully completed Todo.", typeof(Todo))]
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> Complete(
@@ -217,7 +213,7 @@ namespace HoneyDo.Web.Controllers
         [SwaggerOperation(Summary = "Adds due date to a specific todo.",
             OperationId = "AddDueDate",
             Consumes = new[] { "application/json" })]
-        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.", typeof(Todo))]
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> AddDueDate(

@@ -3,16 +3,16 @@ using System;
 namespace HoneyDo.Domain.Entities
 {
     /// <summary>
-    /// Todo item.
+    /// Honey-Dos todo item.
     /// </summary>
     public class Todo
     {
         /// <summary>
-        /// Id of todo.
+        /// App unique id of todo.
         /// </summary>
         public Guid Id { get; private set; }
         /// <summary>
-        /// User given name.
+        /// String by which the todo item is known by.
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
@@ -28,12 +28,12 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public DateTime? CompletedDate { get; private set; }
         /// <summary>
-        /// User given due date.
+        /// Date the todo should be completed.
         /// </summary>
         public DateTime? DueDate { get; private set; }
 
         /// <summary>
-        /// system constructor
+        /// Parameterless constructor required for entity framework.
         /// </summary>
         [Obsolete("system constructor")]
         protected Todo() { }

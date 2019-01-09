@@ -8,7 +8,7 @@ namespace HoneyDo.Infrastructure.Authentication
     public class LoginModel
     {
         /// <summary>
-        /// Login provider (ie "Google")
+        /// Login provider (ie "Google").
         /// </summary>
         [Required]
         public string Provider { get; set; }
