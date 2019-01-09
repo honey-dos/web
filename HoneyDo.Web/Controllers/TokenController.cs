@@ -47,7 +47,7 @@ namespace HoneyDo.Web.Controllers
         /// </remarks>
         [HttpGet("login")]
         [SwaggerOperation(Summary = "Create JWT for registered user.", OperationId = "CreateToken")]
-        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
         [SwaggerResponse(400, "Failed to find Id-Token header, validate Id-Token or find account.")]
         public async Task<ActionResult<TokenModel>> Login()
         {
@@ -77,7 +77,7 @@ namespace HoneyDo.Web.Controllers
         /// </remarks>
         [HttpGet("register")]
         [SwaggerOperation(Summary = "Registers account and creates JWT.", OperationId = "Register")]
-        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
         [SwaggerResponse(400, "Failed to find Id-Token header or validate Id-Token.")]
         public async Task<ActionResult<TokenModel>> Register()
         {
@@ -112,7 +112,7 @@ namespace HoneyDo.Web.Controllers
         [SwaggerOperation(Summary = "Create JWT for provided login information.",
             OperationId = "CreateTestToken",
             Consumes = new[] { "application/json" })]
-        [SwaggerResponse(200, "Returns valid JWT.")]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
         [SwaggerResponse(400, "Login for provided provider and id not found.")]
         [SwaggerResponse(404, "Does not exist in current environment.")]
         public async Task<ActionResult<TokenModel>> TestToken(
