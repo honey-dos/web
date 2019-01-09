@@ -41,9 +41,10 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// Create new todo item.
         /// </summary>
-        /// <param name="name">User given name.</param>
+        /// <param name="name">Text by which the todo will be known.</param>
         /// <param name="owner">User who creating the todo.</param>
-        public Todo(string name, Account owner)
+        /// <param name="dueDate">Optional date the todo should be completed by.</param>
+        public Todo(string name, Account owner, DateTime? dueDate = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -59,6 +60,7 @@ namespace HoneyDo.Domain.Entities
             Name = name;
             OwnerId = owner.Id;
             CreateDate = DateTime.UtcNow;
+            DueDate = dueDate;
         }
 
         /// <summary>

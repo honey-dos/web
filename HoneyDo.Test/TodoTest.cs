@@ -22,6 +22,14 @@ namespace HoneyDo.Test
             Assert.Null(todo.DueDate);
             Assert.Equal(account.Id, todo.OwnerId);
         }
+        [Fact]
+        public void SecondaryConstructor()
+        {
+            Account account = new Account("test");
+            DateTime dueDate = new DateTime(2019, 6, 28);
+            var todo = new Todo("foobar", account, dueDate);
+            Assert.Equal(dueDate, todo.DueDate);
+        }
 
         [Fact]
         public void UpdateName()
