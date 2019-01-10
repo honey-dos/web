@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Infrastructure.Authentication;
@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HoneyDo.Web.Controllers
 {
+    [ApiController]
     [Route("api/token")]
+    [Produces("application/json")]
     public class TokenController : Controller
     {
         private readonly LoginService _loginService;
@@ -34,8 +37,19 @@ namespace HoneyDo.Web.Controllers
             return idToken;
         }
 
+        /// <remarks>
+        /// Expects the following header:
+        /// 
+        ///     {
+        ///         "Id-Token": "{token from firebase}
+        ///     }
+        /// 
+        /// </remarks>
         [HttpGet("login")]
-        public async Task<IActionResult> Login()
+        [SwaggerOperation(Summary = "Create JWT for registered user.", OperationId = "CreateToken")]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
+        [SwaggerResponse(400, "Failed to find Id-Token header, validate Id-Token or find account.")]
+        public async Task<ActionResult<TokenModel>> Login()
         {
             var idToken = GetIdToken();
             if (string.IsNullOrEmpty(idToken))
@@ -53,8 +67,19 @@ namespace HoneyDo.Web.Controllers
             return Ok(new TokenModel(jwt));
         }
 
+        /// <remarks>
+        /// Expects the following header:
+        /// 
+        ///     {
+        ///         "Id-Token": "{token from firebase}
+        ///     }
+        /// 
+        /// </remarks>
         [HttpGet("register")]
-        public async Task<IActionResult> Register()
+        [SwaggerOperation(Summary = "Registers account and creates JWT.", OperationId = "Register")]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
+        [SwaggerResponse(400, "Failed to find Id-Token header or validate Id-Token.")]
+        public async Task<ActionResult<TokenModel>> Register()
         {
             var idToken = GetIdToken();
             if (string.IsNullOrEmpty(idToken))
@@ -71,8 +96,29 @@ namespace HoneyDo.Web.Controllers
             return Ok(new TokenModel(jwt));
         }
 
-        [HttpPost("test-token"), AllowAnonymous]
-        public async Task<IActionResult> TestToken([FromBody] LoginModel model)
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/login/test-token
+        ///     {
+        ///        "provider": "Google",
+        ///        "providerId": "{valid provider id}",
+        ///        "providerKey": "{valid provider key, not always needed}"
+        ///     }
+        ///
+        /// </remarks>
+        [HttpPost("test-token")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Create JWT for provided login information.",
+            OperationId = "CreateTestToken",
+            Consumes = new[] { "application/json" })]
+        [SwaggerResponse(200, "Returns valid JWT.", typeof(TokenModel))]
+        [SwaggerResponse(400, "Login for provided provider and id not found.")]
+        [SwaggerResponse(404, "Does not exist in current environment.")]
+        public async Task<ActionResult<TokenModel>> TestToken(
+            [FromBody, Required]
+            [SwaggerParameter("Values to use when searching for login.")]
+            LoginModel model)
         {
             if (!_environment.IsDevelopment())
             {

@@ -4,21 +4,23 @@ using HoneyDo.Infrastructure.Context;
 using HoneyDo.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HoneyDo.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
+using System.IO;
+using System;
 
 namespace HoneyDo.Web
 {
+#pragma warning disable CS1591
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -33,6 +35,23 @@ namespace HoneyDo.Web
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
+                c.EnableAnnotations();
+                // Set the comments path for the Swagger JSON and UI.
+                var domainInfo = Assembly.GetAssembly(typeof(Todo));
+                var domainXmlFile = $"{domainInfo.GetName().Name}.xml";
+                var domainXmlPath = Path.Combine(AppContext.BaseDirectory, domainXmlFile);
+                c.IncludeXmlComments(domainXmlPath);
+                var infrastructureInfo = Assembly.GetAssembly(typeof(LoginModel));
+                var infrastructureXmlFile = $"{infrastructureInfo.GetName().Name}.xml";
+                var infrastructureXmlPath = Path.Combine(AppContext.BaseDirectory, infrastructureXmlFile);
+                c.IncludeXmlComments(infrastructureXmlPath);
+                var webXmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var webXmlPath = Path.Combine(AppContext.BaseDirectory, webXmlFile);
+                c.IncludeXmlComments(webXmlPath);
+            });
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
             {
@@ -95,6 +114,11 @@ namespace HoneyDo.Web
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Honey-Dos API v1");
+            });
 
             app.UseMvc(routes =>
             {
@@ -117,4 +141,5 @@ namespace HoneyDo.Web
             });
         }
     }
+#pragma warning restore CS1591
 }
