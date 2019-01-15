@@ -58,8 +58,8 @@ else
     dotnet tool install --global dotnet-user-secrets
 fi
 
-## Set up JwtKey with defined key or random key TODO: Ignore it
-read -p "Input JwtKey or press (enter) for a random key:" key
+## Set up JwtKey with defined key at least 16 chars or random key TODO: Ignore it
+read -p "Input JwtKey (16 char minimum) or press [enter] for a random key:" key
 if [ -z "$key" ]; then
     echo "Generating Random Key..."
     key=$(openssl rand -base64 64 | tr -d '\n')
