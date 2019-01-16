@@ -1,5 +1,7 @@
 # Honey-Dos
 
+[![Build Status](https://travis-ci.com/honey-dos/web.svg?branch=develop)](https://travis-ci.com/honey-dos/web)
+
 ## Prerequisites
 
 - docker >= `18.06.1-ce`
@@ -20,9 +22,11 @@
    - you can also close your shell(s) and open new shell instances
 4. make init script executable `chmod +x init.sh`
 5. add `FirebaseJson` to dotnet secrets `dotnet user-secrets set FirebaseJson "{singleLineEscapedQuotesFirebaseJson}"` in the `HoneyDo.Web` directory.
-  - Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
-  - Reduce it to single line
-  - Escape quotes `\"`
+
+- Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
+- Reduce it to single line
+- Escape quotes `\"`
+
 6. (optional) edit `hosts` file add entry for local development `127.0.0.1 local.honeydos.co`
 7. run init script `./init.sh`
 8. Follow [Running](#Running)
