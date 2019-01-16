@@ -4,7 +4,9 @@ dotnet: 2.1.403
 solution: HoneyDo.sln
 script:
   - ./test.sh
-      
+branches:
+  only:
+    - develop
 deploy:
   provider: heroku
   api_key:
