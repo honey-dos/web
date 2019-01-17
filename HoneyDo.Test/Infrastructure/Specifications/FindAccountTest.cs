@@ -2,7 +2,7 @@ using HoneyDo.Infrastructure.Specifications;
 using HoneyDo.Domain.Entities;
 using Xunit;
 
-namespace HoneyDo.Test
+namespace HoneyDo.Test.Infrastructure.Specifications
 {
     public class FindAccountTest
     {

@@ -2,7 +2,7 @@ using System;
 using HoneyDo.Domain.Entities;
 using Xunit;
 
-namespace HoneyDo.Test
+namespace HoneyDo.Test.Domain.Entities
 {
     public class AccountTest
     {

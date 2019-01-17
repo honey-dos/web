@@ -5,7 +5,7 @@ using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Specifications.Todos;
 using Xunit;
 
-namespace HoneyDo.Test
+namespace HoneyDo.Test.Domain.Specifications
 {
     public class TodoByIdTest
     {
