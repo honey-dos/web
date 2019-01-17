@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HoneyDo.Domain\HoneyDo.Domain.csproj" />
+    <ProjectReference Include="..\HoneyDo.Infrastructure\HoneyDo.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

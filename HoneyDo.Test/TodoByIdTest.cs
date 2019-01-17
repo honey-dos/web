@@ -10,14 +10,23 @@ namespace HoneyDo.Test
     public class TodoByIdTest
     {
         [Fact]
-        public void BuildExpression()
+        public void BuildExpressionTrue()
         {
             var account = new Account("foobar");
             var newTodo = new Todo("test todo",account);
-            Expression<Func<Todo, bool>> expr = todo => todo.Id == account.Id;
-            var todoById = new TodoById(account.Id);
+            var todoById = new TodoById(newTodo.Id);
             var result = todoById.BuildExpression().Compile()(newTodo);
             Assert.True(result);
+        }
+        [Fact]
+        public void BuildExpressionFalse()
+        {
+            var account = new Account("foobar");
+            var newTodo = new Todo("test todo",account);
+            var fakeTodo = new Todo("test todo 2",account);
+            var todoById = new TodoById(fakeTodo.Id);
+            var result = todoById.BuildExpression().Compile()(newTodo);
+            Assert.False(result);
         }
     }
 }
