@@ -20,6 +20,10 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public Guid OwnerId { get; private set; }
         /// <summary>
+        /// Id of the user who is assigned to the todo.
+        /// </summary>
+        public Guid? AssigneeId { get; private set; }
+        /// <summary>
         /// Date the todo was created.
         /// </summary>
         public DateTime CreateDate { get; private set; }
