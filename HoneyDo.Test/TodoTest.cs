@@ -20,6 +20,7 @@ namespace HoneyDo.Test
             Assert.Equal(DateTime.UtcNow.DayOfYear, todo.CreateDate.DayOfYear);
             Assert.Null(todo.CompletedDate);
             Assert.Null(todo.DueDate);
+            Assert.Null(todo.AssigneeId);
             Assert.Equal(account.Id, todo.OwnerId);
         }
         [Fact]
