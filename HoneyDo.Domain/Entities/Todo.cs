@@ -35,6 +35,10 @@ namespace HoneyDo.Domain.Entities
         /// Date the todo should be completed.
         /// </summary>
         public DateTime? DueDate { get; private set; }
+        /// <summary>
+        /// Group Id of the group the todo belongs to.
+        /// </summary>
+        public Guid? GroupId { get; private set; }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -106,12 +110,20 @@ namespace HoneyDo.Domain.Entities
             DueDate = dueDate;
         }
         /// <summary>
-        /// Assigns the todo to the Id given.
+        /// Assigns the todo to the ID given.
         /// </summary>
-        /// <param name="assigneeId">Id of the assignee</param>
-        public void Assign(Guid assigneeId)
+        /// <param name="assigneeId">ID of the assignee</param>
+        public void Assign(Guid? assigneeId)
         {
             AssigneeId = assigneeId;
+        }
+        /// <summary>
+        /// Moves the todo to the specified group ID.
+        /// </summary>
+        /// <param name="groupId">ID of the new group</param>
+        public void ChangeGroup(Guid? groupId)
+        {
+            GroupId = groupId;
         }
     }
 }

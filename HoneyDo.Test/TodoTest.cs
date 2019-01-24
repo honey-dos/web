@@ -79,5 +79,35 @@ namespace HoneyDo.Test
             todo.Assign(assigneeId);
             Assert.Equal(assigneeId, todo.AssigneeId);
         }
+
+        [Fact]
+        public void AssignNull()
+        {
+            Guid? assigneeId = null;
+            Account account = new Account("test");
+            var todo = new Todo("foobar", account);
+            todo.Assign(assigneeId);
+            Assert.Null(todo.AssigneeId);
+        }
+
+        [Fact]
+        public void ChangeGroup()
+        {
+            Guid groupId = new Guid();
+            Account account = new Account("test");
+            var todo = new Todo("foobar", account);
+            todo.ChangeGroup(groupId);
+            Assert.Equal(groupId, todo.GroupId);
+        }
+
+        [Fact]
+        public void ChangeGroupNull()
+        {
+            Guid? groupId = null;
+            Account account = new Account("test");
+            var todo = new Todo("foobar", account);
+            todo.ChangeGroup(groupId);
+            Assert.Null(todo.GroupId);
+        }
     }
 }
