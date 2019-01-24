@@ -21,15 +21,26 @@ namespace HoneyDo.Test
             Assert.Null(todo.CompletedDate);
             Assert.Null(todo.DueDate);
             Assert.Null(todo.AssigneeId);
+            Assert.Null(todo.GroupId);
             Assert.Equal(account.Id, todo.OwnerId);
         }
+
         [Fact]
-        public void SecondaryConstructor()
+        public void ConstructorWithDate()
         {
             Account account = new Account("test");
             DateTime dueDate = new DateTime(2019, 6, 28);
-            var todo = new Todo("foobar", account, dueDate);
+            var todo = new Todo("foobar", account, dueDate: dueDate);
             Assert.Equal(dueDate, todo.DueDate);
+        }
+
+        [Fact]
+        public void ConstructorWithGroupId()
+        {
+            Account account = new Account("test");
+            Guid? groupId = new Guid();
+            var todo = new Todo("foobar", account, groupId: groupId);
+            Assert.Equal(groupId, todo.GroupId);
         }
 
         [Fact]

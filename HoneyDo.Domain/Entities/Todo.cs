@@ -52,7 +52,8 @@ namespace HoneyDo.Domain.Entities
         /// <param name="name">Text by which the todo will be known.</param>
         /// <param name="owner">User who creating the todo.</param>
         /// <param name="dueDate">Optional date the todo should be completed by.</param>
-        public Todo(string name, Account owner, DateTime? dueDate = null)
+        /// <param name="groupId">Optional group ID for the group the todo belongs to.</param>
+        public Todo(string name, Account owner, DateTime? dueDate = null, Guid? groupId = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -69,6 +70,7 @@ namespace HoneyDo.Domain.Entities
             OwnerId = owner.Id;
             CreateDate = DateTime.UtcNow;
             DueDate = dueDate;
+            GroupId = groupId;
         }
 
         /// <summary>
@@ -118,7 +120,7 @@ namespace HoneyDo.Domain.Entities
         {
             AssigneeId = assigneeId;
         }
-        
+
         /// <summary>
         /// Moves the todo to the specified group ID.
         /// </summary>
