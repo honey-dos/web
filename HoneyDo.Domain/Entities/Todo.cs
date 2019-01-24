@@ -105,5 +105,13 @@ namespace HoneyDo.Domain.Entities
         {
             DueDate = dueDate;
         }
+        /// <summary>
+        /// Assigns the todo to the Id given.
+        /// </summary>
+        /// <param name="assigneeId">Id of the assignee</param>
+        public void Assign(Guid assigneeId)
+        {
+            AssigneeId = assigneeId;
+        }
     }
 }

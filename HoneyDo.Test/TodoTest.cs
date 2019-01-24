@@ -69,5 +69,15 @@ namespace HoneyDo.Test
             todo.UpdateDueDate(date);
             Assert.Equal(date, todo.DueDate);
         }
+
+        [Fact]
+        public void Assign()
+        {
+            Guid assigneeId = new Guid();
+            Account account = new Account("test");
+            var todo = new Todo("foobar", account);
+            todo.Assign(assigneeId);
+            Assert.Equal(assigneeId, todo.AssigneeId);
+        }
     }
 }
