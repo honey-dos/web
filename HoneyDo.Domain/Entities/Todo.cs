@@ -109,6 +109,7 @@ namespace HoneyDo.Domain.Entities
         {
             DueDate = dueDate;
         }
+
         /// <summary>
         /// Assigns the todo to the ID given.
         /// </summary>
@@ -117,6 +118,7 @@ namespace HoneyDo.Domain.Entities
         {
             AssigneeId = assigneeId;
         }
+        
         /// <summary>
         /// Moves the todo to the specified group ID.
         /// </summary>
