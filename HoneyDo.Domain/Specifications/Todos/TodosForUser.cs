@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 
@@ -7,6 +8,12 @@ namespace HoneyDo.Domain.Specifications.Todos
 {
     public class TodosForUser : ISpecification<Todo>
     {
-        public IEnumerable<Todo> Filter(IEnumerable<Todo> items) => items;
+        private readonly Guid _ownerId;
+        public TodosForUser(Account account)
+        {
+            _ownerId = account.Id;
+        }
+
+        public Expression<Func<Todo, bool>> BuildExpression() => todo => todo.OwnerId == _ownerId;
     }
 }

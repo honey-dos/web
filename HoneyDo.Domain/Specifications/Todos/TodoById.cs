@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 
@@ -13,6 +14,7 @@ namespace HoneyDo.Domain.Specifications.Todos
         {
             _id = id;
         }
-        public IEnumerable<Todo> Filter(IEnumerable<Todo> items) => items.Where(i => i.Id == _id);
+
+        public Expression<Func<Todo, bool>> BuildExpression() => todo => todo.Id == _id;
     }
 }

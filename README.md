@@ -1,16 +1,41 @@
 # Honey-Dos
 
+[![Build Status](https://travis-ci.com/honey-dos/web.svg?branch=develop)](https://travis-ci.com/honey-dos/web)
+
+## Prerequisites
+
+- docker >= `18.06.1-ce`
+- node >= `8.11.3`
+- npm >= `6.4.1`
+- dotnet sdk >= `2.1.403`
+
 ## Installation
 
 1. clone repo
-2. set env variables in `.bash_profile`, `.zshrc` or equivalent
+2. set env variables in `.bash_profile`, `.zshrc` or equivalent startup script
    ```
    export ASPNETCORE_ENVIRONMENT=Development
-   export ASPNETCORE_HTTPS_PORT=5000
+   export ASPNETCORE_HTTPS_PORT=5001
    export NODE_ENV=development
    ```
-3. make init script executable `chmod +x init.sh`
-4. run init script `./init.sh`
+3. source your startup script (ie `source ~/.zshrc`)
+   - you can also close your shell(s) and open new shell instances
+4. make init script executable `chmod +x init.sh`
+5. add `FirebaseJson` to dotnet secrets `dotnet user-secrets set FirebaseJson "{singleLineEscapedQuotesFirebaseJson}"` in the `HoneyDo.Web` directory.
+
+- Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
+- Reduce it to single line
+- Escape quotes `\"`
+
+6. (optional) edit `hosts` file add entry for local development `127.0.0.1 local.honeydos.co`
+7. run init script `./init.sh`
+8. Follow [Running](#Running)
+
+## Running
+
+1. start `honeydo-db` if it's not running already `docker start honeydo-db`
+2. run `npm run watch` to watch & rebuild while developing locally
+3. navigate to https://localhost:5001 or https://local.honeydos.co:5001 (if you added the hosts entry)
 
 ## Git Flow
 
@@ -50,8 +75,8 @@ To update database with migrations `dotnet ef database update -p ./HoneyDo.Infra
 
 ## JWT Notes
 
-**Not yet Needed -**
-`JwtKey` must be added to the dotnet secrets store for development use `dotnet user-secrets` in the `HoneyDo.Web` directory.
+`JwtKey` must be added to the dotnet secrets store for development use `dotnet user-secrets JwtKey {$key}` in the `HoneyDo.Web` directory.
+init.sh will prompt you for a key or will generate one for you.
 
 ## Database
 

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HoneyDo.Domain.Interfaces
 {
     public interface IRepository<T>
     {
-        void Add(T item);
-        void Update(T item);
-        bool Remove(T item);
-        T Find(ISpecification<T> spec);
-        IEnumerable<T> Query(ISpecification<T> spec);
+        Task Add(T item);
+        Task<bool> Update(T item);
+        Task<bool> Remove(T item);
+        Task<T> Find(ISpecification<T> spec);
+        Task<List<T>> Query(ISpecification<T> spec);
     }
 }
-
