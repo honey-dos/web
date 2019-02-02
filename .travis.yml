@@ -3,15 +3,21 @@ mono: none
 dotnet: 2.1.403
 solution: HoneyDo.sln
 script:
-- "./test.sh"
+  - "./test.sh"
 branches:
   only:
-  - develop
+    - develop
+    - master
 deploy:
   provider: heroku
   api_key:
-    secure: XMXrFaoQ2J6x/S1Wgg+zQs+xV+NNjLJE12CE9VQMKtVzVJGQGJssKF7xlAusiXobPPfYD7zBThsw0d4KsprYvgm528PIfk7vhBq0Wgx6OldGXglPp5hOQZ2HnGSnNxPJJmFt0HqsH6ysBDKRrK73WIeNPs7rCBS/ofEPIxANvZWJhxmsgK4jBHUO1M7lEJe602v6Ljdvm8JSqREIAxsxwbUJzgi790rLeyYrAndbaf7HODAqV07pdjpKacC5EyZ3PMSollNXQHEaw0iAfcVCHkQaiezVTrm0pxCRlZOdOJlKgakJWdVQYprbkUWvrzK3Vz4+qtcnGtBufMc63YmD6bWQIwlNJ4pKxhc832hiVpQ4zH+ObgrebAx/e6tQ99ytsJyIN/4QdFkwyZ10Ch1RzAz1xXhDTaEavNXvpOTvhfCS6lZ90nhwzDBV6Ch1XR0WOF+S8mxttzF/bWKhS+9Z+abgSGvR4mEl0lAeg0UFaN8ZZF9QOsL5BPABK/fL1lWmx9w6Wx+MimE07t+pbqJhm5pt2vpqsGB5ZiNyoF+etAyY9A5qO/JMS8NF088P1Lvw3fo3C6rBhDyHt5j1qzKq9R00/sRrpYK9CG8mmfm0s0NejTv5rsJMmGTiA1duuNeeMYrTUPRt6Xhuk/5a91l4UO+9Je+JLyiHD1ifEUWCZ28=
-  app: honey-dos-staging
+    develop: XMXrFaoQ2J6x/S1Wgg+zQs+xV+NNjLJE12CE9VQMKtVzVJGQGJssKF7xlAusiXobPPfYD7zBThsw0d4KsprYvgm528PIfk7vhBq0Wgx6OldGXglPp5hOQZ2HnGSnNxPJJmFt0HqsH6ysBDKRrK73WIeNPs7rCBS/ofEPIxANvZWJhxmsgK4jBHUO1M7lEJe602v6Ljdvm8JSqREIAxsxwbUJzgi790rLeyYrAndbaf7HODAqV07pdjpKacC5EyZ3PMSollNXQHEaw0iAfcVCHkQaiezVTrm0pxCRlZOdOJlKgakJWdVQYprbkUWvrzK3Vz4+qtcnGtBufMc63YmD6bWQIwlNJ4pKxhc832hiVpQ4zH+ObgrebAx/e6tQ99ytsJyIN/4QdFkwyZ10Ch1RzAz1xXhDTaEavNXvpOTvhfCS6lZ90nhwzDBV6Ch1XR0WOF+S8mxttzF/bWKhS+9Z+abgSGvR4mEl0lAeg0UFaN8ZZF9QOsL5BPABK/fL1lWmx9w6Wx+MimE07t+pbqJhm5pt2vpqsGB5ZiNyoF+etAyY9A5qO/JMS8NF088P1Lvw3fo3C6rBhDyHt5j1qzKq9R00/sRrpYK9CG8mmfm0s0NejTv5rsJMmGTiA1duuNeeMYrTUPRt6Xhuk/5a91l4UO+9Je+JLyiHD1ifEUWCZ28=
+    master: XMXrFaoQ2J6x/S1Wgg+zQs+xV+NNjLJE12CE9VQMKtVzVJGQGJssKF7xlAusiXobPPfYD7zBThsw0d4KsprYvgm528PIfk7vhBq0Wgx6OldGXglPp5hOQZ2HnGSnNxPJJmFt0HqsH6ysBDKRrK73WIeNPs7rCBS/ofEPIxANvZWJhxmsgK4jBHUO1M7lEJe602v6Ljdvm8JSqREIAxsxwbUJzgi790rLeyYrAndbaf7HODAqV07pdjpKacC5EyZ3PMSollNXQHEaw0iAfcVCHkQaiezVTrm0pxCRlZOdOJlKgakJWdVQYprbkUWvrzK3Vz4+qtcnGtBufMc63YmD6bWQIwlNJ4pKxhc832hiVpQ4zH+ObgrebAx/e6tQ99ytsJyIN/4QdFkwyZ10Ch1RzAz1xXhDTaEavNXvpOTvhfCS6lZ90nhwzDBV6Ch1XR0WOF+S8mxttzF/bWKhS+9Z+abgSGvR4mEl0lAeg0UFaN8ZZF9QOsL5BPABK/fL1lWmx9w6Wx+MimE07t+pbqJhm5pt2vpqsGB5ZiNyoF+etAyY9A5qO/JMS8NF088P1Lvw3fo3C6rBhDyHt5j1qzKq9R00/sRrpYK9CG8mmfm0s0NejTv5rsJMmGTiA1duuNeeMYrTUPRt6Xhuk/5a91l4UO+9Je+JLyiHD1ifEUWCZ28=
+  app:
+    develop: honey-dos-stage
+    master: honey-dos
   on:
     repo: honey-dos/web
-    branch: develop
+    branch:
+      - develop
+      - master
