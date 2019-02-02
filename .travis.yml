@@ -17,3 +17,6 @@ deploy:
     - master: honey-dos
   on:
     repo: honey-dos/web
+    branch:
+      - develop
+      - master
