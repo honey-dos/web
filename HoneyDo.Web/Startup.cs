@@ -17,6 +17,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 using System.IO;
 using System;
+using HoneyDo.Web.Swagger;
 
 namespace HoneyDo.Web
 {
@@ -39,6 +40,14 @@ namespace HoneyDo.Web
             {
                 c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
                 c.EnableAnnotations();
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    In = "header",
+                    Description = @"Please enter JWT with Bearer, ""Bearer {jwt}""",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+                c.OperationFilter<AuthResponsesOperationFilter>();
                 // Set the comments path for the Swagger JSON and UI.
                 var domainInfo = Assembly.GetAssembly(typeof(Todo));
                 var domainXmlFile = $"{domainInfo.GetName().Name}.xml";
@@ -118,6 +127,7 @@ namespace HoneyDo.Web
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Honey-Dos API v1");
+                c.DisplayOperationId();
             });
 
             app.UseMvc(routes =>
