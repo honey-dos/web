@@ -35,6 +35,7 @@
 
 1. start `honeydo-db` if it's not running already `docker start honeydo-db`
 2. run `npm run watch` to watch & rebuild while developing locally
+   - You can initiate a nodemon restart `rs` via specifying the index than the command eg. `0:rs` for server
 3. navigate to https://localhost:5001 or https://local.honeydos.co:5001 (if you added the hosts entry)
 
 ## Git Flow
