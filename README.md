@@ -21,15 +21,21 @@
 3. source your startup script (ie `source ~/.zshrc`)
    - you can also close your shell(s) and open new shell instances
 4. make init script executable `chmod +x init.sh`
-5. add `FirebaseJson` to dotnet secrets `dotnet user-secrets set FirebaseJson "{singleLineEscapedQuotesFirebaseJson}"` in the `HoneyDo.Web` directory.
-
-- Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
-- Reduce it to single line
-- Escape quotes `\"`
-
+5. Follow [Configure](#Configure)
 6. (optional) edit `hosts` file add entry for local development `127.0.0.1 local.honeydos.co`
 7. run init script `./init.sh`
 8. Follow [Running](#Running)
+
+## Configure
+
+1. change `JwtIssuerOptions:Secret` _value must be at least 16 characters long_
+2. change `FirebaseConfig` values, Honey-Dos firebase project -> "Get started by adding..." -> Web (</> icon)
+3. change `FirebaseJson` value
+   - Get the firebase json file from the Honey-Dos firebase project -> Settings (gear icon) -> Project settings -> Service Accounts -> Generate new private key
+   - Reduce it to single line
+   - Escape quotes `\"`
+4. add secrets to `HoneyDo.Web` project by executing `cat ./dev-secrets.json | dotnet user-secrets set` in the `HoneyDo.Web` directory.
+5. **REVERT** all changes immediately, do not commit these values, especially `FirebaseJson`
 
 ## Running
 
@@ -70,9 +76,9 @@ Once the PR is approved by Elanore, the PR will be merged into `dev`. After all 
 
 ## Infrastructure Notes
 
-To add a migration `dotnet ef migrations add {migration name} -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c {HoneyDoContext}`
+To add a migration `dotnet ef migrations add {migration name} -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext`
 
-To update database with migrations `dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c {HoneyDoContext}`
+To update database with migrations `dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext`
 
 ## JWT Notes
 
