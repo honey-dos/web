@@ -41,7 +41,7 @@ namespace HoneyDo.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Summary = "Generates a new JWT.", OperationId = "GenerateToken")]
-        [SwaggerResponse(201, "The token was created.", typeof(TokenModel))]
+        [SwaggerResponse(200, "The token was created.", typeof(TokenModel))]
         [SwaggerResponse(400, "Unable to create token.")]
         public async Task<ActionResult> Token([FromBody, Required] LoginModel model)
         {
