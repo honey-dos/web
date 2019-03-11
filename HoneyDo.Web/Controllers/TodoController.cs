@@ -14,7 +14,6 @@ namespace HoneyDo.Web.Controllers
 {
     [Route("api/todos"), Authorize, ApiController]
     [Produces("application/json")]
-    [SwaggerResponse(401, "Not authenticated.")]
     public class TodoController : Controller
     {
         private readonly IRepository<Todo> _todoRepository;
