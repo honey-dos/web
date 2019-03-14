@@ -1,0 +1,39 @@
+{
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://buildpack-registry.s3.amazonaws.com/buildpacks/jincod/dotnetcore.tgz"
+    }
+  ],
+  "env": {
+    "ASPNETCORE_ENVIRONMENT": {
+      "required": true
+    },
+    "FirebaseJson": {
+      "required": true
+    },
+    "HoneyDoContext": {
+      "required": true
+    },
+    "JwtIssuerOptions": {
+      "required": true
+    },
+    "FirebaseConfig": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "honey-dos-web",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}
