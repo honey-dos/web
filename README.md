@@ -1,6 +1,6 @@
 # Honey-Dos
 
-[![Build Status](https://travis-ci.com/honey-dos/web.svg?branch=develop)](https://travis-ci.com/honey-dos/web)
+[![Build Status](https://travis-ci.org/honey-dos/web.svg?branch=develop)](https://travis-ci.org/honey-dos/web)
 
 ## Prerequisites
 
