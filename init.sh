@@ -14,7 +14,7 @@ if docker container ls -a | grep 'honeydo-db'; then
         echo "Starting container..."
         docker start honeydo-db
     fi
-else 
+else
     echo "Creating docker postgres image and migrating the database."
     docker run --name honeydo-db -e POSTGRES_DB=honeydo -e POSTGRES_USER=honeydo-user -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
 fi
@@ -49,7 +49,7 @@ else
     dotnet dev-certs https --trust # mac/windows
 fi
 
-## Set up JwtKey with input or random key with dotnet-user-serets
+## Set up local environment secrets
 echo "Checking for dotnet tool 'user-secrets'."
 if dotnet user-secrets --version; then
     echo "'user-secrets' is installed."
@@ -58,19 +58,23 @@ else
     dotnet tool install --global dotnet-user-secrets
 fi
 
-## Set up JwtKey with defined key at least 16 chars or random key TODO: Ignore it
-read -p "Input JwtKey (16 char minimum) or press [enter] for a random key:" key
+## Configure dev-secrets.json found in HoneyDo.Web
+echo "Configuring dev-secrets.json"
+cat ./HoneyDo.Web/dev-secrets.json | dotnet user-secrets set -p "./HoneyDo.Web"
+
+## Set up JwtIssuerOptions:Secret with defined key at least 16 chars or random key TODO: Ignore it
+read -p "Input JwtIssuerOptions:Secret (16 char minimum) or press [enter] for a random key:" key
 if [ -z "$key" ]; then
     echo "Generating Random Key..."
     key=$(openssl rand -base64 64 | tr -d '\n')
-    dotnet user-secrets set JwtKey ${key} -p "./HoneyDo.Web"
+    dotnet user-secrets set JwtIssuerOptions:Secret ${key} -p "./HoneyDo.Web"
 elif [ -n "$key" ]; then
-    echo "Using key given for JwtKey."
-    dotnet user-secrets set JwtKey ${key} -p "./HoneyDo.Web"
+    echo "Using key given for JwtIssuerOptions:Secret."
+    dotnet user-secrets set JwtIssuerOptions:Secret ${key} -p "./HoneyDo.Web"
 fi
 
-## Check if JwtKey saved successfully
-echo "Checking if JwtKey was saved successfully..."
+## Check if JwtIssuerOptions:Secret saved successfully
+echo "Checking if JwtIssuerOptions:Secret was saved successfully..."
 jwt=$(dotnet user-secrets list -p "./HoneyDo.Web" | grep "$key")
 if [ -n "$jwt" ]; then
     echo "Key saved successfully."
