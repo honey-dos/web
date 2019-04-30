@@ -17,6 +17,12 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 using System.IO;
 using System;
+using HoneyDo.Web.Swagger;
+using HoneyDo.Infrastructure.Providers;
+using Microsoft.AspNetCore.Identity;
+using HoneyDo.Infrastructure.Identity;
+using HoneyDo.Infrastructure;
+using HoneyDo.Web.Models;
 
 namespace HoneyDo.Web
 {
@@ -35,10 +41,19 @@ namespace HoneyDo.Web
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddIdentityCore<Account>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Honey-Dos API", Version = "v1" });
                 c.EnableAnnotations();
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    In = "header",
+                    Description = @"Please enter JWT with Bearer, ""Bearer {jwt}""",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+                c.OperationFilter<AuthResponsesOperationFilter>();
                 // Set the comments path for the Swagger JSON and UI.
                 var domainInfo = Assembly.GetAssembly(typeof(Todo));
                 var domainXmlFile = $"{domainInfo.GetName().Name}.xml";
@@ -55,40 +70,76 @@ namespace HoneyDo.Web
 
             services.Configure<ContextOptions<HoneyDoContext>>(options =>
             {
-                options.ConnectionString = _configuration["HoneyDoContext"];
+                options.ConnectionString = _configuration.GetConnectionString("HoneyDoContext");
             });
 
-            services.Configure<LoginOptions>(options =>
+            // Get options from app settings
+            var jwtAppSettingOptions = _configuration.GetSection(nameof(JwtIssuerOptions));
+            var secret = jwtAppSettingOptions[nameof(JwtIssuerOptions.Secret)];
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret));
+            var validFor = long.Parse(jwtAppSettingOptions[nameof(JwtIssuerOptions.ValidFor)]);
+            // Configure JwtIssuerOptions
+            services.Configure<JwtIssuerOptions>(options =>
             {
-                options.Issuer = _configuration["JwtIssuer"];
-                options.MillisecondsUntilExpiration = long.Parse(_configuration["JwtExpireMilliseconds"]);
-                options.Key = _configuration["JwtKey"];
+                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+                options.ValidFor = TimeSpan.FromMilliseconds(validFor);
+                options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
+            services.Configure<GoogleOptions>(options =>
+            {
                 options.FirebaseJson = _configuration["FirebaseJson"];
+            });
+
+            var firebaseConfig = _configuration.GetSection(nameof(FirebaseConfig));
+            services.Configure<FirebaseConfig>(config =>
+            {
+                config.ApiKey = firebaseConfig[nameof(FirebaseConfig.ApiKey)];
+                config.AuthDomain = firebaseConfig[nameof(FirebaseConfig.AuthDomain)];
+                config.DatabaseURL = firebaseConfig[nameof(FirebaseConfig.DatabaseURL)];
+                config.ProjectId = firebaseConfig[nameof(FirebaseConfig.ProjectId)];
             });
 
             services.AddDbContext<HoneyDoContext>();
 
+            // repos
             services.AddScoped<IRepository<Todo>, ContextRepository<Todo, HoneyDoContext>>();
             services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
             services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
 
+            // services
+            services.AddScoped<IJwtFactory, JwtFactory>();
             services.AddScoped<IAccountAccessor, AccountAccessor>();
-            services.AddScoped<LoginService>();
+            services.AddScoped<IProvider, GoogleProvider>();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = _configuration["JwtIssuer"],
-                        ValidAudience = _configuration["JwtIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]))
-                    };
-                });
+            // identity
+            services.AddTransient<IUserStore<Account>, HoneyDosUserStore>();
+            services.AddTransient<IUserLoginStore<Account>, HoneyDosUserStore>();
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
+                ValidateAudience = true,
+                ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(configureOptions =>
+            {
+                configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                configureOptions.TokenValidationParameters = tokenValidationParameters;
+                configureOptions.SaveToken = true;
+            });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -118,6 +169,7 @@ namespace HoneyDo.Web
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Honey-Dos API v1");
+                c.DisplayOperationId();
             });
 
             app.UseMvc(routes =>

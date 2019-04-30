@@ -3,15 +3,17 @@ using System;
 using HoneyDo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HoneyDo.Infrastructure.Migrations
 {
     [DbContext(typeof(HoneyDoContext))]
-    partial class HoneyDoContextModelSnapshot : ModelSnapshot
+    [Migration("20190307214524_RefactorIdentity")]
+    partial class RefactorIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,15 +49,11 @@ namespace HoneyDo.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("AssigneeId");
-
                     b.Property<DateTime?>("CompletedDate");
 
                     b.Property<DateTime>("CreateDate");
 
                     b.Property<DateTime?>("DueDate");
-
-                    b.Property<Guid?>("GroupId");
 
                     b.Property<string>("Name");
 

@@ -1,14 +1,14 @@
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
-using HoneyDo.Infrastructure.Specifications;
+using HoneyDo.Domain.Specifications.Accounts;
 using Microsoft.AspNetCore.Http;
 
 namespace HoneyDo.Web.Services
 {
-#pragma warning disable CS1591
     public class AccountAccessor : IAccountAccessor
     {
         private readonly IHttpContextAccessor _httpAccessor;
@@ -35,20 +35,19 @@ namespace HoneyDo.Web.Services
             };
 
             var claims = user.Claims;
-            var jtiClaim = claims.FirstOrDefault(c => c.Type == "jti");
-            if (jtiClaim == null)
+            var idClaim = claims.FirstOrDefault(c => c.Type == "id");
+            if (idClaim == null)
             {
                 return null;
             };
 
-            if (!Guid.TryParse(jtiClaim.Value, out Guid accountId))
+            if (!Guid.TryParse(idClaim.Value, out Guid accountId))
             {
                 return null;
             };
 
-            _account = await _accountRepo.Find(new FindAccount(accountId));
+            _account = await _accountRepo.Find(new AccountById(accountId));
             return _account;
         }
     }
-#pragma warning restore CS1591
 }

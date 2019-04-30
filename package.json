@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "honey-dos todo list",
   "scripts": {
-    "watch": "concurrently --kill-others \"nodemon HoneyDo.Web/HoneyDo.Web.csproj\" \"npm run start --prefix HoneyDo.Web/ClientApp\"",
+    "watch": "concurrently --kill-others --handle-input \"nodemon HoneyDo.Web/HoneyDo.Web.csproj\" \"npm run start --prefix HoneyDo.Web/ClientApp\"",
     "database:update": "dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext"
   },
   "repository": {
