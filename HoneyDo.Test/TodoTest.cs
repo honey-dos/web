@@ -37,10 +37,10 @@ namespace HoneyDo.Test
         [Fact]
         public void ConstructorWithGroupId()
         {
-            Account account = new Account("test");
-            Guid? groupId = new Guid();
-            var todo = new Todo("foobar", account, groupId: groupId);
-            Assert.Equal(groupId, todo.GroupId);
+            Account account = new Account("test", "test");
+            Group group = new Group("groupName", account);
+            var todo = new Todo("foobar", account, group: group);
+            Assert.Equal(group.Id, todo.GroupId);
         }
 
         [Fact]
@@ -84,40 +84,38 @@ namespace HoneyDo.Test
         [Fact]
         public void Assign()
         {
-            Guid assigneeId = new Guid();
-            Account account = new Account("test");
+            Account account = new Account("test", "test");
             var todo = new Todo("foobar", account);
-            todo.Assign(assigneeId);
-            Assert.Equal(assigneeId, todo.AssigneeId);
+            todo.Assign(account);
+            Assert.Equal(account.Id, todo.AssigneeId);
         }
 
         [Fact]
-        public void AssignNull()
+        public void Unassign()
         {
-            Guid? assigneeId = null;
-            Account account = new Account("test");
+            Account account = new Account("test", "test");
             var todo = new Todo("foobar", account);
-            todo.Assign(assigneeId);
+            todo.Unassign();
             Assert.Null(todo.AssigneeId);
         }
 
         [Fact]
         public void ChangeGroup()
         {
-            Guid groupId = new Guid();
-            Account account = new Account("test");
+            Account account = new Account("test", "test");
+            Group group = new Group("groupName", account);
             var todo = new Todo("foobar", account);
-            todo.ChangeGroup(groupId);
-            Assert.Equal(groupId, todo.GroupId);
+            todo.ChangeGroup(group);
+            Assert.Equal(group.Id, todo.GroupId);
         }
 
         [Fact]
-        public void ChangeGroupNull()
+        public void RemoveGroup()
         {
-            Guid? groupId = null;
-            Account account = new Account("test");
-            var todo = new Todo("foobar", account);
-            todo.ChangeGroup(groupId);
+            Account account = new Account("test", "test");
+            Group group = new Group("groupName", account);
+            var todo = new Todo("foobar", account, group: group);
+            todo.RemoveGroup();
             Assert.Null(todo.GroupId);
         }
     }

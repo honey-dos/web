@@ -52,8 +52,8 @@ namespace HoneyDo.Domain.Entities
         /// <param name="name">Text by which the todo will be known.</param>
         /// <param name="owner">User who creating the todo.</param>
         /// <param name="dueDate">Optional date the todo should be completed by.</param>
-        /// <param name="groupId">Optional group ID for the group the todo belongs to.</param>
-        public Todo(string name, Account owner, DateTime? dueDate = null, Guid? groupId = null)
+        /// <param name="group">Optional group for the group the todo belongs to.</param>
+        public Todo(string name, Account owner, DateTime? dueDate = null, Group group = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -70,7 +70,10 @@ namespace HoneyDo.Domain.Entities
             OwnerId = owner.Id;
             CreateDate = DateTime.UtcNow;
             DueDate = dueDate;
-            GroupId = groupId;
+            if (group != null)
+            {
+                GroupId = group.Id;
+            }
         }
 
         /// <summary>
@@ -113,21 +116,45 @@ namespace HoneyDo.Domain.Entities
         }
 
         /// <summary>
-        /// Assigns the todo to the ID given.
+        /// Assigns the todo to the account given.
         /// </summary>
-        /// <param name="assigneeId">ID of the assignee</param>
-        public void Assign(Guid? assigneeId)
+        /// <param name="assignee">New account the todo will be assigned to.</param>
+        public void Assign(Account assignee)
         {
-            AssigneeId = assigneeId;
+            if (assignee == null)
+            {
+                throw new ArgumentNullException(nameof(assignee));
+            }
+            AssigneeId = assignee.Id;
+        }
+
+        /// <summary>
+        /// Unassigns the todo.
+        /// </summary>
+        public void Unassign()
+        {
+            AssigneeId = null;
         }
 
         /// <summary>
         /// Moves the todo to the specified group ID.
         /// </summary>
-        /// <param name="groupId">ID of the new group</param>
-        public void ChangeGroup(Guid? groupId)
+        /// <param name="group">New account the todo will belong to.</param>
+        public void ChangeGroup(Group group)
         {
-            GroupId = groupId;
+            if (group == null)
+            {
+                throw new ArgumentNullException(nameof(group));
+            }
+            GroupId = group.Id;
+        }
+
+        /// <summary>
+        /// Remove group
+        /// </summary>
+        public void RemoveGroup()
+        {
+            GroupId = null;
         }
     }
 }

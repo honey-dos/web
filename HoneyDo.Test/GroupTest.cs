@@ -9,7 +9,7 @@ namespace HoneyDo.Test
         [Fact]
         public void Constructor()
         {
-            Account account = new Account("test");
+            Account account = new Account("test", "test");
             Assert.Throws<ArgumentNullException>(() => new Group("", account));
             Assert.Throws<ArgumentNullException>(() => new Group("foobar", null));
             Assert.Throws<ArgumentNullException>(() => new Group("", null));
