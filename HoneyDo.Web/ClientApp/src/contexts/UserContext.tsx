@@ -1,3 +1,4 @@
+// TODO refactor this context to be more geared towards Auth (AuthContext)
 import React, { Component } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";

@@ -23,20 +23,34 @@ namespace HoneyDo.Domain.Entities
         /// Url to user's picture.
         /// </summary>
         public string Picture { get; private set; }
+        /// <summary>
+        /// Accounts app unique username
+        /// </summary>
+        public string UserName { get; private set; }
+        /// <summary>
+        /// Accounts app unique normalized username
+        /// </summary>
+        public string NormalizedUserName { get; private set; }
 
         /// <summary>
         /// Create new account.
         /// </summary>
         /// <param name="name">User's given name.</param>
-        public Account(string name)
+        /// <param name="userName">User's app name, app unique.</param>
+        /// <param name="picture">User's picture (optional).</param>
+        public Account(string name, string userName, string picture = "")
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentNullException(nameof(userName));
 
             Id = Guid.NewGuid();
             Name = name.Trim();
             IsEnabled = true;
-            Picture = string.Empty;
+            Picture = picture;
+            UserName = userName;
+            NormalizedUserName = userName.ToUpper();
         }
 
         /// <summary>
@@ -75,6 +89,28 @@ namespace HoneyDo.Domain.Entities
                 throw new ArgumentNullException(nameof(picture));
 
             Picture = picture.Trim();
+        }
+
+        /// <summary>
+        /// Update the user's user name
+        /// </summary>
+        public void UpdateUserName(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            UserName = userName.Trim();
+        }
+
+        /// <summary>
+        /// Update the user's normalized user name
+        /// </summary>
+        public void UpdateNormalizedUserName(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            NormalizedUserName = userName;
         }
     }
 }

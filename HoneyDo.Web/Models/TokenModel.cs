@@ -1,5 +1,3 @@
-using HoneyDo.Domain.Entities;
-
 namespace HoneyDo.Web.Models
 {
     /// <summary>
