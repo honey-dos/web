@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
-using HoneyDo.Infrastructure.Authentication;
 using HoneyDo.Infrastructure.Providers;
 using HoneyDo.Web.Models;
 using Microsoft.AspNetCore.Authorization;
