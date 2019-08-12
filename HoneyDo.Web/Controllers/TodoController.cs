@@ -9,6 +9,7 @@ using HoneyDo.Domain.Specifications.Todos;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
+using HoneyDo.Domain.Specifications.Accounts;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -17,12 +18,14 @@ namespace HoneyDo.Web.Controllers
     public class TodoController : Controller
     {
         private readonly IRepository<Todo> _todoRepository;
+        private readonly IRepository<Account> _accountRepository;
         private readonly IAccountAccessor _accountAccessor;
 
-        public TodoController(IRepository<Todo> todoRepository, IAccountAccessor accountAccessor)
+        public TodoController(IRepository<Todo> todoRepository, IAccountAccessor accountAccessor, IRepository<Account> accountRepository)
         {
             _todoRepository = todoRepository;
             _accountAccessor = accountAccessor;
+            _accountRepository = accountRepository;
         }
 
         [HttpGet]
@@ -259,5 +262,63 @@ namespace HoneyDo.Web.Controllers
             await _todoRepository.Update(todo);
             return Ok(todo);
         }
+
+        [HttpPut("{id}/assign/{accountId}")]
+        [SwaggerOperation(Summary = "Assign account to a specific todo.", OperationId = "AssignTodo")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+        public async Task<ActionResult<Todo>> Assign(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id,
+                [SwaggerParameter("Id of account to assign the todo to")] Guid accountId)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            account = await _accountRepository.Find(new AccountById(accountId));
+
+            if (account == null)
+            {
+                return BadRequest();
+            }
+
+            todo.Assign(account);
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+		[HttpDelete("{id}/assign")]
+        [SwaggerOperation(Summary = "Assign account to a specific todo.", OperationId = "assignTodo")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+		public async Task<ActionResult<Todo>> Unassign(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id)
+		{
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.OwnerId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            todo.Unassign();
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+		}
     }
 }
