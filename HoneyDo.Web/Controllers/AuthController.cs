@@ -50,21 +50,42 @@ namespace HoneyDo.Web.Controllers
                 p.Provider.Equals(model.Provider, StringComparison.InvariantCultureIgnoreCase));
             if (provider == null)
             {
-                return BadRequest();
+                return BadRequest(new IdentityError[]
+                {
+                    new IdentityError
+                    {
+                        Code = "InvalidProvider",
+                        Description = "Provider specified is invalid or not supported."
+                    }
+                });
             }
 
             // get provider key
             string providerKey = await provider.GetProviderKey(model.AccessToken);
             if (string.IsNullOrWhiteSpace(providerKey))
             {
-                return BadRequest();
+                return BadRequest(new IdentityError[]
+                {
+                    new IdentityError
+                    {
+                        Code = "InvalidAccessToken",
+                        Description = "Access token from provider is invalid."
+                    }
+                });
             }
 
             // get account
             Account account = await _userManager.FindByLoginAsync(provider.Provider, providerKey);
             if (account == null)
             {
-                return BadRequest();
+                return BadRequest(new IdentityError[]
+                {
+                    new IdentityError
+                    {
+                        Code = "InvalidAccount",
+                        Description = "No account."
+                    }
+                });
             }
 
             // generate token
