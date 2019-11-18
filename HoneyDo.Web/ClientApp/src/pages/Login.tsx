@@ -12,7 +12,7 @@ import { login, registerAccount } from "../lib/auth";
 const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
-      margin: spacing.unit
+      margin: spacing()
     },
     divider: {
       marginBottom: 20

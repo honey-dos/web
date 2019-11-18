@@ -9,7 +9,7 @@ import { withWidth } from "@material-ui/core";
 const styles = ({ spacing, breakpoints }: Theme) =>
   createStyles({
     button: {
-      margin: spacing.unit,
+      margin: spacing(),
       float: "right"
     },
     inputContainer: {
@@ -22,7 +22,7 @@ const styles = ({ spacing, breakpoints }: Theme) =>
       }
     },
     input: {
-      margin: spacing.unit
+      margin: spacing()
     },
     dateInput: {
       flexBasis: 260

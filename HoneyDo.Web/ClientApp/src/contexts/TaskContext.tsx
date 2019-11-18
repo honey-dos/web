@@ -116,7 +116,6 @@ export class TaskProvider extends Component {
 
   render() {
     const { children } = this.props;
-    fetch;
 
     return (
       <Provider

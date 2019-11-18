@@ -7,11 +7,7 @@ import Router from "./Router";
 import { TaskProvider } from "./contexts/TaskContext";
 
 // when we start to create a bigger more customized theme we should move this configuration to it's own file theme.tsx for example
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true
-  }
-});
+const theme = createMuiTheme({});
 
 export default () => (
   <MuiThemeProvider theme={theme}>

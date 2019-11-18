@@ -9,7 +9,7 @@ import { TaskContext, TaskContextData } from "../contexts/TaskContext";
 const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
-      margin: spacing.unit,
+      margin: spacing(),
       float: "right"
     },
     buttonContainer: {

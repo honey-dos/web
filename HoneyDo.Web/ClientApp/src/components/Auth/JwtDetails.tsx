@@ -11,7 +11,7 @@ import { JwtData } from "../../lib/jwt";
 const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
-      margin: spacing.unit
+      margin: spacing()
     }
   });
 
