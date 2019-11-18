@@ -1,9 +1,17 @@
-import React, { Component, ChangeEvent, RefObject, KeyboardEvent } from "react";
+import React, {
+  Component,
+  ChangeEvent,
+  RefObject,
+  KeyboardEvent,
+  useState,
+  useRef,
+  useEffect
+} from "react";
 import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Task, TaskFormModel } from "../../lib/Task";
-import { DatetimePicker } from "../core/DatetimePicker";
+import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import { withWidth } from "@material-ui/core";
 
 const styles = ({ spacing, breakpoints }: Theme) =>
@@ -25,7 +33,9 @@ const styles = ({ spacing, breakpoints }: Theme) =>
       margin: spacing()
     },
     dateInput: {
-      flexBasis: 260
+      [breakpoints.up("md")]: {
+        flexBasis: 320
+      }
     },
     buttonContainer: {
       display: "flex",
@@ -70,9 +80,8 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
     this.setState({ name, hasError: false });
   };
 
-  handleDateChange = (dates: Date[]) => {
-    const dueDate = dates.length > 0 ? dates[0] : undefined;
-    this.setState({ dueDate });
+  handleDateChange = (dueDate: Date | null) => {
+    this.setState({ dueDate: dueDate || undefined });
   };
 
   saveOnEnter = () => (event: KeyboardEvent<HTMLDivElement>) => {
@@ -106,7 +115,7 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
             value={this.state.name}
             onChange={this.handleNameChange()}
             onKeyUp={this.saveOnEnter()}
-            margin="normal"
+            margin="dense"
             variant="outlined"
             fullWidth
             inputRef={this.nameInput}
@@ -114,13 +123,26 @@ class TaskForm extends Component<TaskFormProps, TaskFormState> {
             helperText={hasError ? "Name is required." : null}
             className={classes.input}
           />
-          <DatetimePicker
-            label={"Due Date"}
-            date={dueDate}
-            fullWidth={width === "xs" || width === "sm"}
-            onChange={(dates: Date[]) => this.handleDateChange(dates)}
-            className={[classes.input, classes.dateInput].join(" ")}
-          />
+          {dueDate ? (
+            <KeyboardDateTimePicker
+              disablePast
+              variant="inline"
+              inputVariant="outlined"
+              format="yyyy/MM/dd HH:mm"
+              margin="dense"
+              className={[classes.input, classes.dateInput].join(" ")}
+              fullWidth={width === "xs" || width === "sm"}
+              label="Due Date"
+              value={dueDate}
+              onChange={this.handleDateChange}
+              KeyboardButtonProps={{
+                "aria-label": "change date"
+              }}
+              onKeyUp={this.saveOnEnter()}
+            />
+          ) : (
+            <Button>Add Due Date</Button>
+          )}
         </div>
         <div className={classes.buttonContainer}>
           <Button className={classes.button} onClick={() => this.handleSave()}>
