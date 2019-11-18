@@ -1,10 +1,16 @@
 import React, { useState, useRef, useEffect, FunctionComponent } from "react";
-import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import { Task, TaskFormModel } from "../../lib/Task";
+import {
+  IconButton,
+  Button,
+  TextField,
+  Theme,
+  createStyles,
+  withStyles
+} from "@material-ui/core";
+import { AddCircleOutline } from "@material-ui/icons";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import { withWidth } from "@material-ui/core";
+import { Task, TaskFormModel } from "../../lib/Task";
 
 const styles = ({ spacing, breakpoints }: Theme) =>
   createStyles({
@@ -24,14 +30,25 @@ const styles = ({ spacing, breakpoints }: Theme) =>
     input: {
       margin: spacing()
     },
-    dateInput: {
-      [breakpoints.up("md")]: {
-        flexBasis: 320
-      }
-    },
+    dateInput: {},
     addDueDate: {
       margin: spacing(),
       flexBasis: 160
+    },
+    dueDateContainer: {
+      position: "relative",
+      [breakpoints.up("md")]: {
+        flexBasis: 330
+      }
+    },
+    dueDateButtonIcon: {
+      position: "absolute",
+      top: -15,
+      right: -15,
+      transform: "rotate(45deg)"
+    },
+    dueDateIcon: {
+      backgroundColor: "white"
     },
     buttonContainer: {
       display: "flex",
@@ -101,22 +118,30 @@ const TaskFormFunction: FunctionComponent<TaskFormProps> = (
           className={classes.input}
         />
         {dueDate ? (
-          <KeyboardDateTimePicker
-            disablePast
-            variant="inline"
-            inputVariant="outlined"
-            format="yyyy/MM/dd HH:mm"
-            margin="dense"
-            className={[classes.input, classes.dateInput].join(" ")}
-            fullWidth={width === "xs" || width === "sm"}
-            label="Due Date"
-            value={dueDate}
-            onChange={date => updateDueDate(date || undefined)}
-            KeyboardButtonProps={{
-              "aria-label": "change date"
-            }}
-            // onKeyUp={this.saveOnEnter()}
-          />
+          <div className={classes.dueDateContainer}>
+            <KeyboardDateTimePicker
+              disablePast
+              variant="inline"
+              inputVariant="outlined"
+              format="yyyy/MM/dd HH:mm"
+              margin="dense"
+              className={[classes.input, classes.dateInput].join(" ")}
+              fullWidth={width === "xs" || width === "sm"}
+              label="Due Date"
+              value={dueDate}
+              onChange={date => updateDueDate(date || undefined)}
+              KeyboardButtonProps={{
+                "aria-label": "change date"
+              }}
+              // onKeyUp={this.saveOnEnter()}
+            />
+            <IconButton
+              className={classes.dueDateButtonIcon}
+              aria-label="remove due date"
+              onClick={() => updateDueDate(undefined)}>
+              <AddCircleOutline className={classes.dueDateIcon} />
+            </IconButton>
+          </div>
         ) : (
           <Button
             className={classes.addDueDate}
