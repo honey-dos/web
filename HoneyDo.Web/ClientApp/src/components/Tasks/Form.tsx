@@ -11,7 +11,7 @@ import { AddCircleOutline } from "@material-ui/icons";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import { Task, TaskFormModel } from "../../lib/Task";
 
-const styles = ({ spacing, breakpoints }: Theme) =>
+const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
       margin: spacing(),
