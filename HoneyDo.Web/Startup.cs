@@ -26,7 +26,6 @@ using HoneyDo.Web.Models;
 
 namespace HoneyDo.Web
 {
-#pragma warning disable CS1591
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -193,5 +192,4 @@ namespace HoneyDo.Web
             });
         }
     }
-#pragma warning restore CS1591
 }
