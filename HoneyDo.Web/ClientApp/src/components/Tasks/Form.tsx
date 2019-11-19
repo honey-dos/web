@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 import { AddCircleOutline } from "@material-ui/icons";
 import { KeyboardDateTimePicker } from "@material-ui/pickers";
-import { withWidth } from "@material-ui/core";
 import { Task, TaskFormModel } from "../../lib/Task";
 
 const styles = ({ spacing, breakpoints }: Theme) =>
@@ -20,12 +19,7 @@ const styles = ({ spacing, breakpoints }: Theme) =>
     },
     inputContainer: {
       display: "flex",
-      [breakpoints.up("md")]: {
-        flexWrap: "nowrap"
-      },
-      [breakpoints.down("sm")]: {
-        flexWrap: "wrap"
-      }
+      flexWrap: "wrap"
     },
     input: {
       margin: spacing()
@@ -36,19 +30,14 @@ const styles = ({ spacing, breakpoints }: Theme) =>
       flexBasis: 160
     },
     dueDateContainer: {
-      position: "relative",
-      [breakpoints.up("md")]: {
-        flexBasis: 330
-      }
+      width: "100%",
+      display: "flex"
     },
     dueDateButtonIcon: {
-      position: "absolute",
-      top: -15,
-      right: -15,
-      transform: "rotate(45deg)"
+      flex: "0 0 auto"
     },
     dueDateIcon: {
-      backgroundColor: "white"
+      transform: "rotate(45deg)"
     },
     buttonContainer: {
       display: "flex",
@@ -62,7 +51,6 @@ interface TaskFormProps {
   onSave: (task: TaskFormModel) => void;
   onCancel: () => void;
   onDelete?: () => void;
-  width: string;
 }
 
 const useComponentDidMount = (func: () => void) => {
@@ -78,7 +66,7 @@ const useComponentDidMount = (func: () => void) => {
 const TaskFormFunction: FunctionComponent<TaskFormProps> = (
   props: TaskFormProps
 ) => {
-  const { classes, task, onCancel, onDelete, width, onSave } = props;
+  const { classes, task, onCancel, onDelete, onSave } = props;
   const [name, updateName] = useState((props.task && props.task.name) || "");
   const [dueDate, updateDueDate] = useState<Date | undefined>(
     (props.task && props.task.dueDate) || undefined
@@ -126,7 +114,7 @@ const TaskFormFunction: FunctionComponent<TaskFormProps> = (
               format="yyyy/MM/dd HH:mm"
               margin="dense"
               className={[classes.input, classes.dateInput].join(" ")}
-              fullWidth={width === "xs" || width === "sm"}
+              fullWidth
               label="Due Date"
               value={dueDate}
               onChange={date => updateDueDate(date || undefined)}
@@ -169,4 +157,4 @@ const TaskFormFunction: FunctionComponent<TaskFormProps> = (
   );
 };
 
-export default withStyles(styles)(withWidth()(TaskFormFunction));
+export default withStyles(styles)(TaskFormFunction);
