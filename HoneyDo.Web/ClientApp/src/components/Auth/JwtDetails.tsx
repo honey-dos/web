@@ -1,45 +1,45 @@
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import React, { Component, RefObject } from "react";
-import { JwtData } from "../../lib/jwt";
+import Button from '@material-ui/core/Button'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import React, { Component, RefObject } from 'react'
+import { JwtData } from '../../lib/jwt'
 
 const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
       margin: spacing()
     }
-  });
+  })
 
 interface JwtDetailsProps {
-  jwtData: JwtData;
-  onLogout: () => void;
-  onRefresh: () => void;
-  classes: { button: any };
+  jwtData: JwtData
+  onLogout: () => void
+  onRefresh: () => void
+  classes: { button: any }
 }
 
 class JwtDetails extends Component<JwtDetailsProps> {
-  tokenTextArea: RefObject<HTMLTextAreaElement>;
+  tokenTextArea: RefObject<HTMLTextAreaElement>
   constructor(props: JwtDetailsProps) {
-    super(props);
-    this.tokenTextArea = React.createRef();
+    super(props)
+    this.tokenTextArea = React.createRef()
   }
 
   copyToken = () => {
     if (this.tokenTextArea && this.tokenTextArea.current) {
-      this.tokenTextArea.current.select();
-      document.execCommand("copy");
+      this.tokenTextArea.current.select()
+      document.execCommand('copy')
     }
-  };
+  }
 
   render() {
-    const { jwtData, classes, onLogout, onRefresh } = this.props;
-    const { id, token, name, expires } = jwtData;
-    const isExpired = jwtData.isExpired();
+    const { jwtData, classes, onLogout, onRefresh } = this.props
+    const { id, token, name, expires } = jwtData
+    const isExpired = jwtData.isExpired()
     return (
       <div>
         <Typography variant="h5">Token Data</Typography>
@@ -56,7 +56,7 @@ class JwtDetails extends Component<JwtDetailsProps> {
           <ListItem>
             <ListItemText
               primary="Expired"
-              secondary={!isExpired ? "No" : "Yes"}
+              secondary={!isExpired ? 'No' : 'Yes'}
             />
           </ListItem>
         </List>
@@ -86,8 +86,8 @@ class JwtDetails extends Component<JwtDetailsProps> {
           Logout
         </Button>
       </div>
-    );
+    )
   }
 }
 
-export default withStyles(styles)(JwtDetails);
+export default withStyles(styles)(JwtDetails)

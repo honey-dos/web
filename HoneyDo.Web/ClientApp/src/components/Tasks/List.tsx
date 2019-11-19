@@ -1,18 +1,18 @@
-import React from "react";
-import List from "@material-ui/core/List";
-import TaskListItem from "./ListItem";
-import TaskForm from "./Form";
-import { Task, TaskFormModel } from "../../lib/Task";
+import React from 'react'
+import List from '@material-ui/core/List'
+import TaskListItem from './ListItem'
+import TaskForm from './Form'
+import { Task, TaskFormModel } from '../../lib/Task'
 
 interface TasksListProps {
-  editTask?: Task;
-  tasks: Task[];
-  onTaskUpdate: (task: Task, taskFormModel: TaskFormModel) => void;
-  onCancelEdit: () => void;
-  onDelete: (task: Task) => void;
-  onItemClick: (task: Task) => void;
-  onItemEdit: (task: Task) => void;
-  onCheck: (task: Task) => void;
+  editTask?: Task
+  tasks: Task[]
+  onTaskUpdate: (task: Task, taskFormModel: TaskFormModel) => void
+  onCancelEdit: () => void
+  onDelete: (task: Task) => void
+  onItemClick: (task: Task) => void
+  onItemEdit: (task: Task) => void
+  onCheck: (task: Task) => void
 }
 
 const TasksList = ({
@@ -25,7 +25,7 @@ const TasksList = ({
   onTaskUpdate,
   onDelete
 }: TasksListProps) => {
-  const editId = editTask ? editTask.id : "";
+  const editId = editTask ? editTask.id : ''
   return (
     <List>
       {tasks.map(task =>
@@ -48,7 +48,7 @@ const TasksList = ({
         )
       )}
     </List>
-  );
-};
+  )
+}
 
-export default TasksList;
+export default TasksList

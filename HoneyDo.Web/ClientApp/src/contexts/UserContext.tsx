@@ -1,32 +1,32 @@
 // TODO refactor this context to be more geared towards Auth (AuthContext)
-import React, { Component } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
-import { JwtData, setToken, getTokenData, logout } from "../lib/jwt";
+import React, { Component } from 'react'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import { JwtData, setToken, getTokenData, logout } from '../lib/jwt'
 
 export interface IUpdateToken {
-  (token: string): void;
+  (token: string): void
 }
 
 export interface ILogout {
-  (): void;
+  (): void
 }
 
 export interface IIsLoggedIn {
-  (): boolean;
+  (): boolean
 }
 
 export interface UserContextData {
-  jwtData?: JwtData;
-  updateToken: IUpdateToken;
-  logout: ILogout;
-  isLoggedIn: IIsLoggedIn;
-  isInitialized: boolean;
+  jwtData?: JwtData
+  updateToken: IUpdateToken
+  logout: ILogout
+  isLoggedIn: IIsLoggedIn
+  isInitialized: boolean
 }
 
 interface UserProviderState {
-  jwtData?: JwtData;
-  isInitialized: boolean;
+  jwtData?: JwtData
+  isInitialized: boolean
 }
 
 export const UserContext = React.createContext<UserContextData>({
@@ -34,50 +34,50 @@ export const UserContext = React.createContext<UserContextData>({
   logout: () => {},
   isLoggedIn: () => false,
   isInitialized: false
-});
+})
 
-const { Provider, Consumer } = UserContext;
+const { Provider, Consumer } = UserContext
 
 export class UserProvider extends Component<{}, UserProviderState> {
   constructor(props: {}) {
-    super(props);
-    this.state = { isInitialized: false };
+    super(props)
+    this.state = { isInitialized: false }
   }
 
   componentDidMount() {
-    this.setJwtData();
+    this.setJwtData()
   }
 
   updateToken: IUpdateToken = (token: string): void => {
-    setToken(token);
-    this.setJwtData();
-  };
+    setToken(token)
+    this.setJwtData()
+  }
 
   setJwtData() {
-    const jwtData = getTokenData() || undefined;
+    const jwtData = getTokenData() || undefined
     if (jwtData) {
-      this.setState({ jwtData });
+      this.setState({ jwtData })
     }
-    this.setState({ isInitialized: true });
+    this.setState({ isInitialized: true })
   }
 
   logout: ILogout = (): void => {
-    logout();
-    const firebaseAuth = firebase && firebase.auth();
-    firebaseAuth.signOut();
-    this.setState({ jwtData: undefined });
-  };
+    logout()
+    const firebaseAuth = firebase && firebase.auth()
+    firebaseAuth.signOut()
+    this.setState({ jwtData: undefined })
+  }
 
   isLoggedIn: IIsLoggedIn = (): boolean => {
     if (this.state.jwtData) {
-      return !this.state.jwtData.isExpired();
+      return !this.state.jwtData.isExpired()
     }
-    return false;
-  };
+    return false
+  }
 
   render() {
-    const { children } = this.props;
-    const { isInitialized, jwtData } = this.state;
+    const { children } = this.props
+    const { isInitialized, jwtData } = this.state
 
     return (
       <Provider
@@ -90,8 +90,8 @@ export class UserProvider extends Component<{}, UserProviderState> {
         }}>
         {children}
       </Provider>
-    );
+    )
   }
 }
 
-export const UserConsumer = Consumer;
+export const UserConsumer = Consumer

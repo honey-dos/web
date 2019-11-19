@@ -1,3 +1,3 @@
 export interface TokenModel {
-  token: string;
+  token: string
 }

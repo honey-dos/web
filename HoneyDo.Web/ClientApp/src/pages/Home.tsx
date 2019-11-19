@@ -1,5 +1,5 @@
-import React from "react";
-import Typography from "@material-ui/core/Typography";
+import React from 'react'
+import Typography from '@material-ui/core/Typography'
 
 const Home = () => (
   <div>
@@ -18,6 +18,6 @@ const Home = () => (
       living space with.
     </Typography>
   </div>
-);
+)
 
-export default Home;
+export default Home

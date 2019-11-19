@@ -1,18 +1,18 @@
-import React from "react";
-import { Switch, Route, Redirect } from "react-router";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Tasks from "./pages/Tasks";
-import { UserConsumer, UserContextData } from "./contexts/UserContext";
+import React from 'react'
+import { Switch, Route, Redirect } from 'react-router'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Tasks from './pages/Tasks'
+import { UserConsumer, UserContextData } from './contexts/UserContext'
 
 function PrivateRoute({
   component,
   ...rest
 }: {
-  component: any;
-  [key: string]: any;
+  component: any
+  [key: string]: any
 }) {
-  const Component = component;
+  const Component = component
   return (
     <UserConsumer>
       {(userContext: UserContextData) => (
@@ -24,7 +24,7 @@ function PrivateRoute({
             ) : (
               <Redirect
                 to={{
-                  pathname: "/login",
+                  pathname: '/login',
                   state: { from: props.location }
                 }}
               />
@@ -33,7 +33,7 @@ function PrivateRoute({
         />
       )}
     </UserConsumer>
-  );
+  )
 }
 
 export default () => (
@@ -50,4 +50,4 @@ export default () => (
       )
     }
   </UserConsumer>
-);
+)
