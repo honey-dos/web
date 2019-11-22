@@ -35,6 +35,7 @@
    - Reduce it to single line
    - Escape quotes `\"`
 4. add secrets to `HoneyDo.Web` project by executing `cat ./dev-secrets.json | dotnet user-secrets set` in the `HoneyDo.Web` directory.
+   - You man also run the `./init.sh` script
 5. **REVERT** all changes immediately, do not commit these values, especially `FirebaseJson`
 
 ## Running

@@ -1,33 +1,33 @@
-import React, { Component } from "react";
-import { Task, TaskModel, TaskFormModel } from "../lib/Task";
-import { FetchContext, IFetch } from "./FetchContext";
+import React, { Component } from 'react'
+import { Task, TaskModel, TaskFormModel } from '../lib/Task'
+import { FetchContext, IFetch } from './FetchContext'
 
 export interface IGetTasks {
-  (): Promise<Task[]>;
+  (): Promise<Task[]>
 }
 
 export interface ICreateTask {
-  (taskFormModel: TaskFormModel): Promise<Task | null>;
+  (taskFormModel: TaskFormModel): Promise<Task | null>
 }
 
 export interface ICompleteTask {
-  (task: Task, isCompleted: boolean): Promise<Task | null>;
+  (task: Task, isCompleted: boolean): Promise<Task | null>
 }
 
 export interface IUpdateTask {
-  (task: Task, taskFormModel: TaskFormModel): Promise<Task | null>;
+  (task: Task, taskFormModel: TaskFormModel): Promise<Task | null>
 }
 
 export interface IDeleteTask {
-  (task: Task): Promise<boolean>;
+  (task: Task): Promise<boolean>
 }
 
 export interface TaskContextData {
-  getTasks: IGetTasks;
-  createTask: ICreateTask;
-  completeTask: ICompleteTask;
-  updateTask: IUpdateTask;
-  deleteTask: IDeleteTask;
+  getTasks: IGetTasks
+  createTask: ICreateTask
+  completeTask: ICompleteTask
+  updateTask: IUpdateTask
+  deleteTask: IDeleteTask
 }
 
 export const TaskContext = React.createContext<TaskContextData>({
@@ -36,87 +36,86 @@ export const TaskContext = React.createContext<TaskContextData>({
   completeTask: async () => null,
   updateTask: async () => null,
   deleteTask: async () => false
-});
+})
 
-const { Provider, Consumer } = TaskContext;
+const { Provider, Consumer } = TaskContext
 
 export class TaskProvider extends Component {
-  static contextType = FetchContext;
+  static contextType = FetchContext
 
   getTasks: IGetTasks = async (): Promise<Task[]> => {
-    const { fetch }: { fetch: IFetch } = this.context;
-    const url = `api/todos/`;
+    const { fetch }: { fetch: IFetch } = this.context
+    const url = `api/todos/`
     const taskRequest = await fetch(url, {
-      method: "GET",
-      cache: "no-cache"
-    });
-    const taskModels: TaskModel[] = await taskRequest.json();
-    const tasks = taskModels.map(i => new Task(i));
-    return tasks;
-  };
+      method: 'GET',
+      cache: 'no-cache'
+    })
+    const taskModels: TaskModel[] = await taskRequest.json()
+    const tasks = taskModels.map(i => new Task(i))
+    return tasks
+  }
 
   createTask: ICreateTask = async (
     taskFormModel: TaskFormModel
   ): Promise<Task> => {
-    const { fetch }: { fetch: IFetch } = this.context;
-    const url = `api/todos/`;
+    const { fetch }: { fetch: IFetch } = this.context
+    const url = `api/todos/`
     const taskRequest = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8'
       },
       body: JSON.stringify(taskFormModel)
-    });
-    const taskModel: TaskModel = await taskRequest.json();
-    return new Task(taskModel);
-  };
+    })
+    const taskModel: TaskModel = await taskRequest.json()
+    return new Task(taskModel)
+  }
 
   completeTask: ICompleteTask = async (
     task: Task,
     isCompleted: boolean
   ): Promise<Task> => {
-    const { fetch }: { fetch: IFetch } = this.context;
-    const url = `api/todos/${task.id}/complete`;
-    const method = isCompleted ? "PUT" : "DELETE";
+    const { fetch }: { fetch: IFetch } = this.context
+    const url = `api/todos/${task.id}/complete`
+    const method = isCompleted ? 'PUT' : 'DELETE'
     const taskRequest = await fetch(url, {
       method
-    });
-    const taskModel: TaskModel = await taskRequest.json();
-    return new Task(taskModel);
-  };
+    })
+    const taskModel: TaskModel = await taskRequest.json()
+    return new Task(taskModel)
+  }
 
   updateTask: IUpdateTask = async (
     task: Task,
     taskFormModel: TaskFormModel
   ) => {
-    const { fetch }: { fetch: IFetch } = this.context;
-    const url = `api/todos/${task.id}`;
+    const { fetch }: { fetch: IFetch } = this.context
+    const url = `api/todos/${task.id}`
     const taskRequest = await fetch(url, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8'
       },
       body: JSON.stringify(taskFormModel)
-    });
-    const taskModel: TaskModel = await taskRequest.json();
-    return new Task(taskModel);
-  };
+    })
+    const taskModel: TaskModel = await taskRequest.json()
+    return new Task(taskModel)
+  }
 
   deleteTask: IDeleteTask = async (task: Task) => {
-    const { fetch }: { fetch: IFetch } = this.context;
-    const url = `api/todos/${task.id}`;
+    const { fetch }: { fetch: IFetch } = this.context
+    const url = `api/todos/${task.id}`
     const taskRequest = await fetch(url, {
-      method: "Delete",
+      method: 'Delete',
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        'Content-Type': 'application/json; charset=utf-8'
       }
-    });
-    return taskRequest.status === 204;
-  };
+    })
+    return taskRequest.status === 204
+  }
 
   render() {
-    const { children } = this.props;
-    fetch;
+    const { children } = this.props
 
     return (
       <Provider
@@ -131,8 +130,8 @@ export class TaskProvider extends Component {
         }}>
         {children}
       </Provider>
-    );
+    )
   }
 }
 
-export const TaskConsumer = Consumer;
+export const TaskConsumer = Consumer

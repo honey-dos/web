@@ -1,145 +1,158 @@
-import React, { Component, ChangeEvent, RefObject, KeyboardEvent } from "react";
-import { Theme, createStyles, withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import { Task, TaskFormModel } from "../../lib/Task";
-import { DatetimePicker } from "../core/DatetimePicker";
-import { withWidth } from "@material-ui/core";
+import {
+  Button,
+  createStyles,
+  IconButton,
+  TextField,
+  Theme,
+  withStyles
+} from '@material-ui/core'
+import { AddCircleOutline } from '@material-ui/icons'
+import { KeyboardDateTimePicker } from '@material-ui/pickers'
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
+import { Task, TaskFormModel } from '../../lib/Task'
 
-const styles = ({ spacing, breakpoints }: Theme) =>
+const styles = ({ spacing }: Theme) =>
   createStyles({
     button: {
-      margin: spacing.unit,
-      float: "right"
+      margin: spacing(),
+      float: 'right'
     },
     inputContainer: {
-      display: "flex",
-      [breakpoints.up("md")]: {
-        flexWrap: "nowrap"
-      },
-      [breakpoints.down("sm")]: {
-        flexWrap: "wrap"
-      }
+      display: 'flex',
+      flexWrap: 'wrap'
     },
     input: {
-      margin: spacing.unit
+      margin: spacing()
     },
-    dateInput: {
-      flexBasis: 260
+    dateInput: {},
+    addDueDate: {
+      margin: spacing(),
+      flexBasis: 160
+    },
+    dueDateContainer: {
+      width: '100%',
+      display: 'flex'
+    },
+    dueDateButtonIcon: {
+      flex: '0 0 auto'
+    },
+    dueDateIcon: {
+      transform: 'rotate(45deg)'
     },
     buttonContainer: {
-      display: "flex",
-      flexDirection: "row-reverse"
+      display: 'flex',
+      flexDirection: 'row-reverse'
     }
-  });
+  })
 
 interface TaskFormProps {
-  task?: Task;
-  classes: { [key: string]: any };
-  onSave: (task: TaskFormModel) => void;
-  onCancel: () => void;
-  onDelete?: () => void;
-  width: string;
+  task?: Task
+  classes: { [key: string]: string }
+  onSave: (task: TaskFormModel) => void
+  onCancel: () => void
+  onDelete?: () => void
 }
 
-interface TaskFormState {
-  name: string;
-  hasError: boolean;
-  dueDate?: Date;
+const useComponentDidMount = (func: () => void) => {
+  const [hasMounted, setMounted] = useState(false)
+  useEffect(() => {
+    if (!hasMounted && func) {
+      setMounted(true)
+      func()
+    }
+  }, [hasMounted, func])
 }
 
-class TaskForm extends Component<TaskFormProps, TaskFormState> {
-  nameInput: RefObject<HTMLInputElement>;
-
-  constructor(props: TaskFormProps) {
-    super(props);
-    const name = (props.task && props.task.name) || "";
-    const dueDate = (props.task && props.task.dueDate) || undefined;
-    this.state = { name, hasError: false, dueDate };
-    this.nameInput = React.createRef();
-  }
-
-  componentDidMount() {
-    if (this.nameInput && this.nameInput.current) {
-      this.nameInput.current.focus();
-    }
-  }
-
-  handleNameChange = () => (event: ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.value;
-    this.setState({ name, hasError: false });
-  };
-
-  handleDateChange = (dates: Date[]) => {
-    const dueDate = dates.length > 0 ? dates[0] : undefined;
-    this.setState({ dueDate });
-  };
-
-  saveOnEnter = () => (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.keyCode === 13) {
-      this.handleSave();
-    }
-  };
-
-  handleSave = () => {
-    const { name, dueDate } = this.state;
+const TaskForm: FunctionComponent<TaskFormProps> = (props: TaskFormProps) => {
+  const { classes, task, onCancel, onDelete, onSave } = props
+  const [name, updateName] = useState((props.task && props.task.name) || '')
+  const [dueDate, updateDueDate] = useState<Date | undefined>(
+    (props.task && props.task.dueDate) || undefined
+  )
+  const [hasError, updateError] = useState(false)
+  const nameRef = useRef({ focus: () => {} })
+  useComponentDidMount(() => {
+    nameRef && nameRef.current && nameRef.current.focus()
+  })
+  const handleSave = () => {
     if (!name || name.trim().length === 0) {
-      this.setState({ hasError: true });
-      return;
+      updateError(true)
+      return
     }
     const newTask: TaskFormModel = {
       name,
       dueDate
-    };
-    this.props.onSave(newTask);
-  };
-
-  render() {
-    const { classes, task, onCancel, onDelete, width } = this.props;
-    const { hasError, dueDate } = this.state;
-    return (
-      <div>
-        <div className={classes.inputContainer}>
-          <TextField
-            id="name"
-            label="Name"
-            value={this.state.name}
-            onChange={this.handleNameChange()}
-            onKeyUp={this.saveOnEnter()}
-            margin="normal"
-            variant="outlined"
-            fullWidth
-            inputRef={this.nameInput}
-            error={hasError}
-            helperText={hasError ? "Name is required." : null}
-            className={classes.input}
-          />
-          <DatetimePicker
-            label={"Due Date"}
-            date={dueDate}
-            fullWidth={width === "xs" || width === "sm"}
-            onChange={(dates: Date[]) => this.handleDateChange(dates)}
-            className={[classes.input, classes.dateInput].join(" ")}
-          />
-        </div>
-        <div className={classes.buttonContainer}>
-          <Button className={classes.button} onClick={() => this.handleSave()}>
-            Save
-          </Button>
-          <Button className={classes.button} onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          {task ? (
-            <Button
-              className={classes.button}
-              onClick={() => (onDelete ? onDelete() : null)}>
-              Delete
-            </Button>
-          ) : null}
-        </div>
-      </div>
-    );
+    }
+    onSave(newTask)
   }
+
+  return (
+    <div>
+      <div className={classes.inputContainer}>
+        <TextField
+          id="name"
+          label="Name"
+          value={name}
+          onChange={event => updateName(event.target.value)}
+          // onKeyUp={this.saveOnEnter()}
+          margin="dense"
+          variant="outlined"
+          fullWidth
+          inputRef={nameRef}
+          error={hasError}
+          helperText={hasError ? 'Name is required.' : null}
+          className={classes.input}
+        />
+        {dueDate ? (
+          <div className={classes.dueDateContainer}>
+            <KeyboardDateTimePicker
+              disablePast
+              variant="inline"
+              inputVariant="outlined"
+              format="yyyy/MM/dd HH:mm"
+              margin="dense"
+              className={[classes.input, classes.dateInput].join(' ')}
+              fullWidth
+              label="Due Date"
+              value={dueDate}
+              onChange={date => updateDueDate(date || undefined)}
+              KeyboardButtonProps={{
+                'aria-label': 'change date'
+              }}
+              // onKeyUp={this.saveOnEnter()}
+            />
+            <IconButton
+              className={classes.dueDateButtonIcon}
+              aria-label="remove due date"
+              onClick={() => updateDueDate(undefined)}>
+              <AddCircleOutline className={classes.dueDateIcon} />
+            </IconButton>
+          </div>
+        ) : (
+          <Button
+            className={classes.addDueDate}
+            onClick={() => updateDueDate(new Date())}>
+            Add Due Date
+          </Button>
+        )}
+      </div>
+      <div className={classes.buttonContainer}>
+        <Button className={classes.button} onClick={() => handleSave()}>
+          Save
+        </Button>
+        <Button className={classes.button} onClick={() => onCancel()}>
+          Cancel
+        </Button>
+        {task ? (
+          <Button
+            className={classes.button}
+            onClick={() => (onDelete ? onDelete() : null)}>
+            Delete
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  )
 }
 
-export default withStyles(styles)(withWidth()(TaskForm));
+export default withStyles(styles)(TaskForm)

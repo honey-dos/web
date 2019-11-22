@@ -1,21 +1,20 @@
-import React, { Component, MouseEvent } from "react";
-import { withStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import MenuIcon from "@material-ui/icons/Menu";
-import Settings from "@material-ui/icons/Settings";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { Link } from "react-router-dom";
-import { Hidden } from "@material-ui/core";
-import { UserContext, UserContextData } from "../../contexts/UserContext";
+import React, { Component, MouseEvent } from 'react'
+import { withStyles } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
+import { Menu as MenuIcon, Settings } from '@material-ui/icons'
+import MenuItem from '@material-ui/core/MenuItem'
+import Menu from '@material-ui/core/Menu'
+import { Link } from 'react-router-dom'
+import { Hidden } from '@material-ui/core'
+import { UserContext, UserContextData } from '../../contexts/UserContext'
 
 const styles = {
   root: {
-    display: "block"
+    display: 'block'
   },
   flex: {
     flex: 1
@@ -26,51 +25,51 @@ const styles = {
   },
   toolbarContainer: {
     maxWidth: 800,
-    marginRight: "auto",
-    marginLeft: "auto"
+    marginRight: 'auto',
+    marginLeft: 'auto'
   }
-};
+}
 
 interface Props {
-  classes: { [key: string]: any };
-  toggleDrawer: () => void;
+  classes: { [key: string]: any }
+  toggleDrawer: () => void
 }
 
 interface State {
-  anchorEl: HTMLElement | null;
+  anchorEl: HTMLElement | null
 }
 
 const initialState: State = {
   anchorEl: null
-};
+}
 
 class PrimaryAppBar extends Component<Props, State> {
-  static contextType = UserContext;
+  static contextType = UserContext
 
   constructor(props: any) {
-    super(props);
-    this.state = initialState;
+    super(props)
+    this.state = initialState
   }
 
   handleMenu = (event: MouseEvent<HTMLElement>) => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
+    this.setState({ anchorEl: event.currentTarget })
+  }
 
   logout = () => {
-    const { logout }: UserContextData = this.context;
-    logout();
-    this.handleClose();
-  };
+    const { logout }: UserContextData = this.context
+    logout()
+    this.handleClose()
+  }
 
   handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
+    this.setState({ anchorEl: null })
+  }
 
   render() {
-    const { isLoggedIn }: UserContextData = this.context;
-    const { classes, toggleDrawer } = this.props;
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+    const { isLoggedIn }: UserContextData = this.context
+    const { classes, toggleDrawer } = this.props
+    const { anchorEl } = this.state
+    const open = Boolean(anchorEl)
 
     return (
       <AppBar position="static" className={classes.root}>
@@ -86,7 +85,7 @@ class PrimaryAppBar extends Component<Props, State> {
                 <MenuIcon />
               </IconButton>
             </Hidden>
-            <Link to={"/"} className={classes.flex}>
+            <Link to={'/'} className={classes.flex}>
               <Typography variant="h5" color="inherit">
                 Honey-Dos
               </Typography>
@@ -94,7 +93,7 @@ class PrimaryAppBar extends Component<Props, State> {
             {isLoggedIn() ? (
               <div>
                 <IconButton
-                  aria-owns={open ? "menu-appbar" : undefined}
+                  aria-owns={open ? 'menu-appbar' : undefined}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit">
@@ -104,35 +103,35 @@ class PrimaryAppBar extends Component<Props, State> {
                   id="menu-appbar"
                   anchorEl={anchorEl}
                   anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
+                    vertical: 'top',
+                    horizontal: 'right'
                   }}
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
+                    vertical: 'top',
+                    horizontal: 'right'
                   }}
                   open={open}
                   onClose={this.handleClose}>
-                  <Link to={"/"}>
+                  <Link to={'/'}>
                     <MenuItem onClick={this.handleClose}>Home</MenuItem>
                   </Link>
-                  <Link to={"/tasks"}>
+                  <Link to={'/tasks'}>
                     <MenuItem onClick={this.handleClose}>Tasks</MenuItem>
                   </Link>
-                  <Link to={"/login"}>
+                  <Link to={'/login'}>
                     <MenuItem onClick={this.handleClose}>Login Page</MenuItem>
                   </Link>
-                  <Link to={"/login"}>
+                  <Link to={'/login'}>
                     <MenuItem onClick={this.logout}>Logout</MenuItem>
                   </Link>
                 </Menu>
               </div>
             ) : (
               <div>
-                <Link to={"/login"}>
+                <Link to={'/login'}>
                   <Button color="inherit">Login</Button>
                 </Link>
-                <Link to={"/login"}>
+                <Link to={'/login'}>
                   <Button color="inherit">Sign Up</Button>
                 </Link>
               </div>
@@ -140,8 +139,8 @@ class PrimaryAppBar extends Component<Props, State> {
           </Toolbar>
         </div>
       </AppBar>
-    );
+    )
   }
 }
 
-export default withStyles(styles)(PrimaryAppBar);
+export default withStyles(styles)(PrimaryAppBar)

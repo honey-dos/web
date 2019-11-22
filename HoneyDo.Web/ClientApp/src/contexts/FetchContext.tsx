@@ -1,42 +1,42 @@
-import React, { Component } from "react";
-import { UserContext } from "./UserContext";
-import { JwtData } from "../lib/jwt";
+import React, { Component } from 'react'
+import { UserContext } from './UserContext'
+import { JwtData } from '../lib/jwt'
 
 export interface IFetch {
-  (input: RequestInfo, init?: RequestInit): Promise<Response>;
+  (input: RequestInfo, init?: RequestInit): Promise<Response>
 }
 
 export interface FetchContextData {
-  fetch: IFetch;
+  fetch: IFetch
 }
 
 export const FetchContext = React.createContext<FetchContextData>({
   fetch: fetch
-});
+})
 
-const { Provider, Consumer } = FetchContext;
+const { Provider, Consumer } = FetchContext
 
 export class FetchProvider extends Component {
-  static contextType = UserContext;
+  static contextType = UserContext
 
   appFetch = (): IFetch => (
     input: RequestInfo,
     init?: RequestInit
   ): Promise<Response> => {
-    const { jwtData }: { jwtData: JwtData } = this.context;
+    const { jwtData }: { jwtData: JwtData } = this.context
     if (!init) {
-      init = {};
+      init = {}
     }
     init.headers = {
       ...init.headers,
       Authorization: `Bearer ${jwtData.token}`
-    };
+    }
 
-    return fetch(input, init);
-  };
+    return fetch(input, init)
+  }
 
   render() {
-    const { children } = this.props;
+    const { children } = this.props
 
     return (
       <Provider
@@ -45,8 +45,8 @@ export class FetchProvider extends Component {
         }}>
         {children}
       </Provider>
-    );
+    )
   }
 }
 
-export const FetchConsumer = Consumer;
+export const FetchConsumer = Consumer
