@@ -14,6 +14,7 @@ using HoneyDo.Domain.Specifications.Accounts;
 namespace HoneyDo.Web.Controllers
 {
     [Route("api/todos"), Authorize, ApiController]
+    [SwaggerTag("Create, read, update & delete todos.")]
     [Produces("application/json")]
     public class TodoController : Controller
     {
