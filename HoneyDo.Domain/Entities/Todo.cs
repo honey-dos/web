@@ -26,7 +26,11 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// Date the todo was created.
         /// </summary>
-        public DateTime CreateDate { get; private set; }
+        public DateTime DateCreated { get; private set; }
+        /// <summary>
+        /// Date the todo was last modified.
+        /// </summary>
+        public DateTime DateModified { get; private set; }
         /// <summary>
         /// Date the todo was completed.
         /// </summary>
@@ -68,7 +72,7 @@ namespace HoneyDo.Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
             CreatorId = owner.Id;
-            CreateDate = DateTime.UtcNow;
+            DateCreated = DateModified = DateTime.UtcNow;
             DueDate = dueDate;
             if (group != null)
             {
@@ -88,6 +92,7 @@ namespace HoneyDo.Domain.Entities
             }
 
             Name = name;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -96,6 +101,7 @@ namespace HoneyDo.Domain.Entities
         public void Complete()
         {
             CompletedDate = DateTime.UtcNow;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -104,6 +110,7 @@ namespace HoneyDo.Domain.Entities
         public void UnComplete()
         {
             CompletedDate = null;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -113,6 +120,7 @@ namespace HoneyDo.Domain.Entities
         public void UpdateDueDate(DateTime? dueDate)
         {
             DueDate = dueDate;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -126,6 +134,7 @@ namespace HoneyDo.Domain.Entities
                 throw new ArgumentNullException(nameof(assignee));
             }
             AssigneeId = assignee.Id;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -134,6 +143,7 @@ namespace HoneyDo.Domain.Entities
         public void Unassign()
         {
             AssigneeId = null;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -147,6 +157,7 @@ namespace HoneyDo.Domain.Entities
                 throw new ArgumentNullException(nameof(group));
             }
             GroupId = group.Id;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -155,6 +166,7 @@ namespace HoneyDo.Domain.Entities
         public void RemoveGroup()
         {
             GroupId = null;
+            DateModified = DateTime.UtcNow;
         }
     }
 }
