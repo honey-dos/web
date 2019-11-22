@@ -52,7 +52,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -101,7 +101,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -141,7 +141,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -186,7 +186,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -247,7 +247,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -279,7 +279,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -311,7 +311,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }

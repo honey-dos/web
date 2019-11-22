@@ -14,6 +14,6 @@ namespace HoneyDo.Domain.Specifications.Todos
             _ownerId = account.Id;
         }
 
-        public Expression<Func<Todo, bool>> BuildExpression() => todo => todo.OwnerId == _ownerId;
+        public Expression<Func<Todo, bool>> BuildExpression() => todo => todo.CreatorId == _ownerId;
     }
 }

@@ -18,7 +18,7 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// Id of the user who created the todo.
         /// </summary>
-        public Guid OwnerId { get; private set; }
+        public Guid CreatorId { get; private set; }
         /// <summary>
         /// Id of the user who is assigned to the todo.
         /// </summary>
@@ -67,7 +67,7 @@ namespace HoneyDo.Domain.Entities
 
             Id = Guid.NewGuid();
             Name = name;
-            OwnerId = owner.Id;
+            CreatorId = owner.Id;
             CreateDate = DateTime.UtcNow;
             DueDate = dueDate;
             if (group != null)

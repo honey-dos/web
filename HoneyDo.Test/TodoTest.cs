@@ -22,7 +22,7 @@ namespace HoneyDo.Test
             Assert.Null(todo.DueDate);
             Assert.Null(todo.AssigneeId);
             Assert.Null(todo.GroupId);
-            Assert.Equal(account.Id, todo.OwnerId);
+            Assert.Equal(account.Id, todo.CreatorId);
         }
 
         [Fact]
