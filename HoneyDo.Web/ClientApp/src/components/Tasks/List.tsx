@@ -1,8 +1,8 @@
-import React from 'react'
 import List from '@material-ui/core/List'
-import TaskListItem from './ListItem'
-import TaskForm from './Form'
+import React from 'react'
 import { Task, TaskFormModel } from '../../lib/Task'
+import TaskForm from './Form'
+import TaskListItem from './ListItem'
 
 interface TasksListProps {
   editTask?: Task

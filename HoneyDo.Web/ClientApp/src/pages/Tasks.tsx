@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import TasksList from '../components/Tasks/List'
-import TaskForm from '../components/Tasks/Form'
-import { Theme, createStyles, withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
-import { Task, TaskFormModel } from '../lib/Task'
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles'
+import React, { Component } from 'react'
+import TaskForm from '../components/Tasks/Form'
+import TasksList from '../components/Tasks/List'
 import { TaskContext, TaskContextData } from '../contexts/TaskContext'
+import { Task, TaskFormModel } from '../lib/Task'
 
 const styles = ({ spacing }: Theme) =>
   createStyles({

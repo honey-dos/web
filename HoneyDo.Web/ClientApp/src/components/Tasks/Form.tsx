@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect, FunctionComponent } from 'react'
 import {
-  IconButton,
   Button,
+  createStyles,
+  IconButton,
   TextField,
   Theme,
-  createStyles,
   withStyles
 } from '@material-ui/core'
 import { AddCircleOutline } from '@material-ui/icons'
 import { KeyboardDateTimePicker } from '@material-ui/pickers'
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { Task, TaskFormModel } from '../../lib/Task'
 
 const styles = ({ spacing }: Theme) =>
@@ -63,9 +63,7 @@ const useComponentDidMount = (func: () => void) => {
   }, [hasMounted, func])
 }
 
-const TaskFormFunction: FunctionComponent<TaskFormProps> = (
-  props: TaskFormProps
-) => {
+const TaskForm: FunctionComponent<TaskFormProps> = (props: TaskFormProps) => {
   const { classes, task, onCancel, onDelete, onSave } = props
   const [name, updateName] = useState((props.task && props.task.name) || '')
   const [dueDate, updateDueDate] = useState<Date | undefined>(
@@ -157,4 +155,4 @@ const TaskFormFunction: FunctionComponent<TaskFormProps> = (
   )
 }
 
-export default withStyles(styles)(TaskFormFunction)
+export default withStyles(styles)(TaskForm)
