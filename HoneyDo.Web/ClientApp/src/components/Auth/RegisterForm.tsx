@@ -1,38 +1,38 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
 interface RegisterFormProps {
-  onSubmit: (name: string, userName: string) => void;
-  onCancel: () => void;
+  onSubmit: (name: string, userName: string) => void
+  onCancel: () => void
 }
 
 interface RegisterFormState {
-  name: string;
-  userName: string;
+  name: string
+  userName: string
 }
 
 const initialState: RegisterFormState = {
-  name: "",
-  userName: ""
-};
+  name: '',
+  userName: ''
+}
 
 class RegisterForm extends Component<RegisterFormProps, RegisterFormState> {
   constructor(props: RegisterFormProps) {
-    super(props);
-    this.state = initialState;
+    super(props)
+    this.state = initialState
   }
   nameChange = (name: string) => {
-    this.setState({ name });
-  };
+    this.setState({ name })
+  }
   userNameChange = (userName: string) => {
-    this.setState({ userName });
-  };
+    this.setState({ userName })
+  }
   handleSubmit = () => {
-    const { name, userName } = this.state;
+    const { name, userName } = this.state
     if (!name || !name.length || !userName || !userName.length) {
-      return;
+      return
     }
-    this.props.onSubmit(name, userName);
-  };
+    this.props.onSubmit(name, userName)
+  }
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
@@ -57,8 +57,8 @@ class RegisterForm extends Component<RegisterFormProps, RegisterFormState> {
         </button>
         <button type="submit">Register</button>
       </form>
-    );
+    )
   }
 }
 
-export default RegisterForm;
+export default RegisterForm

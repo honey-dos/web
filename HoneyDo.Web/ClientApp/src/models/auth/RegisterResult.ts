@@ -1,6 +1,6 @@
-import { Account } from "./Account";
-import { IdentityError } from "./IdentityError";
-import { LoginResult } from "./LoginResult";
+import { Account } from './Account'
+import { IdentityError } from './IdentityError'
+import { LoginResult } from './LoginResult'
 
 export class RegisterResult extends LoginResult {
   constructor(
@@ -8,10 +8,10 @@ export class RegisterResult extends LoginResult {
     errors: IdentityError[],
     public account?: Account
   ) {
-    super(token, errors);
+    super(token, errors)
   }
 
   static registerSuccess = (account: Account, token: string) =>
-    new RegisterResult(token, [], account);
-  static failed = (errors: IdentityError[]) => new RegisterResult("", errors);
+    new RegisterResult(token, [], account)
+  static failed = (errors: IdentityError[]) => new RegisterResult('', errors)
 }
