@@ -55,5 +55,20 @@ namespace HoneyDo.Domain.Entities
             CreatorId = creator.Id;
             DateCreated = DateModified = DateTime.UtcNow;
         }
+
+        /// <summary>
+        /// Update the groups's name.
+        /// </summary>
+        /// <param name="name">New name</param>
+        public void UpdateName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            Name = name;
+            DateModified = DateTime.UtcNow;
+        }
     }
 }
