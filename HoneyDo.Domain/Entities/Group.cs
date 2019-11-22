@@ -22,7 +22,7 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// The date that the Group was created
         /// </summary>
-        public DateTime CreateDate { get; private set; }
+        public DateTime DateCreated { get; private set; }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -49,7 +49,7 @@ namespace HoneyDo.Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
             CreatorId = creator.Id;
-            CreateDate = DateTime.UtcNow;
+            DateCreated = DateTime.UtcNow;
         }
     }
 }
