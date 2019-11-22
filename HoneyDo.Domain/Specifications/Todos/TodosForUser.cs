@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 
 namespace HoneyDo.Domain.Specifications.Todos
 {
+    // TODO: refactor to look at groups
     public class TodosForUser : ISpecification<Todo>
     {
         private readonly Guid _ownerId;
