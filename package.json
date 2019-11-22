@@ -4,6 +4,7 @@
   "description": "honey-dos todo list",
   "scripts": {
     "watch": "concurrently --kill-others --handle-input \"nodemon HoneyDo.Web/HoneyDo.Web.csproj\" \"npm run start --prefix HoneyDo.Web/ClientApp\"",
+    "database:migrate": "dotnet ef migrations add -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext",
     "database:update": "dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext",
     "build": "npm run build:web && npm run build:client",
     "build:web": "dotnet build HoneyDo.Web/HoneyDo.Web.csproj",
