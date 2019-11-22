@@ -35,7 +35,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<List<Group>>> GetGroups()
         {
             var account = await _accountAccessor.GetAccount();
-            var groups = await _groupRepository.Query(new GroupsForUser(account));
+            var groups = await _groupRepository.Query(new GroupsForUser(account), load: "Todos");
             return Ok(groups);
         }
 

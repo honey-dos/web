@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
 using HoneyDo.Domain.Specifications.Accounts;
+using HoneyDo.Domain.Specifications.Groups;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -21,12 +22,17 @@ namespace HoneyDo.Web.Controllers
         private readonly IRepository<Todo> _todoRepository;
         private readonly IRepository<Account> _accountRepository;
         private readonly IAccountAccessor _accountAccessor;
+        private readonly IRepository<Group> _groupRepository;
 
-        public TodoController(IRepository<Todo> todoRepository, IAccountAccessor accountAccessor, IRepository<Account> accountRepository)
+        public TodoController(IRepository<Todo> todoRepository,
+            IAccountAccessor accountAccessor,
+            IRepository<Account> accountRepository,
+            IRepository<Group> groupRepository)
         {
             _todoRepository = todoRepository;
             _accountAccessor = accountAccessor;
             _accountRepository = accountRepository;
+            _groupRepository = groupRepository;
         }
 
         [HttpGet]
@@ -81,8 +87,13 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Todo values, optional: dueDate")]
                 TodoCreateFormModel model)
         {
+            Group group = null;
+            if (model.GroupId.HasValue)
+            {
+                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
+            }
             var account = await _accountAccessor.GetAccount();
-            var todo = new Todo(model.Name, account, model.DueDate);
+            var todo = new Todo(model.Name, account, model.DueDate, group);
             await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }

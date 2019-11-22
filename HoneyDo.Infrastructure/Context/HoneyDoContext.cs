@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Infrastructure.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,15 @@ namespace HoneyDo.Infrastructure.Context
             {
                 a.HasIndex(i => i.NormalizedUserName)
                     .IsUnique();
+            });
+            modelBuilder.Entity<Todo>(t =>
+            {
+                t.HasOne(to => to.Group)
+                .WithMany("Todos");
+            });
+            modelBuilder.Entity<Group>(grp =>
+            {
+                grp.HasMany(typeof(Todo), "Todos");
             });
         }
     }

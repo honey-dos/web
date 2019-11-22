@@ -30,12 +30,16 @@ namespace HoneyDo.Infrastructure.Context
             return _dbset.Where(spec.BuildExpression()).FirstOrDefaultAsync();
         }
 
-        public Task<List<T>> Query(ISpecification<T> spec, Page page = null)
+        public Task<List<T>> Query(ISpecification<T> spec, Page page = null, string load = "")
         {
             IQueryable<T> queryable = _dbset.Where(spec.BuildExpression());
             if (page != null)
             {
                 queryable = queryable.Skip((page.PageIndex - 1) * page.PageSize).Take(page.PageSize);
+            }
+            if (!string.IsNullOrWhiteSpace(load))
+            {
+              queryable = queryable.Include(load);
             }
 
             return queryable.ToListAsync();

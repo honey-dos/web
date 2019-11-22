@@ -10,6 +10,6 @@ namespace HoneyDo.Domain.Interfaces
         Task<bool> Update(T item);
         Task<bool> Remove(T item);
         Task<T> Find(ISpecification<T> spec);
-        Task<List<T>> Query(ISpecification<T> spec, Page page = null);
+        Task<List<T>> Query(ISpecification<T> spec, Page page = null, string load = "");
     }
 }

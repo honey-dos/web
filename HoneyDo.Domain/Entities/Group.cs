@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HoneyDo.Domain.Entities
 {
@@ -27,6 +28,10 @@ namespace HoneyDo.Domain.Entities
         /// Date the group was last modified.
         /// </summary>
         public DateTime DateModified { get; private set; }
+        /// <summary>
+        /// Date the group was last modified.
+        /// </summary>
+        protected List<Todo> Todos { get; private set; }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -54,6 +59,7 @@ namespace HoneyDo.Domain.Entities
             Name = name;
             CreatorId = creator.Id;
             DateCreated = DateModified = DateTime.UtcNow;
+            Todos = new List<Todo>();
         }
 
         /// <summary>
