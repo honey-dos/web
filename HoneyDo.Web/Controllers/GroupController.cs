@@ -63,5 +63,46 @@ namespace HoneyDo.Web.Controllers
             await _groupRepository.Add(group);
             return Created($"api/groups/{group.Id}", group);
         }
+
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     PUT /api/groups/{id}
+        ///     {
+        ///        "name": "Some name"
+        ///     }
+        ///
+        /// </remarks> 
+        [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Updates a specific group.",
+            OperationId = "UpdateGroup",
+            Consumes = new[] { "application/json" })]
+        [SwaggerResponse(200, "Returns successfully updated Group.", typeof(Group))]
+        [SwaggerResponse(400, "No group found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult<Group>> UpdateGroup(
+            [SwaggerParameter("Id of group to be updated.")] Guid id,
+            [FromBody, Required]
+            [SwaggerParameter("Group values, optional: dueDate")]
+                GroupCreateFormModel model)
+        {
+            var group = await _groupRepository.Find(new GroupById(id));
+
+            if (group == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (group.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            group.UpdateName(model.Name);
+            await _groupRepository.Update(group);
+            return Ok(group);
+        }
+
     }
 }

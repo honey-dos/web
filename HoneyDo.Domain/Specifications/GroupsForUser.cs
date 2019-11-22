@@ -13,6 +13,6 @@ namespace HoneyDo.Domain.Specifications.Groups
             _accountId = account.Id;
         }
 
-        public Expression<Func<Group, bool>> BuildExpression() => todo => todo.CreatorId == _accountId;
+        public Expression<Func<Group, bool>> BuildExpression() => group => group.CreatorId == _accountId;
     }
 }
