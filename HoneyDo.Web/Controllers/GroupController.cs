@@ -38,5 +38,30 @@ namespace HoneyDo.Web.Controllers
             var groups = await _groupRepository.Query(new GroupsForUser(account));
             return Ok(groups);
         }
+
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/groups
+        ///     {
+        ///        "name": "Some name"
+        ///     }
+        ///
+        /// </remarks> 
+        [HttpPost]
+        [SwaggerOperation(Summary = "Create a new Group.",
+            OperationId = "CreateGroup",
+            Consumes = new[] { "application/json" })]
+        [SwaggerResponse(201, "The group was created.", typeof(Group))]
+        public async Task<ActionResult<Group>> CreateGroup(
+            [FromBody, Required]
+            [SwaggerParameter("Group values, optional: dueDate")]
+                GroupCreateFormModel model)
+        {
+            var account = await _accountAccessor.GetAccount();
+            var group = new Group(model.Name, account);
+            await _groupRepository.Add(group);
+            return Created($"api/groups/{group.Id}", group);
+        }
     }
 }
