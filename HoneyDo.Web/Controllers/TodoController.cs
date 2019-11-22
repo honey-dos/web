@@ -297,14 +297,14 @@ namespace HoneyDo.Web.Controllers
             return Ok(todo);
         }
 
-		[HttpDelete("{id}/assign")]
+        [HttpDelete("{id}/assign")]
         [SwaggerOperation(Summary = "Assign account to a specific todo.", OperationId = "assignTodo")]
         [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
-		public async Task<ActionResult<Todo>> Unassign(
+        public async Task<ActionResult<Todo>> Unassign(
                 [SwaggerParameter("Id of todo to be updated.")] Guid id)
-		{
+        {
             var todo = await _todoRepository.Find(new TodoById(id));
             if (todo == null)
             {
@@ -320,6 +320,6 @@ namespace HoneyDo.Web.Controllers
             todo.Unassign();
             await _todoRepository.Update(todo);
             return Ok(todo);
-		}
+        }
     }
 }
