@@ -19,6 +19,8 @@ namespace HoneyDo.Test
             Assert.Equal(account.Id, group.CreatorId);
             Assert.Equal(DateTime.UtcNow.Year, group.DateCreated.Year);
             Assert.Equal(DateTime.UtcNow.DayOfYear, group.DateCreated.DayOfYear);
+            Assert.Equal(DateTime.UtcNow.Year, group.DateModified.Year);
+            Assert.Equal(DateTime.UtcNow.DayOfYear, group.DateModified.DayOfYear);
         }
     }
 }
