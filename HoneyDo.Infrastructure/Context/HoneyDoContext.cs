@@ -1,4 +1,3 @@
-using System;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Infrastructure.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ namespace HoneyDo.Infrastructure.Context
     {
         private readonly string _connectionString;
 
+        public DbSet<Group> Groups { get; set; }
         public DbSet<Todo> Todos { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Login> Logins { get; set; }

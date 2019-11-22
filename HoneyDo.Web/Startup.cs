@@ -103,6 +103,7 @@ namespace HoneyDo.Web
             services.AddDbContext<HoneyDoContext>();
 
             // repos
+            services.AddScoped<IRepository<Group>, ContextRepository<Group, HoneyDoContext>>();
             services.AddScoped<IRepository<Todo>, ContextRepository<Todo, HoneyDoContext>>();
             services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
             services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
