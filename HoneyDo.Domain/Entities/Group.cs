@@ -29,9 +29,20 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public DateTime DateModified { get; private set; }
         /// <summary>
-        /// Date the group was last modified.
+        /// Todos that belong to this group.
         /// </summary>
-        protected List<Todo> Todos { get; private set; }
+        protected List<Todo> _tasks { get; set; }
+        public Todo[] Tasks
+        {
+            get
+            {
+                if (_tasks == null)
+                {
+                    return new Todo[0];
+                }
+                return _tasks.ToArray();
+            }
+        }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -59,7 +70,7 @@ namespace HoneyDo.Domain.Entities
             Name = name;
             CreatorId = creator.Id;
             DateCreated = DateModified = DateTime.UtcNow;
-            Todos = new List<Todo>();
+            _tasks = new List<Todo>();
         }
 
         /// <summary>

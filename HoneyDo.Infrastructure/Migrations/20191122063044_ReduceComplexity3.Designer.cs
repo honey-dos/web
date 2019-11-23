@@ -3,15 +3,17 @@ using System;
 using HoneyDo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HoneyDo.Infrastructure.Migrations
 {
     [DbContext(typeof(HoneyDoContext))]
-    partial class HoneyDoContextModelSnapshot : ModelSnapshot
+    [Migration("20191122063044_ReduceComplexity3")]
+    partial class ReduceComplexity3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

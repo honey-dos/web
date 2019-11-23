@@ -3,15 +3,17 @@ using System;
 using HoneyDo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HoneyDo.Infrastructure.Migrations
 {
     [DbContext(typeof(HoneyDoContext))]
-    partial class HoneyDoContextModelSnapshot : ModelSnapshot
+    [Migration("20191122060540_AddTodosRelationship")]
+    partial class AddTodosRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,15 +81,11 @@ namespace HoneyDo.Infrastructure.Migrations
 
                     b.Property<Guid?>("GroupId");
 
-                    b.Property<Guid?>("GroupId1");
-
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
-
-                    b.HasIndex("GroupId1");
 
                     b.ToTable("Todos");
                 });
@@ -113,10 +111,6 @@ namespace HoneyDo.Infrastructure.Migrations
                     b.HasOne("HoneyDo.Domain.Entities.Group", "Group")
                         .WithMany("Todos")
                         .HasForeignKey("GroupId");
-
-                    b.HasOne("HoneyDo.Domain.Entities.Group")
-                        .WithMany("Foobar")
-                        .HasForeignKey("GroupId1");
                 });
 #pragma warning restore 612, 618
         }
