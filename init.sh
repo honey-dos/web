@@ -3,22 +3,6 @@ echo "Installing NPM modules."
 npm install
 npm install --prefix HoneyDo.Web/ClientApp
 
-## Setup a postgres docker and migrate the tables to it - if this fails, run the following commands to remove the container and re-create it
-## troubleshooting: `docker ps` - copy container ID and replace [container ID] in `docker stop [411b2c4fd3e9]` then `docker rm [411b2c4fd3e9]`
-echo "Checking for docker container."
-if docker container ls -a | grep 'honeydo-db'; then
-    echo "Docker has a container ready. Checking if container is running."
-    if docker ps | grep 'honeydo-db'; then
-        echo "Docker container is already running. Skipping..."
-    else
-        echo "Starting container..."
-        docker start honeydo-db
-    fi
-else
-    echo "Creating docker postgres image and migrating the database."
-    docker run --name honeydo-db -e POSTGRES_DB=honeydo -e POSTGRES_USER=honeydo-user -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
-fi
-
 ## Install dotnet ef for db migration
 echo "Checking for dotnet tool 'ef'."
 if dotnet ef --version; then
@@ -27,10 +11,6 @@ else
     echo "Installing dotnet tool 'dotnet-ef'."
     dotnet tool install --global dotnet-ef #will warn if alaready installed
 fi
-
-## Database migration TODO: Set flag to only do database migration
-echo "Migrating the database on docker"
-dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext
 
 ## Install dotnet dev-certs for https
 echo "Checking for dotnet tool 'dev-certs'."
@@ -118,6 +98,26 @@ if [[ "$ans" =~ ^[yY]e?s?$ ]]; then
 else
     echo "Skipping firebasejson setup..."
 fi
+
+## Setup a postgres docker and migrate the tables to it - if this fails, run the following commands to remove the container and re-create it
+## troubleshooting: `docker ps` - copy container ID and replace [container ID] in `docker stop [411b2c4fd3e9]` then `docker rm [411b2c4fd3e9]`
+echo "Checking for docker container."
+if docker container ls -a | grep 'honeydo-db'; then
+    echo "Docker has a container ready. Checking if container is running."
+    if docker ps | grep 'honeydo-db'; then
+        echo "Docker container is already running. Skipping..."
+    else
+        echo "Starting container..."
+        docker start honeydo-db
+    fi
+else
+    echo "Creating docker postgres image and migrating the database."
+    docker run --name honeydo-db -e POSTGRES_DB=honeydo -e POSTGRES_USER=honeydo-user -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+fi
+
+## Database migration TODO: Set flag to only do database migration
+echo "Migrating the database on docker"
+dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext
 
 ## cleanup
 unset key jwt ans
