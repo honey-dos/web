@@ -38,10 +38,27 @@ namespace HoneyDo.Web.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Gets all the groups that the user has access to.", OperationId = "GetGroups")]
         [SwaggerResponse(200, "All groups for the user.", typeof(List<Group>))]
-        public async Task<ActionResult<List<Group>>> GetGroups()
+        [SwaggerResponse(400, "Load parameter no valid.")]
+        public async Task<ActionResult<List<Group>>> GetGroups(
+            [SwaggerParameter("Additional entities to fetch ('Tasks|Accounts').")]string load = "")
         {
+            string loadActual;
+            switch (load.ToLower())
+            {
+                case "tasks":
+                    loadActual = "_tasks";
+                    break;
+                case "accounts":
+                    loadActual = "_groupAccounts.Account";
+                    break;
+                case "":
+                    loadActual = "";
+                    break;
+                default:
+                    return BadRequest();
+            }
             var account = await _accountAccessor.GetAccount();
-            var groups = await _groupRepository.Query(new GroupsForUser(account), load: "_tasks");
+            var groups = await _groupRepository.Query(new GroupsForUser(account), load: loadActual);
             return Ok(groups);
         }
 
@@ -180,7 +197,6 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
-            groupAccount = new GroupAccount(group, account);
             await _groupAccountRepository.Remove(groupAccount);
             return NoContent();
         }
