@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
 using HoneyDo.Domain.Specifications.Accounts;
+using HoneyDo.Domain.Specifications.GroupAccounts;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -111,9 +112,9 @@ namespace HoneyDo.Web.Controllers
         [HttpPost("{id}/add/{accountId}")]
         [SwaggerOperation(Summary = "Add account to a specific group.", OperationId = "CreateGroupAccount")]
         [SwaggerResponse(200, "Returns sucessfully created GroupAccount.")]
-        [SwaggerResponse(400, "No group found with specified id.")]
+        [SwaggerResponse(400, "No group or account found with specified id or account already belongs to group.")]
         [SwaggerResponse(403, "Don't have access to specific group.")]
-        public async Task<ActionResult<Todo>> Assign(
+        public async Task<ActionResult<GroupAccount>> CreateGroupAccount(
                 [SwaggerParameter("Id of group to add account to.")] Guid id,
                 [SwaggerParameter("Id of account to be added to group.")] Guid accountId)
         {
@@ -135,9 +136,53 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest();
             }
 
-            var groupAccount = new GroupAccount(group, account);
+            var groupAccount = await _groupAccountRepository.Find(new GroupAccountByIds(id, accountId));
+            if (groupAccount != null)
+            {
+                return BadRequest();
+            }
+
+            groupAccount = new GroupAccount(group, account);
             await _groupAccountRepository.Add(groupAccount);
             return Ok(groupAccount);
+        }
+
+        [HttpDelete("{id}/remove/{accountId}")]
+        [SwaggerOperation(Summary = "Remove account to a specific group.", OperationId = "RemoveGroupAccount")]
+        [SwaggerResponse(204, "GroupAccount was successfully deleted.")]
+        [SwaggerResponse(400, "No group or account found with specified id or account does not belong to group.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult> RemoveGroupAccount(
+                [SwaggerParameter("Id of group to remove account from.")] Guid id,
+                [SwaggerParameter("Id of account to be removed.")] Guid accountId)
+        {
+            var group = await _groupRepository.Find(new GroupById(id));
+            if (group == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (group.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            account = await _accountRepository.Find(new AccountById(accountId));
+            if (account == null)
+            {
+                return BadRequest();
+            }
+
+            var groupAccount = await _groupAccountRepository.Find(new GroupAccountByIds(id, accountId));
+            if (groupAccount == null)
+            {
+                return BadRequest();
+            }
+
+            groupAccount = new GroupAccount(group, account);
+            await _groupAccountRepository.Remove(groupAccount);
+            return NoContent();
         }
 
     }
