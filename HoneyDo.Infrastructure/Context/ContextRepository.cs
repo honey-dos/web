@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HoneyDo.Domain.Interfaces;
+using HoneyDo.Domain.Values;
 using Microsoft.EntityFrameworkCore;
 
 namespace HoneyDo.Infrastructure.Context
@@ -24,14 +25,29 @@ namespace HoneyDo.Infrastructure.Context
             await _save();
         }
 
-        public Task<T> Find(ISpecification<T> spec)
+        public Task<T> Find(ISpecification<T> spec, string load = "")
         {
-            return _dbset.Where(spec.BuildExpression()).FirstOrDefaultAsync();
+            var query = _dbset.Where(spec.BuildExpression());
+            if (!string.IsNullOrWhiteSpace(load))
+            {
+                query = query.Include(load);
+            }
+            return query.FirstOrDefaultAsync();
         }
 
-        public Task<List<T>> Query(ISpecification<T> spec)
+        public Task<List<T>> Query(ISpecification<T> spec, Page page = null, string load = "")
         {
-            return _dbset.Where(spec.BuildExpression()).ToListAsync();
+            IQueryable<T> queryable = _dbset.Where(spec.BuildExpression());
+            if (page != null)
+            {
+                queryable = queryable.Skip((page.PageIndex - 1) * page.PageSize).Take(page.PageSize);
+            }
+            if (!string.IsNullOrWhiteSpace(load))
+            {
+                queryable = queryable.Include(load);
+            }
+
+            return queryable.ToListAsync();
         }
 
         public async Task<bool> Remove(T item)

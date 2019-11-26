@@ -1,5 +1,5 @@
 {
-  "ignore": [".git"],
+  "ignore": [".git", "HoneyDo.Test/*"],
   "execMap": {
     "csproj": "dotnet run --project"
   },

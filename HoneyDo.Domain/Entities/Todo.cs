@@ -18,11 +18,19 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// Id of the user who created the todo.
         /// </summary>
-        public Guid OwnerId { get; private set; }
+        public Guid CreatorId { get; private set; }
+        /// <summary>
+        /// Id of the user who is assigned to the todo.
+        /// </summary>
+        public Guid? AssigneeId { get; private set; }
         /// <summary>
         /// Date the todo was created.
         /// </summary>
-        public DateTime CreateDate { get; private set; }
+        public DateTime DateCreated { get; private set; }
+        /// <summary>
+        /// Date the todo was last modified.
+        /// </summary>
+        public DateTime DateModified { get; private set; }
         /// <summary>
         /// Date the todo was completed.
         /// </summary>
@@ -31,6 +39,10 @@ namespace HoneyDo.Domain.Entities
         /// Date the todo should be completed.
         /// </summary>
         public DateTime? DueDate { get; private set; }
+        /// <summary>
+        /// Group Id of the group the todo belongs to.
+        /// </summary>
+        public Guid? GroupId { get; private set; }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -44,7 +56,8 @@ namespace HoneyDo.Domain.Entities
         /// <param name="name">Text by which the todo will be known.</param>
         /// <param name="owner">User who creating the todo.</param>
         /// <param name="dueDate">Optional date the todo should be completed by.</param>
-        public Todo(string name, Account owner, DateTime? dueDate = null)
+        /// <param name="group">Optional group for the group the todo belongs to.</param>
+        public Todo(string name, Account owner, DateTime? dueDate = null, Group group = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -58,9 +71,13 @@ namespace HoneyDo.Domain.Entities
 
             Id = Guid.NewGuid();
             Name = name;
-            OwnerId = owner.Id;
-            CreateDate = DateTime.UtcNow;
+            CreatorId = owner.Id;
+            DateCreated = DateModified = DateTime.UtcNow;
             DueDate = dueDate;
+            if (group != null)
+            {
+                GroupId = group.Id;
+            }
         }
 
         /// <summary>
@@ -75,6 +92,7 @@ namespace HoneyDo.Domain.Entities
             }
 
             Name = name;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -83,6 +101,7 @@ namespace HoneyDo.Domain.Entities
         public void Complete()
         {
             CompletedDate = DateTime.UtcNow;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -91,6 +110,7 @@ namespace HoneyDo.Domain.Entities
         public void UnComplete()
         {
             CompletedDate = null;
+            DateModified = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -100,6 +120,53 @@ namespace HoneyDo.Domain.Entities
         public void UpdateDueDate(DateTime? dueDate)
         {
             DueDate = dueDate;
+            DateModified = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Assigns the todo to the account given.
+        /// </summary>
+        /// <param name="assignee">New account the todo will be assigned to.</param>
+        public void Assign(Account assignee)
+        {
+            if (assignee == null)
+            {
+                throw new ArgumentNullException(nameof(assignee));
+            }
+            AssigneeId = assignee.Id;
+            DateModified = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Unassigns the todo.
+        /// </summary>
+        public void Unassign()
+        {
+            AssigneeId = null;
+            DateModified = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Moves the todo to the specified group ID.
+        /// </summary>
+        /// <param name="group">New account the todo will belong to.</param>
+        public void ChangeGroup(Group group)
+        {
+            if (group == null)
+            {
+                throw new ArgumentNullException(nameof(group));
+            }
+            GroupId = group.Id;
+            DateModified = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Remove group
+        /// </summary>
+        public void RemoveGroup()
+        {
+            GroupId = null;
+            DateModified = DateTime.UtcNow;
         }
     }
 }

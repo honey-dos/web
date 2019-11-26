@@ -21,7 +21,7 @@ namespace HoneyDo.Web.Services
             _accountRepo = accountRepo;
         }
 
-        public async Task<Account> GetAccount()
+        public async Task<Account> GetAccount(string load = "")
         {
             if (_account != null)
             {
@@ -46,7 +46,7 @@ namespace HoneyDo.Web.Services
                 return null;
             };
 
-            _account = await _accountRepo.Find(new AccountById(accountId));
+            _account = await _accountRepo.Find(new AccountById(accountId), load);
             return _account;
         }
     }

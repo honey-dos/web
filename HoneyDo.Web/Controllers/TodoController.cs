@@ -9,20 +9,30 @@ using HoneyDo.Domain.Specifications.Todos;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
+using HoneyDo.Domain.Specifications.Accounts;
+using HoneyDo.Domain.Specifications.Groups;
 
 namespace HoneyDo.Web.Controllers
 {
     [Route("api/todos"), Authorize, ApiController]
+    [SwaggerTag("Create, read, update & delete todos.")]
     [Produces("application/json")]
     public class TodoController : Controller
     {
         private readonly IRepository<Todo> _todoRepository;
+        private readonly IRepository<Account> _accountRepository;
         private readonly IAccountAccessor _accountAccessor;
+        private readonly IRepository<Group> _groupRepository;
 
-        public TodoController(IRepository<Todo> todoRepository, IAccountAccessor accountAccessor)
+        public TodoController(IRepository<Todo> todoRepository,
+            IAccountAccessor accountAccessor,
+            IRepository<Account> accountRepository,
+            IRepository<Group> groupRepository)
         {
             _todoRepository = todoRepository;
             _accountAccessor = accountAccessor;
+            _accountRepository = accountRepository;
+            _groupRepository = groupRepository;
         }
 
         [HttpGet]
@@ -30,9 +40,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(200, "All todos for the user.", typeof(List<Todo>))]
         public async Task<ActionResult<List<Todo>>> GetTodos()
         {
-            var account = await _accountAccessor.GetAccount();
-            var todos = await _todoRepository.Query(new TodosForUser(account));
-            return Ok(todos);
+            var account = await _accountAccessor.GetAccount("_groupAccounts.Group._tasks");
+            return Ok(account.Tasks);
         }
 
         [HttpGet("{id}")]
@@ -49,7 +58,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -77,8 +86,15 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Todo values, optional: dueDate")]
                 TodoCreateFormModel model)
         {
+            Group group = null;
+            if (model.GroupId.HasValue)
+            {
+                // TODO: only return group user has access too.
+                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
+            }
             var account = await _accountAccessor.GetAccount();
-            var todo = new Todo(model.Name, account, model.DueDate);
+            // TODO verify group exists
+            var todo = new Todo(model.Name, account, model.DueDate, group);
             await _todoRepository.Add(todo);
             return Created($"api/todos/{todo.Id}", todo);
         }
@@ -98,7 +114,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -138,9 +154,22 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
+            }
+
+            Group group = null;
+            if (model.GroupId.HasValue)
+            {
+                // TODO: only return group user has access too.
+                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
+                // TODO verify group exists
+                todo.ChangeGroup(group);
+            }
+            else if (!model.GroupId.HasValue && todo.GroupId.HasValue)
+            {
+                todo.RemoveGroup();
             }
 
             todo.UpdateName(model.Name);
@@ -183,7 +212,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -244,7 +273,7 @@ namespace HoneyDo.Web.Controllers
             }
 
             var account = await _accountAccessor.GetAccount();
-            if (todo.OwnerId != account.Id)
+            if (todo.CreatorId != account.Id)
             {
                 return Unauthorized();
             }
@@ -256,6 +285,116 @@ namespace HoneyDo.Web.Controllers
             }
 
             todo.UpdateDueDate(dueDate);
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+        [HttpPut("{id}/assign/{accountId}")]
+        [SwaggerOperation(Summary = "Assign account to a specific todo.", OperationId = "AssignTodo")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+        public async Task<ActionResult<Todo>> Assign(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id,
+                [SwaggerParameter("Id of account to assign the todo to")] Guid accountId)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            account = await _accountRepository.Find(new AccountById(accountId));
+            if (account == null)
+            {
+                return BadRequest();
+            }
+
+            // TODO verify account has access to task through groups
+            todo.Assign(account);
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+        [HttpDelete("{id}/assign")]
+        [SwaggerOperation(Summary = "Unassign a specific todo.", OperationId = "UnassignTodo")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+        public async Task<ActionResult<Todo>> Unassign(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            todo.Unassign();
+            await _todoRepository.Update(todo);
+            return Ok(todo);
+        }
+
+        [HttpPut("{id}/group/{groupId}")]
+        [SwaggerOperation(Summary = "Change a specific todo's group.", OperationId = "ChangeGroup")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+        public async Task<ActionResult<Todo>> ChangeGroup(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id,
+                [SwaggerParameter("Id of todo to be updated.")] Guid groupId)
+        {
+            return await SetGroup(id, groupId);
+        }
+
+        [HttpDelete("{id}/group")]
+        [SwaggerOperation(Summary = "Remove a specific todo from a group.", OperationId = "RemoveGroup")]
+        [SwaggerResponse(200, "Returns sucessfully updated Todo.")]
+        [SwaggerResponse(400, "No todo found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific todo.")]
+        public async Task<ActionResult<Todo>> RemoveGroup(
+                [SwaggerParameter("Id of todo to be updated.")] Guid id)
+        {
+            return await SetGroup(id, null);
+        }
+
+        private async Task<ActionResult<Todo>> SetGroup(Guid id, Guid? groupId)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (todo.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            if (groupId.HasValue)
+            {
+                var group = await _groupRepository.Find(new GroupById(groupId.Value));
+                // TODO verify group
+                todo.ChangeGroup(group);
+            }
+            else
+            {
+                todo.RemoveGroup();
+            }
+
             await _todoRepository.Update(todo);
             return Ok(todo);
         }

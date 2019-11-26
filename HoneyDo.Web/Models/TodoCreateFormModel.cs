@@ -17,5 +17,9 @@ namespace HoneyDo.Web.Models
         /// The DueDate the todo will be set to (optional).
         /// </summary>
         public DateTime? DueDate { get; set; }
+        /// <summary>
+        /// The group id of the group this todo will be assigned to (optional).
+        /// </summary>
+        public Guid? GroupId { get; set; }
     }
 }

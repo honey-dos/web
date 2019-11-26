@@ -5,6 +5,6 @@ namespace HoneyDo.Domain.Interfaces
 {
     public interface IAccountAccessor
     {
-        Task<Account> GetAccount();
+        Task<Account> GetAccount(string load = "");
     }
 }

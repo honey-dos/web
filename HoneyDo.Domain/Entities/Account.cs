@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace HoneyDo.Domain.Entities
 {
@@ -31,6 +33,43 @@ namespace HoneyDo.Domain.Entities
         /// Accounts app unique normalized username
         /// </summary>
         public string NormalizedUserName { get; private set; }
+        /// <summary>
+        /// Todos that belong to this group.
+        /// </summary>
+        protected List<GroupAccount> _groupAccounts { get; set; }
+        /// <summary>
+        /// Group that belong to this account
+        /// </summary>
+        public Group[] Groups
+        {
+            get
+            {
+                if (_groupAccounts == null)
+                {
+                    return new Group[0];
+                }
+                return _groupAccounts
+                    .Select(ga => ga.Group)
+                    .ToArray();
+            }
+        }
+        /// <summary>
+        /// Tasks this account has access too.
+        /// </summary>
+        public Todo[] Tasks
+        {
+            get
+            {
+                if (_groupAccounts == null)
+                {
+                  return new Todo[0];
+                }
+                return _groupAccounts
+                    .Select(ga => ga.Group)
+                    .SelectMany(grp => grp.Tasks)
+                    .ToArray();
+            }
+        }
 
         /// <summary>
         /// Create new account.
@@ -51,6 +90,7 @@ namespace HoneyDo.Domain.Entities
             Picture = picture;
             UserName = userName;
             NormalizedUserName = userName.ToUpper();
+            _groupAccounts = new List<GroupAccount>();
         }
 
         /// <summary>

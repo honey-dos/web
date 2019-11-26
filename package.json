@@ -4,7 +4,16 @@
   "description": "honey-dos todo list",
   "scripts": {
     "watch": "concurrently --kill-others --handle-input \"nodemon HoneyDo.Web/HoneyDo.Web.csproj\" \"npm run start --prefix HoneyDo.Web/ClientApp\"",
-    "database:update": "dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext"
+    "database:migrate": "dotnet ef migrations add -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext",
+    "database:update": "dotnet ef database update -p ./HoneyDo.Infrastructure/ -s ./HoneyDo.Web/ -c HoneyDoContext",
+    "build": "npm run build:web && npm run build:client",
+    "build:web": "dotnet build HoneyDo.Web/HoneyDo.Web.csproj",
+    "build:client": "npm run build --prefix HoneyDo.Web/ClientApp",
+    "test": "npm run test:dotnet && npm run test:client",
+    "test:dotnet": "dotnet test HoneyDo.Test/HoneyDo.Test.csproj",
+    "test:client": "npm run test --prefix HoneyDo.Web/ClientApp",
+    "docker:start": "docker start honeydo-db",
+    "docker:stop": "docker stop honeydo-db"
   },
   "repository": {
     "type": "git",

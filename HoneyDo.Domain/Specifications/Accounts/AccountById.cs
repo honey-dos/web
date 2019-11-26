@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq.Expressions;
 using HoneyDo.Domain.Entities;

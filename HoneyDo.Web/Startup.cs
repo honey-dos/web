@@ -38,6 +38,11 @@ namespace HoneyDo.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc()
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling =
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddIdentityCore<Account>();
@@ -103,7 +108,9 @@ namespace HoneyDo.Web
             services.AddDbContext<HoneyDoContext>();
 
             // repos
+            services.AddScoped<IRepository<Group>, ContextRepository<Group, HoneyDoContext>>();
             services.AddScoped<IRepository<Todo>, ContextRepository<Todo, HoneyDoContext>>();
+            services.AddScoped<IRepository<GroupAccount>, ContextRepository<GroupAccount, HoneyDoContext>>();
             services.AddScoped<IRepository<Account>, ContextRepository<Account, HoneyDoContext>>();
             services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
 
