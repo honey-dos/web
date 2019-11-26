@@ -123,7 +123,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [Authorize, HttpGet("search")]
-        [SwaggerOperation(Summary = "Adds a new login to the account.", OperationId = "SearchAccounts")]
+        [SwaggerOperation(Summary = "Search for existing accounts.", OperationId = "SearchAccounts")]
         [SwaggerResponse(200, "Accounts that match search results.", typeof(List<Account>))]
         public async Task<ActionResult<List<Account>>> Search(
             [SwaggerParameter("Term to search for accounts.")]string term,
