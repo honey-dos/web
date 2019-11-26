@@ -13,6 +13,7 @@ namespace HoneyDo.Infrastructure.Context
         public DbSet<Todo> Todos { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Login> Logins { get; set; }
+        public DbSet<GroupAccount> GroupAccounts { get; set; }
 
         public HoneyDoContext(IOptions<ContextOptions<HoneyDoContext>> options)
         {
@@ -30,18 +31,28 @@ namespace HoneyDo.Infrastructure.Context
             {
                 a.HasIndex(i => i.NormalizedUserName)
                     .IsUnique();
+                a.Ignore(i => i.GroupAccounts);
             });
             modelBuilder.Entity<Todo>(t =>
             {
                 t.HasOne(to => to.Group)
-                  .WithMany("Todos")
-                  .HasForeignKey(to => to.GroupId);
+                    .WithMany("_tasks")
+                    .HasForeignKey(to => to.GroupId);
             });
-            /* modelBuilder.Entity<Group>(grp => */
-            /* { */
-            /*     grp.HasMany(g => g.Todos).WithOne(); */
-            /*     grp.Ignore(g => g.Foobar); */
-            /* }); */
+            modelBuilder.Entity<GroupAccount>(groupAccount =>
+            {
+                groupAccount.HasKey(g => new { g.GroupId, g.AccountId });
+                groupAccount.HasOne<Group>()
+                    .WithMany("_groupAccounts")
+                    .HasForeignKey(g => g.GroupId);
+                groupAccount.HasOne<Account>()
+                    .WithMany("_groupAccounts")
+                    .HasForeignKey(g => g.AccountId);
+            });
+            modelBuilder.Entity<Group>(group =>
+            {
+                group.Ignore(i => i.GroupAccounts);
+            });
         }
     }
 }

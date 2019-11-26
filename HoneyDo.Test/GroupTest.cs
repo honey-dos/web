@@ -21,6 +21,8 @@ namespace HoneyDo.Test
             Assert.Equal(DateTime.UtcNow.DayOfYear, group.DateCreated.DayOfYear);
             Assert.Equal(DateTime.UtcNow.Year, group.DateModified.Year);
             Assert.Equal(DateTime.UtcNow.DayOfYear, group.DateModified.DayOfYear);
+            Assert.Empty(group.Tasks);
+            Assert.Empty(group.GroupAccounts);
         }
 
 

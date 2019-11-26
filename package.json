@@ -11,7 +11,9 @@
     "build:client": "npm run build --prefix HoneyDo.Web/ClientApp",
     "test": "npm run test:dotnet && npm run test:client",
     "test:dotnet": "dotnet test HoneyDo.Test/HoneyDo.Test.csproj",
-    "test:client": "npm run test --prefix HoneyDo.Web/ClientApp"
+    "test:client": "npm run test --prefix HoneyDo.Web/ClientApp",
+    "docker:start": "docker start honeydo-db",
+    "docker:stop": "docker stop honeydo-db"
   },
   "repository": {
     "type": "git",

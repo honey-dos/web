@@ -23,16 +23,18 @@ namespace HoneyDo.Web.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly IEnumerable<IProvider> _providers;
         private readonly IRepository<Account> _accountRepository;
+        private readonly IAccountAccessor _accountAccessor;
 
         public AccountController(UserManager<Account> userManager,
             IEnumerable<IProvider> providers,
-            IRepository<Account> accountRepository)
+            IRepository<Account> accountRepository,
+            IAccountAccessor accountAccessor)
         {
             _userManager = userManager;
             _providers = providers;
             _accountRepository = accountRepository;
+            _accountAccessor = accountAccessor;
         }
-
 
         private async Task<IdentityResult> AddLogin(Account account, LoginModel model)
         {
@@ -67,11 +69,20 @@ namespace HoneyDo.Web.Controllers
             return result;
         }
 
+        [Authorize, HttpGet]
+        [SwaggerOperation(Summary = "Get current user's account.", OperationId = "GetAccount")]
+        [SwaggerResponse(200, "The user's account.", typeof(Account))]
+        public async Task<ActionResult<Account>> GetAccount()
+        {
+            var account = await _accountAccessor.GetAccount();
+            return Ok(account);
+        }
+
         [HttpPost("register")]
         [SwaggerOperation(Summary = "Registers a new account.", OperationId = "RegisterAccount")]
         [SwaggerResponse(201, "The account was created.", typeof(Account))]
         [SwaggerResponse(400, "Unable to create account.")]
-        public async Task<ActionResult> Register(
+        public async Task<ActionResult<Account>> Register(
             [FromBody, Required]
             [SwaggerParameter("Account and login values.")]
                 RegisterModel model)
@@ -90,7 +101,7 @@ namespace HoneyDo.Web.Controllers
                 return BadRequest(loginResult.Errors);
             }
 
-            return Created("api/account/", account);
+            return Created("api/account", account);
         }
 
         [Authorize, HttpPost("login")]
@@ -114,7 +125,7 @@ namespace HoneyDo.Web.Controllers
         [Authorize, HttpGet("search")]
         [SwaggerOperation(Summary = "Adds a new login to the account.", OperationId = "SearchAccounts")]
         [SwaggerResponse(200, "Accounts that match search results.", typeof(List<Account>))]
-        public async Task<ActionResult> Search(
+        public async Task<ActionResult<List<Account>>> Search(
             [SwaggerParameter("Term to search for accounts.")]string term,
             [SwaggerParameter("Page index, min: 1")] int pageIndex = 1,
             [SwaggerParameter("Page size, min: 10, max: 1000")] int pageSize = 10)

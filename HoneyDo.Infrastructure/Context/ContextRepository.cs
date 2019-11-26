@@ -25,9 +25,14 @@ namespace HoneyDo.Infrastructure.Context
             await _save();
         }
 
-        public Task<T> Find(ISpecification<T> spec)
+        public Task<T> Find(ISpecification<T> spec, string load = "")
         {
-            return _dbset.Where(spec.BuildExpression()).FirstOrDefaultAsync();
+            var query = _dbset.Where(spec.BuildExpression());
+            if (!string.IsNullOrWhiteSpace(load))
+            {
+                query = query.Include(load);
+            }
+            return query.FirstOrDefaultAsync();
         }
 
         public Task<List<T>> Query(ISpecification<T> spec, Page page = null, string load = "")
@@ -39,7 +44,7 @@ namespace HoneyDo.Infrastructure.Context
             }
             if (!string.IsNullOrWhiteSpace(load))
             {
-              queryable = queryable.Include(load);
+                queryable = queryable.Include(load);
             }
 
             return queryable.ToListAsync();

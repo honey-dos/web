@@ -20,13 +20,18 @@ namespace HoneyDo.Web.Controllers
     {
         private readonly IRepository<Group> _groupRepository;
         private readonly IRepository<Account> _accountRepository;
+        private readonly IRepository<GroupAccount> _groupAccountRepository;
         private readonly IAccountAccessor _accountAccessor;
 
-        public GroupController(IRepository<Group> groupRepository, IAccountAccessor accountAccessor, IRepository<Account> accountRepository)
+        public GroupController(IRepository<Group> groupRepository,
+            IAccountAccessor accountAccessor,
+            IRepository<Account> accountRepository,
+            IRepository<GroupAccount> groupAccountRepository)
         {
             _groupRepository = groupRepository;
             _accountAccessor = accountAccessor;
             _accountRepository = accountRepository;
+            _groupAccountRepository = groupAccountRepository;
         }
 
         [HttpGet]
@@ -35,7 +40,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<List<Group>>> GetGroups()
         {
             var account = await _accountAccessor.GetAccount();
-            var groups = await _groupRepository.Query(new GroupsForUser(account), load: "Todos");
+            var groups = await _groupRepository.Query(new GroupsForUser(account), load: "_tasks");
             return Ok(groups);
         }
 
@@ -87,7 +92,6 @@ namespace HoneyDo.Web.Controllers
                 GroupCreateFormModel model)
         {
             var group = await _groupRepository.Find(new GroupById(id));
-
             if (group == null)
             {
                 return BadRequest();
@@ -102,6 +106,38 @@ namespace HoneyDo.Web.Controllers
             group.UpdateName(model.Name);
             await _groupRepository.Update(group);
             return Ok(group);
+        }
+
+        [HttpPost("{id}/add/{accountId}")]
+        [SwaggerOperation(Summary = "Add account to a specific group.", OperationId = "CreateGroupAccount")]
+        [SwaggerResponse(200, "Returns sucessfully created GroupAccount.")]
+        [SwaggerResponse(400, "No group found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult<Todo>> Assign(
+                [SwaggerParameter("Id of group to add account to.")] Guid id,
+                [SwaggerParameter("Id of account to be added to group.")] Guid accountId)
+        {
+            var group = await _groupRepository.Find(new GroupById(id));
+            if (group == null)
+            {
+                return BadRequest();
+            }
+
+            var account = await _accountAccessor.GetAccount();
+            if (group.CreatorId != account.Id)
+            {
+                return Unauthorized();
+            }
+
+            account = await _accountRepository.Find(new AccountById(accountId));
+            if (account == null)
+            {
+                return BadRequest();
+            }
+
+            var groupAccount = new GroupAccount(group, account);
+            await _groupAccountRepository.Add(groupAccount);
+            return Ok(groupAccount);
         }
 
     }

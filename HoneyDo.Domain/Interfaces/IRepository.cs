@@ -9,7 +9,7 @@ namespace HoneyDo.Domain.Interfaces
         Task Add(T item);
         Task<bool> Update(T item);
         Task<bool> Remove(T item);
-        Task<T> Find(ISpecification<T> spec);
+        Task<T> Find(ISpecification<T> spec, string load = "");
         Task<List<T>> Query(ISpecification<T> spec, Page page = null, string load = "");
     }
 }

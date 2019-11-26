@@ -29,9 +29,12 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public DateTime DateModified { get; private set; }
         /// <summary>
-        /// Todos that belong to this group.
+        /// Tasks that belong to this group.
         /// </summary>
         protected List<Todo> _tasks { get; set; }
+        /// <summary>
+        /// Tasks that belong to this group.
+        /// </summary>
         public Todo[] Tasks
         {
             get
@@ -41,6 +44,24 @@ namespace HoneyDo.Domain.Entities
                     return new Todo[0];
                 }
                 return _tasks.ToArray();
+            }
+        }
+        /// <summary>
+        /// User accounts that belong to this group.
+        /// </summary>
+        protected List<GroupAccount> _groupAccounts { get; set; }
+        /// <summary>
+        /// User accounts that belong to this group.
+        /// </summary>
+        public GroupAccount[] GroupAccounts
+        {
+            get
+            {
+                if (_groupAccounts == null)
+                {
+                    return new GroupAccount[0];
+                }
+                return _groupAccounts.ToArray();
             }
         }
 
@@ -71,6 +92,7 @@ namespace HoneyDo.Domain.Entities
             CreatorId = creator.Id;
             DateCreated = DateModified = DateTime.UtcNow;
             _tasks = new List<Todo>();
+            _groupAccounts = new List<GroupAccount>();
         }
 
         /// <summary>
