@@ -18,7 +18,7 @@ namespace HoneyDo.Test
             Assert.Equal("tyler evans", account.Name);
             Assert.True(account.IsEnabled);
             Assert.Equal(string.Empty, account.Picture);
-            Assert.Empty(account.GroupAccounts);
+            Assert.Empty(account.Tasks);
         }
 
         [Fact]

@@ -22,7 +22,7 @@ namespace HoneyDo.Test
             Assert.Equal(DateTime.UtcNow.Year, group.DateModified.Year);
             Assert.Equal(DateTime.UtcNow.DayOfYear, group.DateModified.DayOfYear);
             Assert.Empty(group.Tasks);
-            Assert.Empty(group.GroupAccounts);
+            Assert.Collection(group.Accounts, x => Assert.Equal(account, x));
         }
 
 

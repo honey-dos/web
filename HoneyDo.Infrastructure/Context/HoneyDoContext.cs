@@ -31,13 +31,8 @@ namespace HoneyDo.Infrastructure.Context
             {
                 a.HasIndex(i => i.NormalizedUserName)
                     .IsUnique();
-                a.Ignore(i => i.GroupAccounts);
-            });
-            modelBuilder.Entity<Todo>(t =>
-            {
-                t.HasOne(to => to.Group)
-                    .WithMany("_tasks")
-                    .HasForeignKey(to => to.GroupId);
+                a.Ignore(i => i.Groups);
+                a.Ignore(i => i.Tasks);
             });
             modelBuilder.Entity<GroupAccount>(groupAccount =>
             {
@@ -51,7 +46,11 @@ namespace HoneyDo.Infrastructure.Context
             });
             modelBuilder.Entity<Group>(group =>
             {
-                group.Ignore(i => i.GroupAccounts);
+                group.Ignore(i => i.Accounts);
+                group.Ignore(i => i.Tasks);
+                group.HasMany<Todo>("_tasks")
+                    .WithOne()
+                    .HasForeignKey(to => to.GroupId);
             });
         }
     }

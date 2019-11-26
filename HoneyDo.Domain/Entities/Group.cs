@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace HoneyDo.Domain.Entities
@@ -53,15 +54,17 @@ namespace HoneyDo.Domain.Entities
         /// <summary>
         /// User accounts that belong to this group.
         /// </summary>
-        public GroupAccount[] GroupAccounts
+        public Account[] Accounts
         {
             get
             {
                 if (_groupAccounts == null)
                 {
-                    return new GroupAccount[0];
+                    return new Account[0];
                 }
-                return _groupAccounts.ToArray();
+                return _groupAccounts
+                    .Select(ga => ga.Account)
+                    .ToArray();
             }
         }
 
@@ -92,7 +95,7 @@ namespace HoneyDo.Domain.Entities
             CreatorId = creator.Id;
             DateCreated = DateModified = DateTime.UtcNow;
             _tasks = new List<Todo>();
-            _groupAccounts = new List<GroupAccount>();
+            _groupAccounts = new List<GroupAccount>() { new GroupAccount(this, creator) };
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace HoneyDo.Domain.Entities
@@ -37,17 +38,36 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         protected List<GroupAccount> _groupAccounts { get; set; }
         /// <summary>
-        /// GroupAccounts that belong to this account
+        /// Group that belong to this account
         /// </summary>
-        public GroupAccount[] GroupAccounts
+        public Group[] Groups
         {
             get
             {
                 if (_groupAccounts == null)
                 {
-                    return new GroupAccount[0];
+                    return new Group[0];
                 }
-                return _groupAccounts.ToArray();
+                return _groupAccounts
+                    .Select(ga => ga.Group)
+                    .ToArray();
+            }
+        }
+        /// <summary>
+        /// Tasks this account has access too.
+        /// </summary>
+        public Todo[] Tasks
+        {
+            get
+            {
+                if (_groupAccounts == null)
+                {
+                  return new Todo[0];
+                }
+                return _groupAccounts
+                    .Select(ga => ga.Group)
+                    .SelectMany(grp => grp.Tasks)
+                    .ToArray();
             }
         }
 

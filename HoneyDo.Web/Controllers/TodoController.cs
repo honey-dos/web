@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -42,8 +41,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<List<Todo>>> GetTodos()
         {
             var account = await _accountAccessor.GetAccount("_groupAccounts.Group._tasks");
-            var todos = account.GroupAccounts.Select(ga => ga.Group).SelectMany(grp => grp.Tasks);
-            return Ok(todos);
+            return Ok(account.Tasks);
         }
 
         [HttpGet("{id}")]

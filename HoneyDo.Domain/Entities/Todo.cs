@@ -43,10 +43,6 @@ namespace HoneyDo.Domain.Entities
         /// Group Id of the group the todo belongs to.
         /// </summary>
         public Guid? GroupId { get; private set; }
-        /// <summary>
-        /// The group the todo belongs to.
-        /// </summary>
-        public Group Group { get; private set; }
 
         /// <summary>
         /// Parameterless constructor required for entity framework.
@@ -80,7 +76,6 @@ namespace HoneyDo.Domain.Entities
             DueDate = dueDate;
             if (group != null)
             {
-                Group = group;
                 GroupId = group.Id;
             }
         }
@@ -161,7 +156,6 @@ namespace HoneyDo.Domain.Entities
             {
                 throw new ArgumentNullException(nameof(group));
             }
-            Group = group;
             GroupId = group.Id;
             DateModified = DateTime.UtcNow;
         }
@@ -171,7 +165,6 @@ namespace HoneyDo.Domain.Entities
         /// </summary>
         public void RemoveGroup()
         {
-            Group = null;
             GroupId = null;
             DateModified = DateTime.UtcNow;
         }

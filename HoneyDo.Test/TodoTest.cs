@@ -42,7 +42,6 @@ namespace HoneyDo.Test
             Account account = new Account("test", "test");
             Group group = new Group("groupName", account);
             var todo = new Todo("foobar", account, group: group);
-            Assert.Equal(group, todo.Group);
             Assert.Equal(group.Id, todo.GroupId);
         }
 
@@ -122,7 +121,6 @@ namespace HoneyDo.Test
             var todo = new Todo("foobar", account);
             var oldModified = todo.DateModified.ToBinary();
             todo.ChangeGroup(group);
-	    Assert.Equal(group, todo.Group);
             Assert.Equal(group.Id, todo.GroupId);
             Assert.NotEqual(oldModified, todo.DateModified.ToBinary());
         }
@@ -135,7 +133,6 @@ namespace HoneyDo.Test
             var todo = new Todo("foobar", account, group: group);
             var oldModified = todo.DateModified.ToBinary();
             todo.RemoveGroup();
-            Assert.Null(todo.Group);
             Assert.Null(todo.GroupId);
             Assert.NotEqual(oldModified, todo.DateModified.ToBinary());
         }
