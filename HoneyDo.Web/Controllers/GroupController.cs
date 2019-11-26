@@ -148,7 +148,7 @@ namespace HoneyDo.Web.Controllers
         }
 
         [HttpDelete("{id}/remove/{accountId}")]
-        [SwaggerOperation(Summary = "Remove account to a specific group.", OperationId = "RemoveGroupAccount")]
+        [SwaggerOperation(Summary = "Remove account from a specific group.", OperationId = "RemoveGroupAccount")]
         [SwaggerResponse(204, "GroupAccount was successfully deleted.")]
         [SwaggerResponse(400, "No group or account found with specified id or account does not belong to group.")]
         [SwaggerResponse(403, "Don't have access to specific group.")]

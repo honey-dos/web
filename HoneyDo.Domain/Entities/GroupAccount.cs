@@ -8,11 +8,11 @@ namespace HoneyDo.Domain.Entities
     public class GroupAccount
     {
         /// <summary>
-        /// Honey-Dos Group Account.
+        /// The id of the group that the account belongs too.
         /// </summary>
         public Guid GroupId { get; private set; }
         /// <summary>
-        /// Honey-Dos Group Account.
+        /// The id of the account the group contains
         /// </summary>
         public Guid AccountId { get; private set; }
         /// <summary>
