@@ -7,7 +7,7 @@ namespace HoneyDo.Web.GraphQL
     {
         public static ISchema BuildSchema(IServiceProvider services) => SchemaBuilder.New()
                     .AddServices(services)
-                    .AddQueryType<Query>()
+                    .AddQueryType<TaskQuery>()
                     /* .AddMutationType<MutationType>() */
                     /* .AddSubscriptionType<SubscriptionType>() */
                     /* .AddType<TodoType>() */
