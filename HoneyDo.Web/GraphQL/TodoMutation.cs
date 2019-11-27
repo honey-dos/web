@@ -33,15 +33,14 @@ namespace HoneyDo.Web.GraphQL
                 todo.ChangeGroup(group);
             }
             else if (!input.GroupId.HasValue && todo.GroupId.HasValue)
-            {
                 todo.RemoveGroup();
-            }
 
-            todo.UpdateName(input.Name);
+            if (!string.IsNullOrWhiteSpace(input.Name))
+                todo.UpdateName(input.Name);
+
             if (input.DueDate != todo.DueDate)
-            {
                 todo.UpdateDueDate(input.DueDate);
-            }
+
             await _todoRepo.Update(todo);
             return todo;
         }
