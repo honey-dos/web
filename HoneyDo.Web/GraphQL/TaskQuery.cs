@@ -3,17 +3,14 @@ using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Specifications.Todos;
-using HotChocolate.AspNetCore;
-using HotChocolate.AspNetCore.Authorization;
-using HotChocolate.Types;
 
 namespace HoneyDo.Web.GraphQL
 {
-    public class TaskQuery
+    public class TodoQuery
     {
         private readonly IRepository<Todo> _repository;
 
-        public TaskQuery(IRepository<Todo> repository)
+        public TodoQuery(IRepository<Todo> repository)
         {
             _repository = repository
                 ?? throw new ArgumentNullException(nameof(repository));
