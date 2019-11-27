@@ -79,7 +79,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Group>> CreateGroup(
             [FromBody, Required]
             [SwaggerParameter("Group values, optional: dueDate")]
-                GroupCreateFormModel model)
+                GroupCreateForm model)
         {
             var account = await _accountAccessor.GetAccount();
             var group = new Group(model.Name, account);
@@ -107,7 +107,7 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Id of group to be updated.")] Guid id,
             [FromBody, Required]
             [SwaggerParameter("Group values, optional: dueDate")]
-                GroupCreateFormModel model)
+                GroupCreateForm model)
         {
             var group = await _groupRepository.Find(new GroupById(id));
             if (group == null)

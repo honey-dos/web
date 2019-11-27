@@ -84,7 +84,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> CreateTodo(
             [FromBody, Required]
             [SwaggerParameter("Todo values, optional: dueDate")]
-                TodoCreateFormModel model)
+                TodoCreateForm model)
         {
             Group group = null;
             if (model.GroupId.HasValue)
@@ -144,7 +144,7 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Id of todo to be updated.")] Guid id,
             [FromBody, Required]
             [SwaggerParameter("Todo values, optional: dueDate")]
-                TodoCreateFormModel model)
+                TodoCreateForm model)
         {
             var todo = await _todoRepository.Find(new TodoById(id));
 

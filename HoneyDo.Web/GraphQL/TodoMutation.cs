@@ -20,27 +20,27 @@ namespace HoneyDo.Web.GraphQL
             _groupRepo = groupRepo ?? throw new ArgumentNullException(nameof(groupRepo));
         }
 
-        public async Task<Todo> UpdateTodo(Guid id, TodoCreateFormModel model)
+        public async Task<Todo> UpdateTodo(Guid id, TodoCreateForm input)
         {
             var todo = await _todoRepo.Find(new TodoById(id));
 
             Group group = null;
-            if (model.GroupId.HasValue)
+            if (input.GroupId.HasValue)
             {
                 // TODO: only return group user has access too.
-                group = await _groupRepo.Find(new GroupById(model.GroupId.Value));
+                group = await _groupRepo.Find(new GroupById(input.GroupId.Value));
                 // TODO verify group exists
                 todo.ChangeGroup(group);
             }
-            else if (!model.GroupId.HasValue && todo.GroupId.HasValue)
+            else if (!input.GroupId.HasValue && todo.GroupId.HasValue)
             {
                 todo.RemoveGroup();
             }
 
-            todo.UpdateName(model.Name);
-            if (model.DueDate != todo.DueDate)
+            todo.UpdateName(input.Name);
+            if (input.DueDate != todo.DueDate)
             {
-                todo.UpdateDueDate(model.DueDate);
+                todo.UpdateDueDate(input.DueDate);
             }
             await _todoRepo.Update(todo);
             return todo;
