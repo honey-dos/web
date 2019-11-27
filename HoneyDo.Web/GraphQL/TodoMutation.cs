@@ -20,6 +20,8 @@ namespace HoneyDo.Web.GraphQL
             _groupRepo = groupRepo ?? throw new ArgumentNullException(nameof(groupRepo));
         }
 
+        // TODO create todo
+
         public async Task<Todo> UpdateTodo(Guid id, TodoCreateForm input)
         {
             var todo = await _todoRepo.Find(new TodoById(id));
@@ -44,5 +46,10 @@ namespace HoneyDo.Web.GraphQL
             await _todoRepo.Update(todo);
             return todo;
         }
+
+        // TODO delete todo
+        // TODO assign/unassign
+        // TODO add/remove dueDate
+        // TODO add/remove group
     }
 }
