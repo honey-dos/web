@@ -12,6 +12,7 @@ namespace HoneyDo.Web.GraphQL
                     .AddServices(services)
                     .AddAuthorizeDirectiveType()
                     .AddQueryType<TodoQuery>(Authorize<TodoQuery>())
+                    /* .AddQueryType<AccountQuery>(Authorize<AccountQuery>()) */
                     .AddMutationType<TodoMutation>(Authorize<TodoMutation>())
                     /* .AddSubscriptionType<SubscriptionType>() */
                     /* .AddType<TodoType>() */
