@@ -4,13 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Web.Models;
-using HoneyDo.Domain.Interfaces;
-using HoneyDo.Domain.Specifications.Todos;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
-using HoneyDo.Domain.Specifications.Accounts;
-using HoneyDo.Domain.Specifications.Groups;
+using HoneyDo.Domain.Services;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -19,30 +16,17 @@ namespace HoneyDo.Web.Controllers
     [Produces("application/json")]
     public class TodoController : Controller
     {
-        private readonly IRepository<Todo> _todoRepository;
-        private readonly IRepository<Account> _accountRepository;
-        private readonly IAccountAccessor _accountAccessor;
-        private readonly IRepository<Group> _groupRepository;
+        private readonly TodoService _todoService;
 
-        public TodoController(IRepository<Todo> todoRepository,
-            IAccountAccessor accountAccessor,
-            IRepository<Account> accountRepository,
-            IRepository<Group> groupRepository)
+        public TodoController(TodoService todoService)
         {
-            _todoRepository = todoRepository;
-            _accountAccessor = accountAccessor;
-            _accountRepository = accountRepository;
-            _groupRepository = groupRepository;
+            _todoService = todoService;
         }
 
         [HttpGet]
         [SwaggerOperation(Summary = "Gets all the todos that the user has access to.", OperationId = "GetTodos")]
         [SwaggerResponse(200, "All todos for the user.", typeof(List<Todo>))]
-        public async Task<ActionResult<List<Todo>>> GetTodos()
-        {
-            var account = await _accountAccessor.GetAccount("_groupAccounts.Group._tasks");
-            return Ok(account.Tasks);
-        }
+        public async Task<ActionResult<Todo[]>> GetTodos() => Ok(await _todoService.Get());
 
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Gets a specific todo.", OperationId = "GetTodo")]
@@ -51,17 +35,9 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> GetTodo([SwaggerParameter("Id of the todo.")]Guid id)
         {
-            var todo = await _todoRepository.Find(new TodoById(id));
+            var todo = await _todoService.Get(id);
             if (todo == null)
-            {
                 return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
 
             return Ok(todo);
         }
@@ -72,7 +48,9 @@ namespace HoneyDo.Web.Controllers
         ///     POST /api/todos
         ///     {
         ///        "name": "Some name",
-        ///        "dueDate": "2018-11-13T23:53:09.651Z" (optional)
+        ///        "dueDate": "2018-11-13T23:53:09.651Z",
+        ///        "groupId": "c20e5e2b-42d0-4164-8d2f-d2b75095bf64",
+        ///        "assigneeId": "c20e5e2b-42d0-4164-8d2f-d2b75095bf64"
         ///     }
         ///
         /// </remarks> 
@@ -83,19 +61,10 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(201, "The todo was created.", typeof(Todo))]
         public async Task<ActionResult<Todo>> CreateTodo(
             [FromBody, Required]
-            [SwaggerParameter("Todo values, optional: dueDate")]
-                TodoCreateFormModel model)
+            [SwaggerParameter("Todo values")]
+                TodoCreateForm model)
         {
-            Group group = null;
-            if (model.GroupId.HasValue)
-            {
-                // TODO: only return group user has access too.
-                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
-            }
-            var account = await _accountAccessor.GetAccount();
-            // TODO verify group exists
-            var todo = new Todo(model.Name, account, model.DueDate, group);
-            await _todoRepository.Add(todo);
+            var todo = await _todoService.Create(model);
             return Created($"api/todos/{todo.Id}", todo);
         }
 
@@ -107,19 +76,10 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult> DeleteTodo(
             [SwaggerParameter("Id of todo to be deleted.")] Guid id)
         {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
+            var isDeleted = await _todoService.DeleteTodo(id);
+            if (!isDeleted)
                 return BadRequest();
-            }
 
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            await _todoRepository.Remove(todo);
             return NoContent();
         }
 
@@ -129,7 +89,13 @@ namespace HoneyDo.Web.Controllers
         ///     PUT /api/todos/{id}
         ///     {
         ///        "name": "Some name",
-        ///        "dueDate": "2018-11-13T23:53:09.651Z" (optional)
+        ///        "dueDate": "2018-11-13T23:53:09.651Z",
+        ///        "groupId": "c20e5e2b-42d0-4164-8d2f-d2b75095bf64",
+        ///        "assigneeId": "c20e5e2b-42d0-4164-8d2f-d2b75095bf64",
+        ///        "isComplete": false,
+        ///        "removeGroup": false,
+        ///        "removeDueDate": false,
+        ///        "removeAssignee": false
         ///     }
         ///
         /// </remarks> 
@@ -143,42 +109,14 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> UpdateTodo(
             [SwaggerParameter("Id of todo to be updated.")] Guid id,
             [FromBody, Required]
-            [SwaggerParameter("Todo values, optional: dueDate")]
-                TodoCreateFormModel model)
+            [SwaggerParameter("Todo values")]
+                TodoUpdateForm model)
         {
-            var todo = await _todoRepository.Find(new TodoById(id));
-
-            if (todo == null)
-            {
+            var updatedTodo = await _todoService.Update(id, model);
+            if (updatedTodo == null)
                 return BadRequest();
-            }
 
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            Group group = null;
-            if (model.GroupId.HasValue)
-            {
-                // TODO: only return group user has access too.
-                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
-                // TODO verify group exists
-                todo.ChangeGroup(group);
-            }
-            else if (!model.GroupId.HasValue && todo.GroupId.HasValue)
-            {
-                todo.RemoveGroup();
-            }
-
-            todo.UpdateName(model.Name);
-            if (model.DueDate != todo.DueDate)
-            {
-                todo.UpdateDueDate(model.DueDate);
-            }
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return Ok(updatedTodo);
         }
 
         [HttpPut("{id}/complete")]
@@ -189,7 +127,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> Complete(
             [SwaggerParameter("Id of todo to be completed.")] Guid id)
         {
-            return await SetCompletion(id, true);
+            return await UpdateTodo(id, new TodoUpdateForm { IsComplete = true });
         }
 
         [HttpDelete("{id}/complete")]
@@ -200,34 +138,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> Uncomplete(
             [SwaggerParameter("Id of todo to be uncompleted.")] Guid id)
         {
-            return await SetCompletion(id, false);
-        }
-
-        private async Task<ActionResult<Todo>> SetCompletion(Guid id, bool isComplete)
-        {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            if (isComplete)
-            {
-                todo.Complete();
-            }
-            else
-            {
-                todo.UnComplete();
-            }
-
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return await UpdateTodo(id, new TodoUpdateForm { IsComplete = false });
         }
 
         /// <remarks>
@@ -250,7 +161,7 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Due date value to add to todo.")]
                 DateTime dueDate)
         {
-            return await UpdateDueDate(id, dueDate);
+            return await UpdateTodo(id, new TodoUpdateForm { DueDate = dueDate });
         }
 
         [HttpDelete("{id}/due")]
@@ -261,32 +172,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> RemoveDueDate(
             [SwaggerParameter("Id of todo to be updated.")] Guid id)
         {
-            return await UpdateDueDate(id, null);
-        }
-
-        private async Task<ActionResult<Todo>> UpdateDueDate(Guid id, DateTime? dueDate)
-        {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            var isPut = Request.Method == "PUT";
-            if (isPut && !dueDate.HasValue)
-            {
-                return BadRequest();
-            }
-
-            todo.UpdateDueDate(dueDate);
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return await UpdateTodo(id, new TodoUpdateForm { DueDate = null });
         }
 
         [HttpPut("{id}/assign/{accountId}")]
@@ -298,28 +184,7 @@ namespace HoneyDo.Web.Controllers
                 [SwaggerParameter("Id of todo to be updated.")] Guid id,
                 [SwaggerParameter("Id of account to assign the todo to")] Guid accountId)
         {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            account = await _accountRepository.Find(new AccountById(accountId));
-            if (account == null)
-            {
-                return BadRequest();
-            }
-
-            // TODO verify account has access to task through groups
-            todo.Assign(account);
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return await UpdateTodo(id, new TodoUpdateForm { AssigneeId = accountId });
         }
 
         [HttpDelete("{id}/assign")]
@@ -330,21 +195,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> Unassign(
                 [SwaggerParameter("Id of todo to be updated.")] Guid id)
         {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            todo.Unassign();
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return await UpdateTodo(id, new TodoUpdateForm { RemoveAssignee = true });
         }
 
         [HttpPut("{id}/group/{groupId}")]
@@ -356,7 +207,7 @@ namespace HoneyDo.Web.Controllers
                 [SwaggerParameter("Id of todo to be updated.")] Guid id,
                 [SwaggerParameter("Id of todo to be updated.")] Guid groupId)
         {
-            return await SetGroup(id, groupId);
+            return await UpdateTodo(id, new TodoUpdateForm { GroupId = groupId });
         }
 
         [HttpDelete("{id}/group")]
@@ -367,36 +218,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> RemoveGroup(
                 [SwaggerParameter("Id of todo to be updated.")] Guid id)
         {
-            return await SetGroup(id, null);
-        }
-
-        private async Task<ActionResult<Todo>> SetGroup(Guid id, Guid? groupId)
-        {
-            var todo = await _todoRepository.Find(new TodoById(id));
-            if (todo == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (todo.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            if (groupId.HasValue)
-            {
-                var group = await _groupRepository.Find(new GroupById(groupId.Value));
-                // TODO verify group
-                todo.ChangeGroup(group);
-            }
-            else
-            {
-                todo.RemoveGroup();
-            }
-
-            await _todoRepository.Update(todo);
-            return Ok(todo);
+            return await UpdateTodo(id, new TodoUpdateForm { RemoveGroup = true });
         }
     }
 }

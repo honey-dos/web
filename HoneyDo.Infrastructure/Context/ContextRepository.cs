@@ -29,9 +29,8 @@ namespace HoneyDo.Infrastructure.Context
         {
             var query = _dbset.Where(spec.BuildExpression());
             if (!string.IsNullOrWhiteSpace(load))
-            {
                 query = query.Include(load);
-            }
+
             return query.FirstOrDefaultAsync();
         }
 
@@ -39,13 +38,10 @@ namespace HoneyDo.Infrastructure.Context
         {
             IQueryable<T> queryable = _dbset.Where(spec.BuildExpression());
             if (page != null)
-            {
                 queryable = queryable.Skip((page.PageIndex - 1) * page.PageSize).Take(page.PageSize);
-            }
+
             if (!string.IsNullOrWhiteSpace(load))
-            {
                 queryable = queryable.Include(load);
-            }
 
             return queryable.ToListAsync();
         }

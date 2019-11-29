@@ -37,12 +37,20 @@ namespace HoneyDo.Test
         }
 
         [Fact]
-        public void ConstructorWithGroupId()
+        public void ConstructorWithGroup()
         {
             Account account = new Account("test", "test");
             Group group = new Group("groupName", account);
             var todo = new Todo("foobar", account, group: group);
             Assert.Equal(group.Id, todo.GroupId);
+        }
+
+        [Fact]
+        public void ConstructorWithAssignee()
+        {
+            Account account = new Account("test", "test");
+            var todo = new Todo("foobar", account, assignee: account);
+            Assert.Equal(account.Id, todo.AssigneeId);
         }
 
         [Fact]

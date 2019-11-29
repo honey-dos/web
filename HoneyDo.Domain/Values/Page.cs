@@ -13,9 +13,9 @@ namespace HoneyDo.Domain.Values
                 throw new ArgumentException("Must be greater than 0", nameof(pageIndex));
             }
 
-            if (pageSize <= 0 || pageSize > 1000)
+            if (pageSize <= 0 || pageSize > 100)
             {
-                throw new ArgumentException("Must be greater than 0 & less than 1000", nameof(pageSize));
+                throw new ArgumentException("Must be greater than 0 & less than 100", nameof(pageSize));
             }
 
             PageIndex = pageIndex;
