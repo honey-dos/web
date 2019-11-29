@@ -31,6 +31,6 @@ namespace HoneyDo.Web.GraphQL.Resolvers
             await _todoService.Update(todoId, input);
 
         /// <summary> Delete todo. </summary>
-        public async Task<bool> Delete(Guid todoId) => await _todoService.DeleteTodo(todoId);
+        public async Task<bool> DeleteTodo(Guid todoId) => await _todoService.Delete(todoId);
     }
 }

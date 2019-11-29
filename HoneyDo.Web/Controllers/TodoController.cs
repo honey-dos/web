@@ -76,7 +76,7 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult> DeleteTodo(
             [SwaggerParameter("Id of todo to be deleted.")] Guid id)
         {
-            var isDeleted = await _todoService.DeleteTodo(id);
+            var isDeleted = await _todoService.Delete(id);
             if (!isDeleted)
                 return BadRequest();
 

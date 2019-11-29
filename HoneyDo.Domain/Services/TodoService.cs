@@ -71,7 +71,7 @@ namespace HoneyDo.Domain.Services
             return todo;
         }
 
-        public async Task<bool> DeleteTodo(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
             var todo = await Get(id);
             if (todo == null)
