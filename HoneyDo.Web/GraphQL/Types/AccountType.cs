@@ -9,10 +9,12 @@ namespace HoneyDo.Web.GraphQL.Types
         protected override void Configure(IObjectTypeDescriptor<Account> descriptor)
         {
             descriptor.Field(a => a.Tasks)
-                .Resolver(ctx => ctx.Service<TodoService>().Get());
+                .Resolver(ctx => ctx.Service<TodoService>()
+                    .Get(ctx.Parent<Account>()));
                 // .UsePaging<TodoType>();
             descriptor.Field(a => a.Groups)
-                .Resolver(ctx => ctx.Service<GroupService>().Get());
+                .Resolver(ctx => ctx.Service<GroupService>()
+                    .Get(ctx.Parent<Account>()));
                 // .UsePaging<TodoType>();
         }
     }

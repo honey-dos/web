@@ -36,6 +36,11 @@ namespace HoneyDo.Domain.Services
         public async Task<Group> Get(Guid id) =>
             await _groupRepository.Find(new GroupById(id));
 
+        public async Task<List<Group>> Get(Account account) =>
+            (await _accountAccessor.GetAccount()).Id == account.Id
+                ? await Get()
+                : null;
+
         public async Task<Group> Create(IGroupForm model)
         {
             var account = await _accountAccessor.GetAccount();

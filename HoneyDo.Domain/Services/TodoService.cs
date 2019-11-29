@@ -39,6 +39,11 @@ namespace HoneyDo.Domain.Services
         public async Task<List<Todo>> Get(Group group) =>
             await _todoRepository.Query(new TodosForGroup(group));
 
+        public async Task<List<Todo>> Get(Account account) =>
+            (await _accountAccessor.GetAccount()).Id == account.Id
+                ? await Get()
+                : null;
+
         public async Task<Todo> Create(ITodoForm model)
         {
             if (model == null)
