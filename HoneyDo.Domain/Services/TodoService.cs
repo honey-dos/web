@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
+using HoneyDo.Domain.Enums;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Models;
 using HoneyDo.Domain.Specifications.Accounts;
 using HoneyDo.Domain.Specifications.Groups;
 using HoneyDo.Domain.Specifications.Todos;
+using HoneyDo.Domain.Values;
 
 namespace HoneyDo.Domain.Services
 {
@@ -44,12 +46,10 @@ namespace HoneyDo.Domain.Services
                 ? await Get()
                 : null;
 
-        public async Task<Todo> Create(ITodoForm model)
+        public async Task<DomainError<Todo>> Create(ITodoForm model)
         {
             if (model == null)
-            {
                 throw new ArgumentNullException(nameof(model));
-            }
 
             Group group = null;
             if (model.GroupId.HasValue)
@@ -57,7 +57,7 @@ namespace HoneyDo.Domain.Services
                 // TODO: only return group user has access too.
                 group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
                 if (group == null)
-                    return null;
+                    return new DomainError<Todo>(DomainErrorCode.InvalidArgument, nameof(model.GroupId));
             }
 
             Account assignee = null;
@@ -66,28 +66,28 @@ namespace HoneyDo.Domain.Services
                 // TODO restrict assignments to users in group
                 assignee = await _accountRepository.Find(new AccountById(model.AssigneeId.Value));
                 if (assignee == null)
-                    return null;
+                    return new DomainError<Todo>(DomainErrorCode.InvalidArgument, nameof(model.AssigneeId));
             }
 
             var account = await _accountAccessor.GetAccount();
             // TODO verify group exists
             var todo = new Todo(model.Name, account, model.DueDate, group, assignee);
             await _todoRepository.Add(todo);
-            return todo;
+            return new DomainError<Todo>(todo);
         }
 
-        public async Task<bool> Delete(Guid id)
+        public async Task<DomainError> Delete(Guid id)
         {
             var todo = await Get(id);
             if (todo == null)
-                return false;
+                return DomainError.NotFound();
 
             var account = await _accountAccessor.GetAccount();
             if (todo.CreatorId != account.Id)
-                return false;
+                return DomainError.NotAuthorized();
 
             await _todoRepository.Remove(todo);
-            return true;
+            return DomainError.NoError();
         }
 
         public async Task<Todo> Update(Guid id, ITodoUpdate model)

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Web.Models;
+using HoneyDo.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
@@ -64,8 +65,10 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Todo values")]
                 TodoCreateForm model)
         {
-            var todo = await _todoService.Create(model);
-            return Created($"api/todos/{todo.Id}", todo);
+            var result = await _todoService.Create(model);
+            if (result.HasError)
+                return BadRequest(result.ForRestApi());
+            return Created($"api/todos/{result.Value.Id}", result.Value);
         }
 
         [HttpDelete("{id}")]
@@ -76,9 +79,9 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult> DeleteTodo(
             [SwaggerParameter("Id of todo to be deleted.")] Guid id)
         {
-            var isDeleted = await _todoService.Delete(id);
-            if (!isDeleted)
-                return BadRequest();
+            var result = await _todoService.Delete(id);
+            if (!result.HasError)
+                return BadRequest(result);
 
             return NoContent();
         }
