@@ -47,32 +47,32 @@ namespace HoneyDo.Domain.Services
                 ? await Get()
                 : null;
 
-        public async Task<IDomainResult<Todo>> Create(ITodoForm model)
+        public async Task<IDomainResult<Todo>> Create(ITodoForm input)
         {
-            if (model == null)
-                return new InvalidArgumentResult<Todo>(nameof(model));
+            if (input == null)
+                return new InvalidArgumentResult<Todo>(nameof(input));
 
             Group group = null;
-            if (model.GroupId.HasValue)
+            if (input.GroupId.HasValue)
             {
                 // TODO: only return group user has access too.
-                group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
+                group = await _groupRepository.Find(new GroupById(input.GroupId.Value));
                 if (group == null)
-                    return new InvalidArgumentResult<Todo>(nameof(model.GroupId));
+                    return new InvalidArgumentResult<Todo>(nameof(input.GroupId));
             }
 
             Account assignee = null;
-            if (model.AssigneeId.HasValue)
+            if (input.AssigneeId.HasValue)
             {
                 // TODO restrict assignments to users in group
-                assignee = await _accountRepository.Find(new AccountById(model.AssigneeId.Value));
+                assignee = await _accountRepository.Find(new AccountById(input.AssigneeId.Value));
                 if (assignee == null)
-                    return new InvalidArgumentResult<Todo>(nameof(model.AssigneeId));
+                    return new InvalidArgumentResult<Todo>(nameof(input.AssigneeId));
             }
 
             var account = await _accountAccessor.GetAccount();
             // TODO verify group exists
-            var todo = new Todo(model.Name, account, model.DueDate, group, assignee);
+            var todo = new Todo(input.Name, account, input.DueDate, group, assignee);
             await _todoRepository.Add(todo);
             return new CreatedResult<Todo>(todo);
         }
