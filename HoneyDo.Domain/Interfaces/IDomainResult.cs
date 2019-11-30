@@ -4,7 +4,7 @@ namespace HoneyDo.Domain.Interfaces
 {
     public interface IDomainResult<T>
     {
-        DomainErrorCode Code { get; }
+        DomainResultCode Code { get; }
         T Value { get; }
         bool HasError { get; }
         string Message { get; }
@@ -12,7 +12,7 @@ namespace HoneyDo.Domain.Interfaces
 
     public interface IDomainResult
     {
-        DomainErrorCode Code { get; }
+        DomainResultCode Code { get; }
         bool HasError { get; }
         string Message { get; }
     }

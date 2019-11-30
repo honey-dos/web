@@ -2,9 +2,12 @@ namespace HoneyDo.Domain.Enums
 {
     public enum DomainResultCode
     {
-        NoError = 0,
-        NotFound = 1,
-        NotAuthorized = 2,
-        InvalidArgument = 3
+        Success = 0,
+        Created = 1,
+        Deleted = 2,
+        NotFound = 3,
+        Unauthorized = 4,
+        InvalidArgument = 5,
+        InsufficientPermissions = 6
     }
 }

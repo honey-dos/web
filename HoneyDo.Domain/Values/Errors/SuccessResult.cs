@@ -3,22 +3,22 @@ using HoneyDo.Domain.Interfaces;
 
 namespace HoneyDo.Domain.Values.Errors
 {
-    public class CreatedResult<T> : IDomainResult<T>
+    public class SuccessResult<T> : IDomainResult<T>
     {
-        public DomainResultCode Code => DomainResultCode.Created;
+        public DomainResultCode Code => DomainResultCode.Success;
         public T Value { get; private set; }
         public bool HasError => false;
         public string Message => "";
 
-        public CreatedResult(T value)
+        public SuccessResult(T value)
         {
             Value = value;
         }
     }
 
-    public class CreatedResult : IDomainResult
+    public class SuccessResult : IDomainResult
     {
-        public DomainResultCode Code => DomainResultCode.Created;
+        public DomainResultCode Code => DomainResultCode.Success;
         public bool HasError => false;
         public string Message => "";
     }
