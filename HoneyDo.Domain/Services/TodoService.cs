@@ -9,6 +9,7 @@ using HoneyDo.Domain.Specifications.Accounts;
 using HoneyDo.Domain.Specifications.Groups;
 using HoneyDo.Domain.Specifications.Todos;
 using HoneyDo.Domain.Values;
+using HoneyDo.Domain.Values.Errors;
 
 namespace HoneyDo.Domain.Services
 {
@@ -46,10 +47,10 @@ namespace HoneyDo.Domain.Services
                 ? await Get()
                 : null;
 
-        public async Task<DomainError<Todo>> Create(ITodoForm model)
+        public async Task<IDomainResult<Todo>> Create(ITodoForm model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model));
+                return new InvalidArgumentResult<Todo>(nameof(model));
 
             Group group = null;
             if (model.GroupId.HasValue)
@@ -57,7 +58,7 @@ namespace HoneyDo.Domain.Services
                 // TODO: only return group user has access too.
                 group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
                 if (group == null)
-                    return new DomainError<Todo>(DomainErrorCode.InvalidArgument, nameof(model.GroupId));
+                    return new InvalidArgumentResult<Todo>(nameof(model.GroupId));
             }
 
             Account assignee = null;
@@ -66,14 +67,14 @@ namespace HoneyDo.Domain.Services
                 // TODO restrict assignments to users in group
                 assignee = await _accountRepository.Find(new AccountById(model.AssigneeId.Value));
                 if (assignee == null)
-                    return new DomainError<Todo>(DomainErrorCode.InvalidArgument, nameof(model.AssigneeId));
+                    return new InvalidArgumentResult<Todo>(nameof(model.AssigneeId));
             }
 
             var account = await _accountAccessor.GetAccount();
             // TODO verify group exists
             var todo = new Todo(model.Name, account, model.DueDate, group, assignee);
             await _todoRepository.Add(todo);
-            return new DomainError<Todo>(todo);
+            return new CreatedResult<Todo>(todo);
         }
 
         public async Task<DomainError> Delete(Guid id)
