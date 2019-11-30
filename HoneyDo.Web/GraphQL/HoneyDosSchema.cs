@@ -14,6 +14,7 @@ namespace HoneyDo.Web.GraphQL
                     .AddType<AccountType>()
                     .AddType<GroupType>()
                     .AddType<TodoType>()
+                    .AddType<TodoCreateFormType>()
                     .Create();
     }
 }
