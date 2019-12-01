@@ -26,11 +26,11 @@ namespace HoneyDo.Web.Extensions
             .SetMessage(error.Message)
             .Build();
 
-        public static ErrorModel ForRestApi<T>(this DomainError<T> error) where T : class =>
-            new ErrorModel { Error = error.ErrorCode.ToString(), Message = error.Message };
+        public static ErrorModelB ForRestApi<T>(this DomainError<T> error) where T : class =>
+            new ErrorModelB { Error = error.ErrorCode.ToString(), Message = error.Message };
 
-        public static ErrorModel ForRestApi(this DomainError error) =>
-            new ErrorModel { Error = error.ErrorCode.ToString(), Message = error.Message };
+        public static ErrorModelB ForRestApi(this DomainError error) =>
+            new ErrorModelB { Error = error.ErrorCode.ToString(), Message = error.Message };
 
         public static ActionResult ForRestApi<T>(this IDomainResult<T> result) =>
             new ErrorModel<T>(result).BuildActionResult();
