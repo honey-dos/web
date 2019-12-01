@@ -2,6 +2,7 @@ using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Values;
 using HoneyDo.Web.Models;
 using HotChocolate;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HoneyDo.Web.Extensions
 {
@@ -28,10 +29,13 @@ namespace HoneyDo.Web.Extensions
         public static ErrorModel ForRestApi<T>(this DomainError<T> error) where T : class =>
             new ErrorModel { Error = error.ErrorCode.ToString(), Message = error.Message };
 
-        public static ErrorModel ForRestApi<T>(this IDomainResult<T> error) where T : class =>
-            new ErrorModel { Error = error.Code.ToString(), Message = error.Message };
-
         public static ErrorModel ForRestApi(this DomainError error) =>
             new ErrorModel { Error = error.ErrorCode.ToString(), Message = error.Message };
+
+        public static ActionResult ForRestApi<T>(this IDomainResult<T> result) =>
+            new ErrorModel<T>(result).BuildActionResult();
+
+        public static ActionResult ForRestApi(this IDomainResult result) =>
+            new ErrorModel(result).BuildActionResult();
     }
 }
