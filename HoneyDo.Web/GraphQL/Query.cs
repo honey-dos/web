@@ -10,7 +10,7 @@ namespace HoneyDo.Web.GraphQL
             descriptor.Field<AccountResolver>(a => a.Account()).Authorize();
             descriptor.Field<AccountResolver>(a => a.Accounts(default)).Authorize();
 
-            descriptor.Field<TodoResolver>(t => t.Todo(default)).Authorize();
+            descriptor.Field<TodoResolver>(t => t.Todo(default, default)).Authorize();
             descriptor.Field<TodoResolver>(t => t.Todos()).Authorize();
 
             descriptor.Field<GroupResolver>(t => t.Groups()).Authorize();

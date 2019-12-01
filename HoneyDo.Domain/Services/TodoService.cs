@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HoneyDo.Domain.Entities;
-using HoneyDo.Domain.Enums;
 using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Models;
 using HoneyDo.Domain.Specifications.Accounts;
 using HoneyDo.Domain.Specifications.Groups;
 using HoneyDo.Domain.Specifications.Todos;
-using HoneyDo.Domain.Values;
 using HoneyDo.Domain.Values.Errors;
 
 namespace HoneyDo.Domain.Services
@@ -36,8 +34,14 @@ namespace HoneyDo.Domain.Services
         public async Task<List<Todo>> Get() =>
              await _todoRepository.Query(new TodosForAccount(await _accountAccessor.GetAccount()));
 
-        public async Task<Todo> Get(Guid id) =>
-            await _todoRepository.Find(new TodoById(id));
+        public async Task<IDomainResult<Todo>> Get(Guid id)
+        {
+            var todo = await _todoRepository.Find(new TodoById(id));
+            if (todo == null)
+                return new NotFoundResult<Todo>();
+
+            return new SuccessResult<Todo>(todo);
+        }
 
         public async Task<List<Todo>> Get(Group group) =>
             await _todoRepository.Query(new TodosForGroup(group));
@@ -77,80 +81,81 @@ namespace HoneyDo.Domain.Services
             return new CreatedResult<Todo>(todo);
         }
 
-        public async Task<DomainError> Delete(Guid id)
+        public async Task<IDomainResult> Delete(Guid id)
         {
-            var todo = await Get(id);
-            if (todo == null)
-                return DomainError.NotFound();
+            var result = await Get(id);
+            if (result.HasError)
+                return result as IDomainResult;
 
+            var todo = result.Value;
             var account = await _accountAccessor.GetAccount();
             if (todo.CreatorId != account.Id)
-                return DomainError.NotAuthorized();
+                return new InsufficientPermissionsResult();
 
             await _todoRepository.Remove(todo);
-            return DomainError.NoError();
+            return new DeletedResult();
         }
 
-        public async Task<Todo> Update(Guid id, ITodoUpdate model)
+        public async Task<IDomainResult<Todo>> Update(Guid id, ITodoUpdate input)
         {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
+            if (input == null)
+                return new InvalidArgumentResult<Todo>(nameof(input));
 
-            var todo = await Get(id);
+            var result = await Get(id);
+            if (result.HasError)
+                return result;
 
-            if (todo == null)
-                return null;
-
+            var todo = result.Value;
             var account = await _accountAccessor.GetAccount();
             if (todo.CreatorId != account.Id)
-                return null;
+                return new InsufficientPermissionsResult<Todo>();
 
-            if (model.GroupId.HasValue &&
-                (!todo.GroupId.HasValue || model.GroupId.Value != todo.GroupId.Value))
+            if (input.GroupId.HasValue &&
+                (!todo.GroupId.HasValue || input.GroupId.Value != todo.GroupId.Value))
             {
                 // TODO: only return group user has access too.
-                var group = await _groupRepository.Find(new GroupById(model.GroupId.Value));
+                var group = await _groupRepository.Find(new GroupById(input.GroupId.Value));
                 if (group == null)
-                    return null;
+                    return new InvalidArgumentResult<Todo>(nameof(input.GroupId));
 
                 todo.ChangeGroup(group);
             }
-            else if (model.RemoveGroup)
+            else if (input.RemoveGroup)
             {
                 todo.RemoveGroup();
             }
 
-            if (model.AssigneeId.HasValue &&
-                (!todo.AssigneeId.HasValue || model.AssigneeId.Value != todo.AssigneeId.Value))
+            if (input.AssigneeId.HasValue &&
+                (!todo.AssigneeId.HasValue || input.AssigneeId.Value != todo.AssigneeId.Value))
             {
                 // TODO restrict assignments to users in group
-                account = await _accountRepository.Find(new AccountById(model.AssigneeId.Value));
+                account = await _accountRepository.Find(new AccountById(input.AssigneeId.Value));
                 if (account == null)
-                    return null;
+                    return new InvalidArgumentResult<Todo>(nameof(input.AssigneeId));
 
                 todo.Assign(account);
             }
-            else if (model.RemoveAssignee)
+            else if (input.RemoveAssignee)
             {
                 todo.Unassign();
             }
 
-            if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != todo.Name)
+            if (!string.IsNullOrWhiteSpace(input.Name) && input.Name != todo.Name)
             {
-                todo.UpdateName(model.Name);
+                todo.UpdateName(input.Name);
             }
 
-            if (model.DueDate != todo.DueDate)
+            if (input.DueDate != todo.DueDate)
             {
-                todo.UpdateDueDate(model.DueDate);
+                todo.UpdateDueDate(input.DueDate);
             }
-            else if (model.RemoveDueDate)
+            else if (input.RemoveDueDate)
             {
                 todo.UpdateDueDate(null);
             }
 
             await _todoRepository.Update(todo);
-            return todo;
+            return new SuccessResult<Todo>(todo);
         }
     }
 }

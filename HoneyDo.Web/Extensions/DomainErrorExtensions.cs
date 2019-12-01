@@ -26,6 +26,12 @@ namespace HoneyDo.Web.Extensions
             .SetMessage(error.Message)
             .Build();
 
+        public static IError ForGraphQL(this IDomainResult error) =>
+            ErrorBuilder.New()
+            .SetCode(error.Code.ToString())
+            .SetMessage(error.Message)
+            .Build();
+
         public static ErrorModelB ForRestApi<T>(this DomainError<T> error) where T : class =>
             new ErrorModelB { Error = error.ErrorCode.ToString(), Message = error.Message };
 

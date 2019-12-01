@@ -34,14 +34,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(200, "Returns the specified todo.", typeof(Todo))]
         [SwaggerResponse(400, "Todo not found with the specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
-        public async Task<ActionResult<Todo>> GetTodo([SwaggerParameter("Id of the todo.")]Guid id)
-        {
-            var todo = await _todoService.Get(id);
-            if (todo == null)
-                return BadRequest();
-
-            return Ok(todo);
-        }
+        public async Task<ActionResult<Todo>> GetTodo([SwaggerParameter("Id of the todo.")]Guid id) =>
+            (await _todoService.Get(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -63,13 +57,8 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Todo>> CreateTodo(
             [FromBody, Required]
             [SwaggerParameter("Todo values")]
-                TodoCreateForm model)
-        {
-            var result = await _todoService.Create(model);
-            if (result.HasError)
-                return BadRequest(result.ForRestApi());
-            return Created($"api/todos/{result.Value.Id}", result.Value);
-        }
+                TodoCreateForm model) =>
+            (await _todoService.Create(model)).ForRestApi();
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Deletes a specific todo.", OperationId = "DeleteTodo")]
@@ -77,14 +66,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult> DeleteTodo(
-            [SwaggerParameter("Id of todo to be deleted.")] Guid id)
-        {
-            var result = await _todoService.Delete(id);
-            if (!result.HasError)
-                return BadRequest(result);
-
-            return NoContent();
-        }
+            [SwaggerParameter("Id of todo to be deleted.")] Guid id) =>
+            (await _todoService.Delete(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -113,14 +96,8 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Id of todo to be updated.")] Guid id,
             [FromBody, Required]
             [SwaggerParameter("Todo values")]
-                TodoUpdateForm model)
-        {
-            var updatedTodo = await _todoService.Update(id, model);
-            if (updatedTodo == null)
-                return BadRequest();
-
-            return Ok(updatedTodo);
-        }
+                TodoUpdateForm model) =>
+            (await _todoService.Update(id, model)).ForRestApi();
 
         [HttpPut("{id}/complete")]
         [SwaggerOperation(Summary = "Completes a specific todo.", OperationId = "CompleteTodo")]
@@ -128,10 +105,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> Complete(
-            [SwaggerParameter("Id of todo to be completed.")] Guid id)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { IsComplete = true });
-        }
+            [SwaggerParameter("Id of todo to be completed.")] Guid id) =>
+            await UpdateTodo(id, new TodoUpdateForm { IsComplete = true });
 
         [HttpDelete("{id}/complete")]
         [SwaggerOperation(Summary = "Uncompletes a specific todo.", OperationId = "UncompleteTodo")]
@@ -139,10 +114,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> Uncomplete(
-            [SwaggerParameter("Id of todo to be uncompleted.")] Guid id)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { IsComplete = false });
-        }
+            [SwaggerParameter("Id of todo to be uncompleted.")] Guid id) =>
+            await UpdateTodo(id, new TodoUpdateForm { IsComplete = false });
 
         /// <remarks>
         /// Sample request:
@@ -162,10 +135,8 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Id of todo to be updated.")] Guid id,
             [FromBody, Required]
             [SwaggerParameter("Due date value to add to todo.")]
-                DateTime dueDate)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { DueDate = dueDate });
-        }
+                DateTime dueDate) =>
+            await UpdateTodo(id, new TodoUpdateForm { DueDate = dueDate });
 
         [HttpDelete("{id}/due")]
         [SwaggerOperation(Summary = "Removes due date a specific todo.", OperationId = "RemoveDueDate")]
@@ -173,10 +144,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> RemoveDueDate(
-            [SwaggerParameter("Id of todo to be updated.")] Guid id)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { DueDate = null });
-        }
+            [SwaggerParameter("Id of todo to be updated.")] Guid id) =>
+            await UpdateTodo(id, new TodoUpdateForm { DueDate = null });
 
         [HttpPut("{id}/assign/{accountId}")]
         [SwaggerOperation(Summary = "Assign account to a specific todo.", OperationId = "AssignTodo")]
@@ -185,10 +154,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> Assign(
                 [SwaggerParameter("Id of todo to be updated.")] Guid id,
-                [SwaggerParameter("Id of account to assign the todo to")] Guid accountId)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { AssigneeId = accountId });
-        }
+                [SwaggerParameter("Id of account to assign the todo to")] Guid accountId) =>
+            await UpdateTodo(id, new TodoUpdateForm { AssigneeId = accountId });
 
         [HttpDelete("{id}/assign")]
         [SwaggerOperation(Summary = "Unassign a specific todo.", OperationId = "UnassignTodo")]
@@ -196,10 +163,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> Unassign(
-                [SwaggerParameter("Id of todo to be updated.")] Guid id)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { RemoveAssignee = true });
-        }
+                [SwaggerParameter("Id of todo to be updated.")] Guid id) =>
+            await UpdateTodo(id, new TodoUpdateForm { RemoveAssignee = true });
 
         [HttpPut("{id}/group/{groupId}")]
         [SwaggerOperation(Summary = "Change a specific todo's group.", OperationId = "ChangeGroup")]
@@ -208,10 +173,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> ChangeGroup(
                 [SwaggerParameter("Id of todo to be updated.")] Guid id,
-                [SwaggerParameter("Id of todo to be updated.")] Guid groupId)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { GroupId = groupId });
-        }
+                [SwaggerParameter("Id of todo to be updated.")] Guid groupId) =>
+            await UpdateTodo(id, new TodoUpdateForm { GroupId = groupId });
 
         [HttpDelete("{id}/group")]
         [SwaggerOperation(Summary = "Remove a specific todo from a group.", OperationId = "RemoveGroup")]
@@ -219,9 +182,7 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No todo found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific todo.")]
         public async Task<ActionResult<Todo>> RemoveGroup(
-                [SwaggerParameter("Id of todo to be updated.")] Guid id)
-        {
-            return await UpdateTodo(id, new TodoUpdateForm { RemoveGroup = true });
-        }
+                [SwaggerParameter("Id of todo to be updated.")] Guid id) =>
+            await UpdateTodo(id, new TodoUpdateForm { RemoveGroup = true });
     }
 }

@@ -9,11 +9,6 @@ namespace HoneyDo.Domain.Values.Errors
         public T Value => default(T);
         public bool HasError => true;
         public string Message { get; private set; }
-
-        public NotFoundResult(string message)
-        {
-            Message = message;
-        }
     }
 
     public class NotFoundResult : IDomainResult
@@ -21,10 +16,5 @@ namespace HoneyDo.Domain.Values.Errors
         public DomainResultCode Code => DomainResultCode.NotFound;
         public bool HasError => true;
         public string Message { get; private set; }
-
-        public NotFoundResult(string message)
-        {
-            Message = message;
-        }
     }
 }
