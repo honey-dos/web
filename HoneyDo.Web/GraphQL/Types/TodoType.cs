@@ -1,5 +1,6 @@
 using HoneyDo.Domain.Entities;
 using HoneyDo.Domain.Services;
+using HoneyDo.Web.Extensions;
 using HotChocolate.Types;
 
 namespace HoneyDo.Web.GraphQL.Types
@@ -9,8 +10,9 @@ namespace HoneyDo.Web.GraphQL.Types
         protected override void Configure(IObjectTypeDescriptor<Todo> descriptor)
         {
             descriptor.Field("group")
-                .Resolver(ctx => ctx.Parent<Todo>().GroupId.HasValue
-                    ? ctx.Service<GroupService>().Get(ctx.Parent<Todo>().GroupId.Value)
+                .Type<GroupType>()
+                .Resolver(async ctx => ctx.Parent<Todo>().GroupId.HasValue
+                    ? (await ctx.Service<GroupService>().Get(ctx.Parent<Todo>().GroupId.Value)).ForGraphQL(ctx)
                     : null);
             descriptor.Field("assignee")
                 .Resolver(ctx => ctx.Parent<Todo>().AssigneeId.HasValue

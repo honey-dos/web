@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
 using HoneyDo.Domain.Services;
+using HoneyDo.Web.Extensions;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -35,14 +36,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(200, "Returns the specified group.", typeof(Group))]
         [SwaggerResponse(400, "Group not found with the specified id.")]
         [SwaggerResponse(403, "Don't have access to specific group.")]
-        public async Task<ActionResult<Group>> GetGroup([SwaggerParameter("Id of the group.")]Guid id)
-        {
-            var group = await _groupService.Get(id);
-            if (group == null)
-                return BadRequest();
-
-            return Ok(group);
-        }
+        public async Task<ActionResult<Group>> GetGroup([SwaggerParameter("Id of the group.")]Guid id) =>
+            (await _groupService.Get(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -61,11 +56,8 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Group>> CreateGroup(
             [FromBody, Required]
             [SwaggerParameter("Group values, optional: dueDate")]
-                GroupCreateForm model)
-        {
-            var group = await _groupService.Create(model);
-            return Created($"api/groups/{group.Id}", group);
-        }
+                GroupCreateForm model) =>
+            (await _groupService.Create(model)).ForRestApi(g => $"api/groups/{g.Id}");
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Deletes a specific group.", OperationId = "DeleteGroup")]
@@ -73,14 +65,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(400, "No group found with specified id.")]
         [SwaggerResponse(403, "Don't have access to specific group.")]
         public async Task<ActionResult> DeleteGroup(
-            [SwaggerParameter("Id of group to be deleted.")] Guid id)
-        {
-            var isDeleted = await _groupService.Delete(id);
-            if (!isDeleted)
-                return BadRequest();
-
-            return NoContent();
-        }
+            [SwaggerParameter("Id of group to be deleted.")] Guid id) =>
+            (await _groupService.Delete(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -102,14 +88,8 @@ namespace HoneyDo.Web.Controllers
             [SwaggerParameter("Id of group to be updated.")] Guid id,
             [FromBody, Required]
             [SwaggerParameter("Group values.")]
-                GroupCreateForm model)
-        {
-            var updatedGroup = await _groupService.Update(id, model);
-            if (updatedGroup == null)
-                return BadRequest();
-
-            return Ok(updatedGroup);
-        }
+                GroupCreateForm model) =>
+            (await _groupService.Update(id, model)).ForRestApi();
 
         [HttpPost("{id}/add/accounts")]
         [SwaggerOperation(Summary = "Add accounts to a specific group.", OperationId = "CreateGroupAccounts")]
@@ -125,11 +105,8 @@ namespace HoneyDo.Web.Controllers
             if (!accountIds.Any())
                 return BadRequest();
 
-            var groupAccounts = await _groupService.AddAccounts(id, accountIds);
-            if (!groupAccounts.Any())
-                return BadRequest();
-
-            return Ok(groupAccounts);
+            return (await _groupService.AddAccounts(id, accountIds))
+                .ForRestApi(g => $"api/group/{id}");
         }
 
         [HttpPost("{id}/add/{accountId}")]
@@ -139,14 +116,9 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific group.")]
         public async Task<ActionResult<GroupAccount>> CreateGroupAccount(
                 [SwaggerParameter("Id of group to add account to.")] Guid id,
-                [SwaggerParameter("Id of account to be added to group.")] Guid accountId)
-        {
-            var groupAccounts = await _groupService.AddAccounts(id, new Guid[] { accountId });
-            if (!groupAccounts.Any())
-                return BadRequest();
-
-            return Ok(groupAccounts[0]);
-        }
+                [SwaggerParameter("Id of account to be added to group.")] Guid accountId) =>
+            (await _groupService.AddAccounts(id, new Guid[] { accountId }))
+                .ForRestApi(g => $"api/groups/{id}");
 
         [HttpDelete("{id}/remove/accounts")]
         [SwaggerOperation(Summary = "Remove accounts from a specific group.", OperationId = "RemoveGroupAccounts")]
@@ -162,11 +134,8 @@ namespace HoneyDo.Web.Controllers
             if (!accountIds.Any())
                 return BadRequest();
 
-            var areRemoved = await _groupService.RemoveAccounts(id, accountIds);
-            if (!areRemoved)
-                return BadRequest();
-
-            return NoContent();
+            return (await _groupService.RemoveAccounts(id, accountIds))
+                .ForRestApi();
         }
 
         [HttpDelete("{id}/remove/{accountId}")]
@@ -176,14 +145,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific group.")]
         public async Task<ActionResult> RemoveGroupAccount(
                 [SwaggerParameter("Id of group to remove account from.")] Guid id,
-                [SwaggerParameter("Id of account to be removed.")] Guid accountId)
-        {
-            var isRemoved = await _groupService.RemoveAccounts(id, new Guid[] { accountId });
-            if (!isRemoved)
-                return BadRequest();
-
-            return NoContent();
-        }
-
+                [SwaggerParameter("Id of account to be removed.")] Guid accountId) =>
+            (await _groupService.RemoveAccounts(id, new Guid[] { accountId }))
+                .ForRestApi();
     }
 }

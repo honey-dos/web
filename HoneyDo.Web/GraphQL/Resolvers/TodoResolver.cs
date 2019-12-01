@@ -22,55 +22,19 @@ namespace HoneyDo.Web.GraphQL.Resolvers
         public async Task<List<Todo>> Todos() => await _todoService.Get();
 
         /// <summary> Gets a specific todo.  </summary>
-        public async Task<Todo> Todo(Guid todoId, IResolverContext context)
-        {
-            var result = await _todoService.Get(todoId);
-            if (result.HasError)
-            {
-                context.ReportError(result.ForGraphQL());
-                return null;
-            }
-
-            return result.Value;
-        }
+        public async Task<Todo> Todo(Guid todoId, IResolverContext ctx) =>
+            (await _todoService.Get(todoId)).ForGraphQL(ctx);
 
         /// <summary> Create todo. </summary>
-        public async Task<Todo> CreateTodo(TodoCreateForm input, IResolverContext context)
-        {
-            var result = await _todoService.Create(input);
-            if (result.HasError)
-            {
-                context.ReportError(result.ForGraphQL());
-                return null;
-            }
-
-            return result.Value;
-        }
+        public async Task<Todo> CreateTodo(TodoCreateForm input, IResolverContext ctx) =>
+            (await _todoService.Create(input)).ForGraphQL(ctx);
 
         /// <summary> Update todo. </summary>
-        public async Task<Todo> UpdateTodo(Guid todoId, TodoUpdateForm input, IResolverContext context)
-        {
-            var result = await _todoService.Update(todoId, input);
-            if (result.HasError)
-            {
-                context.ReportError(result.ForGraphQL());
-                return null;
-            }
-
-            return result.Value;
-        }
+        public async Task<Todo> UpdateTodo(Guid todoId, TodoUpdateForm input, IResolverContext ctx) =>
+            (await _todoService.Update(todoId, input)).ForGraphQL(ctx);
 
         /// <summary> Delete todo. </summary>
-        public async Task<bool> DeleteTodo(Guid todoId, IResolverContext context)
-        {
-            var result = await _todoService.Delete(todoId);
-            if (result.HasError)
-            {
-                context.ReportError(result.ForGraphQL());
-                return false;
-            }
-
-            return true;
-        }
+        public async Task<bool> DeleteTodo(Guid todoId, IResolverContext ctx) =>
+            (await _todoService.Delete(todoId)).ForGraphQL(ctx);
     }
 }

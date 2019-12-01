@@ -7,6 +7,7 @@ using HoneyDo.Domain.Interfaces;
 using HoneyDo.Domain.Models;
 using HoneyDo.Domain.Specifications.Accounts;
 using HoneyDo.Domain.Specifications.Groups;
+using HoneyDo.Domain.Values.Errors;
 
 namespace HoneyDo.Domain.Services
 {
@@ -33,97 +34,104 @@ namespace HoneyDo.Domain.Services
         public async Task<List<Group>> Get() =>
              await _groupRepository.Query(new GroupsForAccount(await _accountAccessor.GetAccount()));
 
-        public async Task<Group> Get(Guid id) =>
-            await _groupRepository.Find(new GroupById(id));
+        public async Task<IDomainResult<Group>> Get(Guid id)
+        {
+            var group = await _groupRepository.Find(new GroupById(id));
+            if (group == null)
+                return new NotFoundResult<Group>();
+
+            return new SuccessResult<Group>(group);
+        }
 
         public async Task<List<Group>> Get(Account account) =>
             (await _accountAccessor.GetAccount()).Id == account.Id
                 ? await Get()
                 : null;
 
-        public async Task<Group> Create(IGroupForm model)
+        public async Task<IDomainResult<Group>> Create(IGroupForm input)
         {
+            if (input == null)
+                return new InvalidArgumentResult<Group>(nameof(input));
+
             var account = await _accountAccessor.GetAccount();
-            var group = new Group(model.Name, account);
+            var group = new Group(input.Name, account);
             await _groupRepository.Add(group);
-            return group;
+            return new CreatedResult<Group>(group);
         }
 
-        public async Task<bool> Delete(Guid id)
+        public async Task<IDomainResult> Delete(Guid id)
         {
-            var group = await Get(id);
-            if (group == null)
-            {
-                return false;
-            }
+            var result = await Get(id);
+            if (result.HasError)
+                return result as IDomainResult;
 
+            var group = result.Value;
             var account = await _accountAccessor.GetAccount();
             if (group.CreatorId != account.Id)
-            {
-                return false;
-            }
+                return new InsufficientPermissionsResult();
 
             await _groupRepository.Remove(group);
-            return true;
+            return new DeletedResult();
         }
 
-        public async Task<Group> Update(Guid id, IGroupForm model)
+        public async Task<IDomainResult<Group>> Update(Guid id, IGroupForm model)
         {
-            var group = await _groupRepository.Find(new GroupById(id));
-            if (group == null)
-                return null;
+            var result = await Get(id);
+            if (result.HasError)
+                return result;
 
+            var group = result.Value;
             var account = await _accountAccessor.GetAccount();
             if (group.CreatorId != account.Id)
-                return null;
+                return new InsufficientPermissionsResult<Group>();
 
             group.UpdateName(model.Name);
             await _groupRepository.Update(group);
-            return group;
+            return new SuccessResult<Group>(group);
         }
 
-        public async Task<GroupAccount[]> AddAccounts(Guid id, Guid[] accountIds)
+        public async Task<IDomainResult<GroupAccount[]>> AddAccounts(Guid id, Guid[] accountIds)
         {
             var group = await _groupRepository.Find(new GroupById(id), load: "_groupAccounts.Account");
             if (group == null)
-                return new GroupAccount[0];
+                return new NotFoundResult<GroupAccount[]>();
 
             var account = await _accountAccessor.GetAccount();
             if (group.CreatorId != account.Id)
-                return new GroupAccount[0];
+                return new InsufficientPermissionsResult<GroupAccount[]>();
 
             var accounts = await Task.WhenAll(accountIds.Select(async (accountId) =>
                   await _accountRepository.Find(new AccountById(accountId))));
 
             if (accounts.Any(acct => acct == null))
-                return new GroupAccount[0]; // bad accountId given
+                return new InvalidArgumentResult<GroupAccount[]>(nameof(accountIds));
 
             var existingAccounts = group.Accounts.Select(acct => acct.Id);
             if (accounts.Any(acct => existingAccounts.Contains(acct.Id)))
-                return new GroupAccount[0]; // duplicate entries
+                return new InvalidArgumentResult<GroupAccount[]>(nameof(accountIds));
 
             var groupAccounts = group.AddAccounts(accounts);
             await _groupRepository.Update(group);
-            return groupAccounts;
+            return new CreatedResult<GroupAccount[]>(groupAccounts);
         }
 
-        public async Task<bool> RemoveAccounts(Guid id, Guid[] accountIds)
+        public async Task<IDomainResult> RemoveAccounts(Guid id, Guid[] accountIds)
         {
             var group = await _groupRepository.Find(new GroupById(id), load: "_groupAccounts.Account");
             if (group == null)
-                return false;
+                return new NotFoundResult();
 
             var account = await _accountAccessor.GetAccount();
             if (group.CreatorId != account.Id)
-                return false;
+                return new InsufficientPermissionsResult();
 
             var existingAccounts = group.Accounts.Select(acct => acct.Id);
             if (accountIds.Any(accountId => !existingAccounts.Contains(accountId)))
-                return false;
+                return new InvalidArgumentResult(nameof(accountIds));
 
             group.RemoveAccounts(accountIds);
             await _groupRepository.Update(group);
-            return true;
+            return new DeletedResult();
         }
     }
 }

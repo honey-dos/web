@@ -58,7 +58,8 @@ namespace HoneyDo.Web.Controllers
             [FromBody, Required]
             [SwaggerParameter("Todo values")]
                 TodoCreateForm model) =>
-            (await _todoService.Create(model)).ForRestApi();
+            (await _todoService.Create(model))
+                .ForRestApi(t => $"/api/todos/{t.Id}");
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Deletes a specific todo.", OperationId = "DeleteTodo")]

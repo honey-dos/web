@@ -13,11 +13,11 @@ namespace HoneyDo.Web.GraphQL
             descriptor.Field<TodoResolver>(t => t.UpdateTodo(default, default, default)).Authorize();
             descriptor.Field<TodoResolver>(t => t.DeleteTodo(default, default)).Authorize();
 
-            descriptor.Field<GroupResolver>(t => t.CreateGroup(default)).Authorize();
+            descriptor.Field<GroupResolver>(t => t.CreateGroup(default, default)).Authorize();
             descriptor.Field<GroupResolver>(t => t.UpdateGroup(default, default, default)).Authorize();
-            descriptor.Field<GroupResolver>(t => t.DeleteGroup(default)).Authorize();
-            descriptor.Field<GroupResolver>(t => t.AddAccounts(default, default)).Authorize();
-            descriptor.Field<GroupResolver>(t => t.RemoveAccounts(default, default)).Authorize();
+            descriptor.Field<GroupResolver>(t => t.DeleteGroup(default, default)).Authorize();
+            descriptor.Field<GroupResolver>(t => t.AddAccounts(default, default, default)).Authorize();
+            descriptor.Field<GroupResolver>(t => t.RemoveAccounts(default, default, default)).Authorize();
         }
     }
 }

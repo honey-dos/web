@@ -14,7 +14,7 @@ namespace HoneyDo.Web.GraphQL
             descriptor.Field<TodoResolver>(t => t.Todos()).Authorize();
 
             descriptor.Field<GroupResolver>(t => t.Groups()).Authorize();
-            descriptor.Field<GroupResolver>(t => t.Group(default)).Authorize();
+            descriptor.Field<GroupResolver>(t => t.Group(default, default)).Authorize();
         }
     }
 }
