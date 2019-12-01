@@ -5,10 +5,10 @@ using HoneyDo.Domain.Interfaces;
 
 namespace HoneyDo.Domain.Specifications.Groups
 {
-    public class GroupsForUser : ISpecification<Group>
+    public class GroupsForAccount : ISpecification<Group>
     {
         private readonly Guid _accountId;
-        public GroupsForUser(Account account)
+        public GroupsForAccount(Account account)
         {
             _accountId = account.Id;
         }

@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
-using System.IO;
 using System;
 using HoneyDo.Web.Swagger;
 using HoneyDo.Infrastructure.Providers;
@@ -23,6 +22,13 @@ using Microsoft.AspNetCore.Identity;
 using HoneyDo.Infrastructure.Identity;
 using HoneyDo.Infrastructure;
 using HoneyDo.Web.Models;
+using HotChocolate;
+using Path = System.IO.Path;
+using HoneyDo.Web.GraphQL;
+using HotChocolate.Execution.Configuration;
+using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.Voyager;
+using HoneyDo.Domain.Services;
 
 namespace HoneyDo.Web
 {
@@ -115,13 +121,23 @@ namespace HoneyDo.Web
             services.AddScoped<IRepository<Login>, ContextRepository<Login, HoneyDoContext>>();
 
             // services
-            services.AddScoped<IJwtFactory, JwtFactory>();
-            services.AddScoped<IAccountAccessor, AccountAccessor>();
-            services.AddScoped<IProvider, GoogleProvider>();
+            services.AddTransient<IJwtFactory, JwtFactory>();
+            services.AddTransient<IAccountAccessor, AccountAccessor>();
+            services.AddTransient<IProvider, GoogleProvider>();
+            services.AddTransient<TodoService>();
+            services.AddTransient<GroupService>();
+            services.AddTransient<AccountService>();
 
             // identity
             services.AddTransient<IUserStore<Account>, HoneyDosUserStore>();
             services.AddTransient<IUserLoginStore<Account>, HoneyDosUserStore>();
+
+            // Add GraphQL Services
+            services.AddGraphQL(HoneyDosSchema.BuildSchema,
+                new QueryExecutionOptions
+                {
+                    TracingPreference = TracingPreference.Always
+                });
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -177,6 +193,13 @@ namespace HoneyDo.Web
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Honey-Dos API v1");
                 c.DisplayOperationId();
             });
+
+            app
+                .UseWebSockets()
+                .UseGraphQL("/graphql")
+                .UseGraphiQL("/graphql")
+                .UsePlayground("/graphql")
+                .UseVoyager("/graphql");
 
             app.UseMvc(routes =>
             {

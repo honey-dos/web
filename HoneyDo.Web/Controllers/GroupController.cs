@@ -1,16 +1,15 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HoneyDo.Domain.Entities;
 using HoneyDo.Web.Models;
-using HoneyDo.Domain.Interfaces;
-using HoneyDo.Domain.Specifications.Groups;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
-using HoneyDo.Domain.Specifications.Accounts;
-using HoneyDo.Domain.Specifications.GroupAccounts;
+using HoneyDo.Domain.Services;
+using HoneyDo.Web.Extensions;
 
 namespace HoneyDo.Web.Controllers
 {
@@ -19,48 +18,26 @@ namespace HoneyDo.Web.Controllers
     [Produces("application/json")]
     public class GroupController : Controller
     {
-        private readonly IRepository<Group> _groupRepository;
-        private readonly IRepository<Account> _accountRepository;
-        private readonly IRepository<GroupAccount> _groupAccountRepository;
-        private readonly IAccountAccessor _accountAccessor;
+        private readonly GroupService _groupService;
 
-        public GroupController(IRepository<Group> groupRepository,
-            IAccountAccessor accountAccessor,
-            IRepository<Account> accountRepository,
-            IRepository<GroupAccount> groupAccountRepository)
+        public GroupController(GroupService groupService)
         {
-            _groupRepository = groupRepository;
-            _accountAccessor = accountAccessor;
-            _accountRepository = accountRepository;
-            _groupAccountRepository = groupAccountRepository;
+            _groupService = groupService;
         }
 
         [HttpGet]
         [SwaggerOperation(Summary = "Gets all the groups that the user has access to.", OperationId = "GetGroups")]
         [SwaggerResponse(200, "All groups for the user.", typeof(List<Group>))]
         [SwaggerResponse(400, "Load parameter no valid.")]
-        public async Task<ActionResult<List<Group>>> GetGroups(
-            [SwaggerParameter("Additional entities to fetch ('Tasks|Accounts').")]string load = "")
-        {
-            string loadActual;
-            switch (load.ToLower())
-            {
-                case "tasks":
-                    loadActual = "_tasks";
-                    break;
-                case "accounts":
-                    loadActual = "_groupAccounts.Account";
-                    break;
-                case "":
-                    loadActual = "";
-                    break;
-                default:
-                    return BadRequest();
-            }
-            var account = await _accountAccessor.GetAccount();
-            var groups = await _groupRepository.Query(new GroupsForUser(account), load: loadActual);
-            return Ok(groups);
-        }
+        public async Task<ActionResult<List<Group>>> GetGroups() => Ok(await _groupService.Get());
+
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Gets a specific group.", OperationId = "GetGroup")]
+        [SwaggerResponse(200, "Returns the specified group.", typeof(Group))]
+        [SwaggerResponse(400, "Group not found with the specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult<Group>> GetGroup([SwaggerParameter("Id of the group.")]Guid id) =>
+            (await _groupService.Get(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -79,13 +56,17 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Group>> CreateGroup(
             [FromBody, Required]
             [SwaggerParameter("Group values, optional: dueDate")]
-                GroupCreateFormModel model)
-        {
-            var account = await _accountAccessor.GetAccount();
-            var group = new Group(model.Name, account);
-            await _groupRepository.Add(group);
-            return Created($"api/groups/{group.Id}", group);
-        }
+                GroupCreateForm model) =>
+            (await _groupService.Create(model)).ForRestApi(g => $"api/groups/{g.Id}");
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Deletes a specific group.", OperationId = "DeleteGroup")]
+        [SwaggerResponse(204, "Group was successfully deleted.")]
+        [SwaggerResponse(400, "No group found with specified id.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult> DeleteGroup(
+            [SwaggerParameter("Id of group to be deleted.")] Guid id) =>
+            (await _groupService.Delete(id)).ForRestApi();
 
         /// <remarks>
         /// Sample request:
@@ -106,24 +87,26 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<Group>> UpdateGroup(
             [SwaggerParameter("Id of group to be updated.")] Guid id,
             [FromBody, Required]
-            [SwaggerParameter("Group values, optional: dueDate")]
-                GroupCreateFormModel model)
+            [SwaggerParameter("Group values.")]
+                GroupCreateForm model) =>
+            (await _groupService.Update(id, model)).ForRestApi();
+
+        [HttpPost("{id}/add/accounts")]
+        [SwaggerOperation(Summary = "Add accounts to a specific group.", OperationId = "CreateGroupAccounts")]
+        [SwaggerResponse(200, "Returns sucessfully created GroupAccounts.")]
+        [SwaggerResponse(400, "No group or account(s) found with specified id or account already belongs to group.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult<GroupAccount[]>> CreateGroupAccounts(
+                [SwaggerParameter("Id of group to add account to.")] Guid id,
+                [FromBody, Required]
+                [SwaggerParameter("Ids of accounts to be added to group.")]
+                    Guid[] accountIds)
         {
-            var group = await _groupRepository.Find(new GroupById(id));
-            if (group == null)
-            {
+            if (!accountIds.Any())
                 return BadRequest();
-            }
 
-            var account = await _accountAccessor.GetAccount();
-            if (group.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            group.UpdateName(model.Name);
-            await _groupRepository.Update(group);
-            return Ok(group);
+            return (await _groupService.AddAccounts(id, accountIds))
+                .ForRestApi(g => $"api/group/{id}");
         }
 
         [HttpPost("{id}/add/{accountId}")]
@@ -133,35 +116,26 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific group.")]
         public async Task<ActionResult<GroupAccount>> CreateGroupAccount(
                 [SwaggerParameter("Id of group to add account to.")] Guid id,
-                [SwaggerParameter("Id of account to be added to group.")] Guid accountId)
+                [SwaggerParameter("Id of account to be added to group.")] Guid accountId) =>
+            (await _groupService.AddAccounts(id, new Guid[] { accountId }))
+                .ForRestApi(g => $"api/groups/{id}");
+
+        [HttpDelete("{id}/remove/accounts")]
+        [SwaggerOperation(Summary = "Remove accounts from a specific group.", OperationId = "RemoveGroupAccounts")]
+        [SwaggerResponse(204, "GroupAccounts were successfully deleted.")]
+        [SwaggerResponse(400, "No group or account(s) found with specified id or account does not belong to group.")]
+        [SwaggerResponse(403, "Don't have access to specific group.")]
+        public async Task<ActionResult> RemoveGroupAccounts(
+                [SwaggerParameter("Id of group to remove account from.")] Guid id,
+                [FromBody, Required]
+                [SwaggerParameter("Ids of accounts to be added to group.")]
+                    Guid[] accountIds)
         {
-            var group = await _groupRepository.Find(new GroupById(id));
-            if (group == null)
-            {
+            if (!accountIds.Any())
                 return BadRequest();
-            }
 
-            var account = await _accountAccessor.GetAccount();
-            if (group.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            account = await _accountRepository.Find(new AccountById(accountId));
-            if (account == null)
-            {
-                return BadRequest();
-            }
-
-            var groupAccount = await _groupAccountRepository.Find(new GroupAccountByIds(id, accountId));
-            if (groupAccount != null)
-            {
-                return BadRequest();
-            }
-
-            groupAccount = new GroupAccount(group, account);
-            await _groupAccountRepository.Add(groupAccount);
-            return Ok(groupAccount);
+            return (await _groupService.RemoveAccounts(id, accountIds))
+                .ForRestApi();
         }
 
         [HttpDelete("{id}/remove/{accountId}")]
@@ -171,35 +145,8 @@ namespace HoneyDo.Web.Controllers
         [SwaggerResponse(403, "Don't have access to specific group.")]
         public async Task<ActionResult> RemoveGroupAccount(
                 [SwaggerParameter("Id of group to remove account from.")] Guid id,
-                [SwaggerParameter("Id of account to be removed.")] Guid accountId)
-        {
-            var group = await _groupRepository.Find(new GroupById(id));
-            if (group == null)
-            {
-                return BadRequest();
-            }
-
-            var account = await _accountAccessor.GetAccount();
-            if (group.CreatorId != account.Id)
-            {
-                return Unauthorized();
-            }
-
-            account = await _accountRepository.Find(new AccountById(accountId));
-            if (account == null)
-            {
-                return BadRequest();
-            }
-
-            var groupAccount = await _groupAccountRepository.Find(new GroupAccountByIds(id, accountId));
-            if (groupAccount == null)
-            {
-                return BadRequest();
-            }
-
-            await _groupAccountRepository.Remove(groupAccount);
-            return NoContent();
-        }
-
+                [SwaggerParameter("Id of account to be removed.")] Guid accountId) =>
+            (await _groupService.RemoveAccounts(id, new Guid[] { accountId }))
+                .ForRestApi();
     }
 }

@@ -128,11 +128,11 @@ namespace HoneyDo.Web.Controllers
         public async Task<ActionResult<List<Account>>> Search(
             [SwaggerParameter("Term to search for accounts.")]string term,
             [SwaggerParameter("Page index, min: 1")] int pageIndex = 1,
-            [SwaggerParameter("Page size, min: 10, max: 1000")] int pageSize = 10)
+            [SwaggerParameter("Page size, min: 10, max: 100")] int pageSize = 10)
         {
             pageIndex = Math.Max(pageIndex, 1);
             pageSize = Math.Max(pageSize, 10);
-            pageSize = Math.Min(pageSize, 1000);
+            pageSize = Math.Min(pageSize, 100);
 
             Page page = new Page(pageIndex, pageSize);
             List<Account> accounts = await _accountRepository.Query(new AccountsByTerm(term), page);
