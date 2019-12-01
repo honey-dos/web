@@ -27,7 +27,6 @@ using Path = System.IO.Path;
 using HoneyDo.Web.GraphQL;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.AspNetCore;
-using HotChocolate.AspNetCore.Voyager;
 using HoneyDo.Domain.Services;
 
 namespace HoneyDo.Web
@@ -197,9 +196,7 @@ namespace HoneyDo.Web
             app
                 .UseWebSockets()
                 .UseGraphQL("/graphql")
-                .UseGraphiQL("/graphql")
-                .UsePlayground("/graphql")
-                .UseVoyager("/graphql");
+                .UsePlayground("/graphql");
 
             app.UseMvc(routes =>
             {
